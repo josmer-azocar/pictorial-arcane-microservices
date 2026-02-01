@@ -30,6 +30,6 @@ public class ArtWorkRespository {
     }
 
     public void eraseArtWorkById(Long id) {
-        this.crudArtWorkRepository.deleteByIdArtWork(id);
+        this.crudArtWorkRepository.deleteById(id);
     }
 }

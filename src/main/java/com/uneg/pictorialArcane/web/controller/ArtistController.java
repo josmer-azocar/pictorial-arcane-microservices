@@ -18,7 +18,7 @@ public class ArtistController {
         this.artistService = artistService;
     }
 
-    @PostMapping("/addartist")
+    @PostMapping("/add")
     ResponseEntity<ArtistEntity> addArtist(@RequestBody ArtistEntity artist){
         return ResponseEntity.ok(this.artistService.addArtist(artist));
     }
@@ -32,16 +32,22 @@ public class ArtistController {
     ResponseEntity<?> getArtistById(@PathVariable Long id){
         try{
             ArtistEntity artist = this.artistService.getArtistById(id);
-            return ResponseEntity.ok(artist);
+            return ResponseEntity.ok(artist); //devuelve un codigo 200 con el objeto
         } catch (RuntimeException e) {
-            //error 404
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            //error 404 no encontrado
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Artist not found");
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    ResponseEntity<Void> deleteArtistById(@PathVariable Long id){
-        this.artistService.deleteArtistById(id);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<?> deleteArtistById(@PathVariable Long id){
+        try{
+            this.artistService.deleteArtistById(id);
+            return ResponseEntity.noContent().build(); //devuelve un codigo 204
+        } catch (RuntimeException e) {
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("could not be deleted");
+        }
+
+
     }
 }

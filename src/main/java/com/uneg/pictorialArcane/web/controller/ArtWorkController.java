@@ -41,8 +41,14 @@ public class ArtWorkController {
     }
 
     @DeleteMapping("/delete/{id}")
-    ResponseEntity<Void> deleteArtWorkById(@PathVariable Long id){
-        this.artWorkService.deleteArtWorkById(id);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<?> deleteArtWorkById(@PathVariable Long id){
+        try {
+            this.artWorkService.deleteArtWorkById(id);
+            return ResponseEntity.noContent().build(); //codigo 204
+        } catch (RuntimeException e) {
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("could not be deleted");
+        }
+
+
     }
 }

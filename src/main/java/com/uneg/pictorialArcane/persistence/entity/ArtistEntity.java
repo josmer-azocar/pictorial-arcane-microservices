@@ -62,7 +62,4 @@ public class ArtistEntity {
         this.biography = biography;
     }
 
-
-
-
 }
