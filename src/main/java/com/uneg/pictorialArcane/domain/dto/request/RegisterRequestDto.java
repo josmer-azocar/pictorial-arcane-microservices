@@ -1,5 +1,7 @@
 package com.uneg.pictorialArcane.domain.dto.request;
 
+import com.uneg.pictorialArcane.domain.Enum.Role;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,6 +14,7 @@ public record RegisterRequestDto(
         Long dniUser,
 
         @NotBlank(message = "Email is required.")
+        @Email
         @Size(max = 100, message = "Email cannot exceed 100 characters.")
         String email,
 
@@ -25,6 +28,9 @@ public record RegisterRequestDto(
 
         @NotBlank(message = "Last name is required.")
         @Size(max = 25, message = "Last name cannot exceed 25 characters.")
-        String lastName
+        String lastName,
+
+        @NotNull
+        Role role
 ) {
 }

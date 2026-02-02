@@ -60,6 +60,7 @@ public class AuthService {
                 .password(passwordEncoder.encode(requestDto.password())) // Hashea la contraseña
                 .firstName(requestDto.firstName())
                 .lastName(requestDto.lastName())
+                .role(requestDto.role().toString())
                 .build();
 
         // Guarda el usuario en la base de datos

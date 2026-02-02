@@ -11,15 +11,17 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {GenderMapper.class})
+@Mapper(componentModel = "spring", uses = {GenderMapper.class, RoleMapper.class})
 public interface UserMapper {
 
     @Mapping(source ="gender", target = "gender", qualifiedByName = "stringToGender")
+    @Mapping(source ="role", target = "role", qualifiedByName = "stringToRole")
     UserResponseDto toResponseDto(UserEntity entity);
     List<UserResponseDto> toResponseDto(Iterable<UserEntity> entities);
 
     @InheritInverseConfiguration
     @Mapping(source ="gender", target = "gender", qualifiedByName = "genderToString")
+    @Mapping(source ="role", target = "role", qualifiedByName = "roleToString")
     UserEntity toEntity(UserRequestDto requestDto);
 
     void updateEntityFromDto (UpdateUserDto updateUserDto, @MappingTarget UserEntity userEntity);

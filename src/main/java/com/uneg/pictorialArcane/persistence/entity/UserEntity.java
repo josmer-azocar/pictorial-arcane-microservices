@@ -45,10 +45,12 @@ public class UserEntity extends AuditableEntity implements UserDetails, Serializ
     @Column(name = "gender", length = 10)
     private String gender;
 
+    @Column(name = "role", length = 10)
+    private String role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.getClass().getName()));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override
@@ -95,6 +97,14 @@ public class UserEntity extends AuditableEntity implements UserDetails, Serializ
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public void setPassword(String password) {
