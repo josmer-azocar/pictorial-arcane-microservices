@@ -1,9 +1,11 @@
 package com.uneg.pictorialArcane.config;
 
 import com.uneg.pictorialArcane.jwt.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration // Indica que esta clase contiene configuraciones de Spring
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter; // Filtro personalizado para validar JWT
     private final AuthenticationProvider authProvider; // Proveedor de autenticación (DAO en este caso)
@@ -34,9 +37,25 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/**","/swagger-ui.html", // Permite acceso público a estas rutas
                                         "/swagger-ui/**","/v3/api-docs/**",
                                         "/webjars/**")
+
                                 .permitAll() // Permite el acceso sin autenticación
                                 .anyRequest().authenticated() // Cualquier otra petición requiere autenticación
                         )
+
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Esto maneja el error 401 (No estás logueado o token malo)
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"No estas autenticado\"}");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            // Esto maneja el error 403 (Estás logueado pero no tienes permiso)
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Acceso denegado: No tienes el rol necesario\"}");
+                        })
+                )
                 .sessionManagement(sessionManager-> // Configuración de gestión de sesiones
                         sessionManager
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Indica que no se crearán sesiones (stateless), ideal para REST APIs con JWT

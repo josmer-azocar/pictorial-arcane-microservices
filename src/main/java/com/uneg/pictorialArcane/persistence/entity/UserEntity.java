@@ -50,7 +50,7 @@ public class UserEntity extends AuditableEntity implements UserDetails, Serializ
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
