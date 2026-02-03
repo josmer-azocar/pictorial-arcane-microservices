@@ -1,6 +1,7 @@
 package com.uneg.pictorialArcane.domain.dto.request;
 
 import com.uneg.pictorialArcane.domain.Enum.Gender;
+import com.uneg.pictorialArcane.domain.Enum.Role;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import java.time.LocalDate;
@@ -31,7 +32,10 @@ public record UserRequestDto(
         LocalDate dateOfBirth,
 
         @NotNull
-        Gender gender
+        Gender gender,
+
+        @NotNull
+        Role role
 ) {
 }
 

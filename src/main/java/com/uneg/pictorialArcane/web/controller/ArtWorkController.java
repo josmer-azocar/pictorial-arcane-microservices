@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.web.controller;
 import com.uneg.pictorialArcane.domain.service.ArtWorkService;
 import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class ArtWorkController {
     }
 
     @PostMapping("/addArtWork")
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<ArtWorkEntity> addArtWork(@RequestBody ArtWorkEntity artWork){
         return ResponseEntity.ok(this.artWorkService.addArtWork(artWork));
     }
