@@ -6,5 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface CrudArtWorkRepository extends CrudRepository<ArtWorkEntity, Long> {
 
     ArtWorkEntity findByName(String name);
+    ArtWorkEntity findFirstByIdArtWork(Long id);
     ArtWorkEntity deleteByIdArtWork(Long id);
 }

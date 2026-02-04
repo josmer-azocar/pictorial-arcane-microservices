@@ -4,6 +4,7 @@ import com.uneg.pictorialArcane.domain.Enum.Gender;
 import org.mapstruct.Named;
 
 public class GenderMapper {
+
     @Named("stringToGender")
     public static Gender stringToGender(String gender){
         if (gender == null) return null;

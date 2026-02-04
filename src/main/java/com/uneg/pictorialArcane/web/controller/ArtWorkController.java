@@ -1,7 +1,10 @@
 package com.uneg.pictorialArcane.web.controller;
 
+import com.uneg.pictorialArcane.domain.dto.request.ArtWorkRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
 import com.uneg.pictorialArcane.domain.service.ArtWorkService;
 import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +25,8 @@ public class ArtWorkController {
 
     @PostMapping("/addArtWork")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<ArtWorkEntity> addArtWork(@RequestBody ArtWorkEntity artWork){
-        return ResponseEntity.ok(this.artWorkService.addArtWork(artWork));
+    ResponseEntity<ArtWorkResponseDto> addArtWork(@RequestBody @Valid ArtWorkRequestDto artWork){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.artWorkService.addArtWork(artWork));
     }
 
     @GetMapping("/all")
@@ -32,14 +35,8 @@ public class ArtWorkController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getArtWorkById(@PathVariable Long id){
-        try{
-            ArtWorkEntity artWork = this.artWorkService.getArtWorkById(id);
-            return ResponseEntity.ok(artWork);
-        } catch (RuntimeException e) {
-            //error 404
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    ResponseEntity<ArtWorkResponseDto> getArtWorkById(@PathVariable Long id){
+        return ResponseEntity.ok(this.artWorkService.getArtWorkById(id));
     }
 
     @DeleteMapping("/delete/{id}")

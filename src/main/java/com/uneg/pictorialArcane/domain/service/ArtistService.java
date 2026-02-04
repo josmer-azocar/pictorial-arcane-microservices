@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.domain.service;
 import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
 import com.uneg.pictorialArcane.persistence.entity.ArtistEntity;
 import com.uneg.pictorialArcane.persistence.impl_repository.ArtistRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

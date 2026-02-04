@@ -1,5 +1,7 @@
 package com.uneg.pictorialArcane.domain.service;
 
+import com.uneg.pictorialArcane.domain.dto.request.ArtWorkRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
 import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
 import com.uneg.pictorialArcane.persistence.impl_repository.ArtWorkRespository;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ public class ArtWorkService {
         this.artWorkRespository = artWorkRespository;
     }
 
-    public ArtWorkEntity addArtWork(ArtWorkEntity artWork) {
+    public ArtWorkResponseDto addArtWork(ArtWorkRequestDto artWork) {
         return this.artWorkRespository.addArtWork(artWork);
     }
 
@@ -23,17 +25,12 @@ public class ArtWorkService {
         return artWorkRespository.findAllArtWorks();
     }
 
-   public ArtWorkEntity getArtWorkById(Long id){
-        return artWorkRespository.getArtWorkById(id).orElseThrow(() -> new RuntimeException("Obra " +
-                "no encontrada ID: " + id));
+   public ArtWorkResponseDto getArtWorkById(Long id){
+        return artWorkRespository.getArtWorkById(id);
    }
 
     public void deleteArtWorkById(Long id) {
-        if (artWorkRespository.getArtWorkById(id).isPresent()){
-            artWorkRespository.eraseArtWorkById(id);
-        }else {
-            throw new RuntimeException("No se puede eliminar el ID: " + id);
-        }
+        this.artWorkRespository.getArtWorkById(id);
     }
 
 }

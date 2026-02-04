@@ -4,6 +4,7 @@ import com.uneg.pictorialArcane.domain.Enum.Role;
 import org.mapstruct.Named;
 
 public class RoleMapper {
+
     @Named("stringToRole")
     public static Role stringToRole(String role){
         if (role == null) return null;
