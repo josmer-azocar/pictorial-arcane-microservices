@@ -8,6 +8,7 @@ public class ArtWorkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_artwork")
     private Long idArtWork;
 
     @Column(name = "name", nullable = false, length = 100)
