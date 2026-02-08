@@ -2,6 +2,7 @@ package com.uneg.pictorialArcane.web.exception;
 
 
 import com.uneg.pictorialArcane.domain.exception.ArtWorkDoesNotExistsException;
+import com.uneg.pictorialArcane.domain.exception.ArtistDoesNotExistsException;
 import com.uneg.pictorialArcane.domain.exception.UserAlreadyExistsException;
 import com.uneg.pictorialArcane.domain.exception.UserDoesNotExistsException;
 import org.apache.coyote.BadRequestException;
@@ -56,5 +57,11 @@ public class RestExceptionHandler {
     public ResponseEntity<Error> handleException(Exception ex){
         Error error = new Error("unknown-error", ex.getMessage());
         return ResponseEntity.internalServerError().body(error);
+    }
+
+    @ExceptionHandler(ArtistDoesNotExistsException.class)
+    public ResponseEntity<Error> handleException(ArtistDoesNotExistsException ex){
+        Error error = new Error("artist-does-not-exist", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }

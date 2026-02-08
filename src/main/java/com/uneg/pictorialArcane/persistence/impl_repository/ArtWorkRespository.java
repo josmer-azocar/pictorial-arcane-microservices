@@ -32,6 +32,7 @@ public class ArtWorkRespository {
     }
 
     public List<ArtWorkEntity> findAllArtWorks() {
+
         return (List<ArtWorkEntity>) this.crudArtWorkRepository.findAll();
     }
 

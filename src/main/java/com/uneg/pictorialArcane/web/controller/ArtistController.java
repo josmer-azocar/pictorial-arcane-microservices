@@ -1,9 +1,14 @@
 package com.uneg.pictorialArcane.web.controller;
 
+import com.uneg.pictorialArcane.domain.dto.request.ArtistRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ArtistResponseDto;
+import com.uneg.pictorialArcane.domain.dto.update.UpdateArtistDto;
 import com.uneg.pictorialArcane.domain.service.ArtistService;
 import com.uneg.pictorialArcane.persistence.entity.ArtistEntity;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,35 +24,32 @@ public class ArtistController {
     }
 
     @PostMapping("/add")
-    ResponseEntity<ArtistEntity> addArtist(@RequestBody ArtistEntity artist){
-        return ResponseEntity.ok(this.artistService.addArtist(artist));
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<ArtistResponseDto> addArtist(@RequestBody @Valid ArtistRequestDto artist){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.artistService.addArtist(artist));
     }
 
     @GetMapping("/all")
-    ResponseEntity<List<ArtistEntity>> getAllArtist(){
+    ResponseEntity<List<ArtistResponseDto>> getAllArtist(){
         return ResponseEntity.ok(this.artistService.getAllArtist());
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getArtistById(@PathVariable Long id){
-        try{
-            ArtistEntity artist = this.artistService.getArtistById(id);
-            return ResponseEntity.ok(artist); //devuelve un codigo 200 con el objeto
-        } catch (RuntimeException e) {
-            //error 404 no encontrado
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Artist not found");
-        }
+    ResponseEntity<ArtistResponseDto> getArtistById(@PathVariable Long id){
+        return ResponseEntity.ok(this.artistService.getArtistById(id));
+    }
+
+    @PutMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<ArtistResponseDto> updateArtist(@PathVariable Long id, @RequestBody @Valid UpdateArtistDto artist){
+        return ResponseEntity.ok(this.artistService.updateArtist(id, artist));
     }
 
     @DeleteMapping("/delete/{id}")
-    ResponseEntity<?> deleteArtistById(@PathVariable Long id){
-        try{
-            this.artistService.deleteArtistById(id);
-            return ResponseEntity.noContent().build(); //devuelve un codigo 204
-        } catch (RuntimeException e) {
-            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("could not be deleted");
-        }
-
-
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<Void> deleteArtistById(@PathVariable Long id){
+        this.artistService.deleteArtistById(id);
+        return ResponseEntity.noContent().build();
     }
+
 }

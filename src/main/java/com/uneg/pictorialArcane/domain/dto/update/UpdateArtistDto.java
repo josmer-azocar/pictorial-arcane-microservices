@@ -1,0 +1,18 @@
+package com.uneg.pictorialArcane.domain.dto.update;
+
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateArtistDto(
+        @NotNull(message = "name cant be empty")
+        String name,
+
+        @NotNull(message = "Last name cant be empty")
+        String lastName,
+
+        @NotNull(message = "Nationality cant be empty")
+        String nationality,
+
+        @NotNull
+        String biography
+) {
+}

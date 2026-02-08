@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 public class ArtistEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_artist")
     private Long idArtist;
 
     @Column(name = "name", nullable = false, length = 50)
@@ -19,7 +20,7 @@ public class ArtistEntity {
     @Column(name = "nationality", nullable = false, length = 20)
     private String nationality;
 
-    @Column(name = "biography", nullable = false, length = 50)
+    @Column(name = "biography", nullable = false, length = 120)
     private String biography;
 
     public Long getIdArtist() {
