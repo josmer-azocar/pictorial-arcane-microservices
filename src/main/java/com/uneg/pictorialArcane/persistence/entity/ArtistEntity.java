@@ -2,6 +2,8 @@ package com.uneg.pictorialArcane.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "artist")
 
@@ -22,6 +24,9 @@ public class ArtistEntity {
 
     @Column(name = "biography", nullable = false, length = 120)
     private String biography;
+
+    @OneToMany(mappedBy = "artist")
+    private List<ArtWorkEntity> artWorks;
 
     public Long getIdArtist() {
         return idArtist;
