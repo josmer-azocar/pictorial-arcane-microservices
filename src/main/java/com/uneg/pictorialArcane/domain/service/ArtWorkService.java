@@ -23,6 +23,7 @@ public class ArtWorkService {
     }
 
     public List<ArtWorkEntity> getAllArtWorks() {
+
         return artWorkRespository.findAllArtWorks();
     }
 
