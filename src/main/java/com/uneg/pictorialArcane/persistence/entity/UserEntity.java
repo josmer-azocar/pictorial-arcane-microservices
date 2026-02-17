@@ -48,6 +48,9 @@ public class UserEntity extends AuditableEntity implements UserDetails, Serializ
     @Column(name = "role", length = 10)
     private String role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ClientEntity client;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role));
