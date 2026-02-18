@@ -7,7 +7,8 @@ public record ArtWorkResponseDto(
         String name,
         String status,
         double prize,
-        Long idArtist
+        Long idArtist,
+        Long idGender
 
 ) {
 }

@@ -15,6 +15,9 @@ public record ArtWorkRequestDto(
         double prize,
 
         @NotNull
-        Long idArtist
+        Long idArtist,
+
+        @NotNull
+        Long idGender
 ) {
 }
