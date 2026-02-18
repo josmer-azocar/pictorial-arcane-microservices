@@ -2,17 +2,38 @@ package com.uneg.pictorialArcane.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "gender")
 public class GenderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_gender")
+    @Column(name = "id_gender", nullable = false)
     private Long idGender;
 
     @Column(name = "description", nullable = false, length = 120)
     private String description;
 
+    @OneToMany(mappedBy = "gender", cascade = CascadeType.ALL)
+    private List<ArtWorkEntity> artWorkEntities;
+
+    public GenderEntity(Long idGender, String description, List<ArtWorkEntity> artWorkEntities) {
+        this.idGender = idGender;
+        this.description = description;
+        this.artWorkEntities = artWorkEntities;
+    }
+
+    public GenderEntity() {
+    }
+
+    public List<ArtWorkEntity> getArtWorkEntities() {
+        return artWorkEntities;
+    }
+
+    public void setArtWorkEntities(List<ArtWorkEntity> artWorkEntities) {
+        this.artWorkEntities = artWorkEntities;
+    }
 
     public Long getIdGender() {
         return idGender;

@@ -25,7 +25,7 @@ public class ArtistEntity {
     @Column(name = "biography", nullable = false, length = 120)
     private String biography;
 
-    @OneToMany(mappedBy = "artist")
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<ArtWorkEntity> artWorks;
 
     public Long getIdArtist() {
