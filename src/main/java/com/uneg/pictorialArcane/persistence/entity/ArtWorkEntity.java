@@ -17,8 +17,8 @@ public class ArtWorkEntity {
     @Column(name = "status", nullable = false, length = 15)
     private String status;
 
-    @Column(name = "prize")
-    private double prize;
+    @Column(name = "price")
+    private double price;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ArtistEntity.class)
     @JoinColumn(name = "id_artist", referencedColumnName = "id_artist")
@@ -28,11 +28,11 @@ public class ArtWorkEntity {
     @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
     private GenderEntity gender;
 
-    public ArtWorkEntity(Long idArtWork, String name, String status, double prize, ArtistEntity artist, GenderEntity gender) {
+    public ArtWorkEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender) {
         this.idArtWork = idArtWork;
         this.name = name;
         this.status = status;
-        this.prize = prize;
+        this.price = price;
         this.artist = artist;
         this.gender = gender;
     }
@@ -80,11 +80,11 @@ public class ArtWorkEntity {
         this.status = status;
     }
 
-    public double getPrize() {
-        return prize;
+    public double getPrice() {
+        return price;
     }
 
-    public void setPrize(double prize) {
-        this.prize = prize;
+    public void setPrice(double prize) {
+        this.price = prize;
     }
 }
