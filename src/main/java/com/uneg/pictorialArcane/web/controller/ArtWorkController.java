@@ -63,7 +63,7 @@ public class ArtWorkController {
     public ResponseEntity<Page<ArtWork2ResponseDto>> searchArtWorks(
             @RequestParam(required = false) Long idGender,
             @RequestParam(required = false) Long idArtist,
-            @RequestParam(required = false) String title,
+            @RequestParam(required = false, defaultValue = "") String title,
             @RequestParam(required = false) Double min,
             @RequestParam(required = false) Double max,
             @PageableDefault(size = 9, sort = "price", direction = Sort.Direction.ASC) Pageable pageable

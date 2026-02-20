@@ -20,7 +20,7 @@ public interface CrudArtWorkRepository extends CrudRepository<ArtWorkEntity, Lon
             "(:min_price IS NULL OR o.price >= :min_price) AND " +
             "(:max_price IS NULL OR o.price <= :max_price) AND " +
             "(o.status = 'AVAILABLE') AND" +
-            "(:title IS NULL OR LOWER(o.name) LIKE LOWER(CONCAT('%', :title, '%')))"
+            "(LOWER(o.name) LIKE LOWER(CONCAT('%', :title, '%')))"
     )
     Page<ArtWorkEntity> searchArtWorkByFilters(
             @Param("id_gender") Long idGender,
