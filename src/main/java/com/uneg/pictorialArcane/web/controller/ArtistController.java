@@ -74,11 +74,11 @@ public class ArtistController {
         return ResponseEntity.ok(this.artistService.getArtistById(id));
     }
 
-    @PutMapping("/delete/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Update Artist / Actualizar artista",
-            description = "Requires ADMIN role. Updates an existing artist. Note: Endpoint path contains 'delete' but performs update. / Requiere rol ADMIN. Actualiza un artista existente. Nota: La ruta del endpoint contiene 'delete' pero realiza una actualización.",
+            description = "Requires ADMIN role. Updates an existing artist / Requiere rol ADMIN. Actualiza un artista existente",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Artist updated successfully / Artista actualizado exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
