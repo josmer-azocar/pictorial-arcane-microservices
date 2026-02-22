@@ -25,8 +25,28 @@ public class ArtistEntity {
     @Column(name = "biography", nullable = false, length = 120)
     private String biography;
 
+    @Column(name = "commission_rate")
+    private Double commissionRate;
+
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<ArtWorkEntity> artWorks;
+
+
+    public Double getCommissionRate() {
+        return commissionRate;
+    }
+
+    public void setCommissionRate(Double commissionRate) {
+        this.commissionRate = commissionRate;
+    }
+
+    public List<ArtWorkEntity> getArtWorks() {
+        return artWorks;
+    }
+
+    public void setArtWorks(List<ArtWorkEntity> artWorks) {
+        this.artWorks = artWorks;
+    }
 
     public Long getIdArtist() {
         return idArtist;

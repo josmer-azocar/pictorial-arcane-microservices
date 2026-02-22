@@ -1,23 +1,43 @@
 package com.uneg.pictorialArcane.persistence.mapper;
 
-import com.uneg.pictorialArcane.domain.dto.request.SculptureRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerSculptureRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerSculptureResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SculptureResponseDto;
 import com.uneg.pictorialArcane.persistence.entity.SculptureEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+
 import java.util.List;
 
-@Mapper(componentModel = "spring") //componente para inyectar en otras clases
+@Mapper(componentModel = "spring")//componentModel para inyectar en otras clases
 public interface SculptureMapper {
 
-    @Mapping(target = "idArtWork", source = "artWork.idArtWork") //saca el id de artwork para usarlo en el dto
-    SculptureResponseDto toResponseDto (SculptureEntity entity);
+    @Mapping(source = "artWorkRequest.name", target = "name")
+    @Mapping(source = "artWorkRequest.status", target = "status")
+    @Mapping(source = "artWorkRequest.prize", target = "prize")
+    @Mapping(source = "artWorkRequest.idArtist", target = "artist.idArtist")
+    @Mapping(source = "artWorkRequest.idGender", target = "gender.idGender")
+    @Mapping(source = "sculptureRequest.material", target = "material")
+    @Mapping(source = "sculptureRequest.weight", target = "weight")
+    @Mapping(source = "sculptureRequest.length", target = "length")
+    @Mapping(source = "sculptureRequest.width", target = "width")
+    @Mapping(source = "sculptureRequest.depth", target = "depth")
+    SculptureEntity toEntity(ContainerSculptureRequestDto request);
 
-    @InheritInverseConfiguration
-    @Mapping(source = "idArtWork", target = "artWork.idArtWork")//ignora el artwork
-    SculptureEntity toEntity(SculptureRequestDto request);
+    @Mapping(source ="idArtWork", target ="idArtWork")
+    @Mapping(source = "prize", target = "prize")
+    @Mapping(source = "artist.idArtist", target = "idArtist")
+    @Mapping(source = "gender.idGender", target = "idGender")
+    ArtWorkResponseDto toArtWorkResponseDto(SculptureEntity entity);
 
-    List<SculptureResponseDto> toResponseDtoList(List<SculptureEntity> entities);
+    SculptureResponseDto toSculptureResponseDto(SculptureEntity entity);
+
+    default ContainerSculptureResponseDto toContainerResponseDto(SculptureEntity entity){
+        if(entity == null)return null;
+        return new ContainerSculptureResponseDto(toSculptureResponseDto(entity), toArtWorkResponseDto(entity));
+    }
+
 }

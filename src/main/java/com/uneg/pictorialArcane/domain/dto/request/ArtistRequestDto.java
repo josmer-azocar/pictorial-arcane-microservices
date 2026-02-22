@@ -1,6 +1,7 @@
 package com.uneg.pictorialArcane.domain.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record ArtistRequestDto(
@@ -14,5 +15,8 @@ public record ArtistRequestDto(
         String nationality,
 
         @Size(max = 120, message = "Biography must be under 120 characters")
-        String biography
+        String biography,
+
+        @Positive
+        Double commissionRate
 ) {}

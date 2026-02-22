@@ -1,15 +1,11 @@
 package com.uneg.pictorialArcane.domain.service;
 
-import com.uneg.pictorialArcane.domain.dto.request.ArtWorkRequestDto;
+
 import com.uneg.pictorialArcane.domain.dto.request.ArtistRequestDto;
-import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtistResponseDto;
-import com.uneg.pictorialArcane.domain.dto.update.UpdateArtWorkDto;
 import com.uneg.pictorialArcane.domain.dto.update.UpdateArtistDto;
-import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
-import com.uneg.pictorialArcane.persistence.entity.ArtistEntity;
+import com.uneg.pictorialArcane.domain.exception.CommissionRateIncorrectException;
 import com.uneg.pictorialArcane.persistence.impl_repository.ArtistRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,10 +19,6 @@ public class ArtistService {
 
         this.artistRepository = artistRepository;
     }
-
-    /*public ArtistEntity saveArtist(ArtistEntity artist) {
-        return artistRepository.saveArtist(artist);
-    }*/
 
     public ArtistResponseDto addArtist(ArtistRequestDto artist) {
         return this.artistRepository.addArtist(artist);
@@ -49,4 +41,12 @@ public class ArtistService {
 
         return this.artistRepository.updateArtist(id, artist);
     }
+
+    public ArtistResponseDto updateArtistCommission(Long id, Double newRate) {
+        if (newRate < 10 || newRate > 5) {
+            throw new CommissionRateIncorrectException();
+        }
+        return this.artistRepository.updateCommission(id, newRate);
+    }
 }
+

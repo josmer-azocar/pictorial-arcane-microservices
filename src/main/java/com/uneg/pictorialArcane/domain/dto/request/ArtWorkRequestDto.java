@@ -19,5 +19,6 @@ public record ArtWorkRequestDto(
 
         @NotNull
         Long idGender
+
 ) {
 }

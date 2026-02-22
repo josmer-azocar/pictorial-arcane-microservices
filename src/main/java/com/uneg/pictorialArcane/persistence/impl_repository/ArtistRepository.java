@@ -27,11 +27,6 @@ public class ArtistRepository {
         this.artistMapper = artistMapper;
     }
 
-    /*public ArtistResponseDto saveArtist(Long id, ArtistRequestDto artist) {
-        ArtistEntity entity = this.crudArtistRepository.findFirstByIdArtist(id);
-        return artistMapper.toResponseDto(this.crudArtistRepository.save(entity));
-    }*/
-
     public ArtistResponseDto addArtist(ArtistRequestDto artist) {
 
         ArtistEntity entity = artistMapper.toEntity(artist);
@@ -61,6 +56,15 @@ public class ArtistRepository {
         ArtistEntity entity = this.crudArtistRepository.findFirstByIdArtist(id);
         if(entity == null){ throw new ArtistDoesNotExistsException(id);}
         artistMapper.updateEntityFromDto(artist,entity);
+        return artistMapper.toResponseDto(this.crudArtistRepository.save(entity));
+    }
+
+    public ArtistResponseDto updateCommission(Long id, Double newRate) {
+        ArtistEntity entity = this.crudArtistRepository.findFirstByIdArtist(id);
+        if (entity == null) {
+            throw new ArtistDoesNotExistsException(id);
+        }
+        entity.setCommissionRate(newRate);
         return artistMapper.toResponseDto(this.crudArtistRepository.save(entity));
     }
 }

@@ -1,0 +1,54 @@
+package com.uneg.pictorialArcane.persistence.entity;
+
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "goldsmith")
+@PrimaryKeyJoinColumn(name = "id_artwork")
+public class GoldsmithEntity extends ArtWorkEntity{
+
+    @Column(name = "material", length = 15)
+    private String material;
+
+    @Column(name = "precious_stones", length = 15)
+    private String preciousStones;
+
+    @Column(name = "weight")
+    private Double weight;
+
+    public GoldsmithEntity(Long idArtWork, String name, String status, double prize, ArtistEntity artist, GenderEntity gender, String material, String preciousStones, Double weight) {
+        super(idArtWork, name, status, prize, artist, gender);
+        this.material = material;
+        this.preciousStones = preciousStones;
+        this.weight = weight;
+    }
+    public GoldsmithEntity() {}
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public String getPreciousStones() {
+        return preciousStones;
+    }
+
+    public void setPreciousStones(String preciousStones) {
+        this.preciousStones = preciousStones;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+}

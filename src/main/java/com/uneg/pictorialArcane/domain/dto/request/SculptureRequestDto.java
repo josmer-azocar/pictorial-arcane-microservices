@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record SculptureRequestDto(
-        @NotNull(message = "idArtWork cant be null")
-        Long idArtWork,    // id que vincula a la obra
-
         @NotBlank(message = "material cant be blank")
         String material,
 

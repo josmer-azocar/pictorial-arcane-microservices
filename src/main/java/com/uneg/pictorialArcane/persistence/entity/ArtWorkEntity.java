@@ -2,7 +2,10 @@ package com.uneg.pictorialArcane.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED) //la dice a jpa que use herencia con tablas separadas
 @Table(name = "artwork")
 public class ArtWorkEntity {
 
@@ -27,6 +30,17 @@ public class ArtWorkEntity {
     @ManyToOne(targetEntity = GenderEntity.class)
     @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
     private GenderEntity gender;
+
+    //reserva transaccional
+    @Version
+    @Column(name = "version")
+    private Long version; //para evitar las ventas dobles
+
+    @Column(name = "reserved_at")
+    private java.time.LocalDateTime reserved_at; //timestamp de la reserva
+
+    @Column(name = "security_code", length = 50)
+    private String securityCode; //codigo de la reserva
 
     public ArtWorkEntity(Long idArtWork, String name, String status, double prize, ArtistEntity artist, GenderEntity gender) {
         this.idArtWork = idArtWork;
@@ -86,5 +100,29 @@ public class ArtWorkEntity {
 
     public void setPrize(double prize) {
         this.prize = prize;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public LocalDateTime getReserved_at() {
+        return reserved_at;
+    }
+
+    public void setReserved_at(LocalDateTime reserved_at) {
+        this.reserved_at = reserved_at;
+    }
+
+    public String getSecurityCode() {
+        return securityCode;
+    }
+
+    public void setSecurityCode(String securityCode) {
+        this.securityCode = securityCode;
     }
 }
