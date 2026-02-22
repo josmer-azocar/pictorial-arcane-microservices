@@ -12,6 +12,6 @@ public record UpdateArtWorkDto(
         String status,
 
         @Positive
-        double prize
+        double price
 ) {
 }

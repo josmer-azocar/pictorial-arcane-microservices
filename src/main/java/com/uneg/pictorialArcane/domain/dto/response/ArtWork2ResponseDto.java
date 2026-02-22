@@ -1,14 +1,11 @@
 package com.uneg.pictorialArcane.domain.dto.response;
 
-import com.uneg.pictorialArcane.persistence.entity.ArtistEntity;
-
-public record ArtWorkResponseDto(
+public record ArtWork2ResponseDto(
         Long idArtWork,
         String name,
         String status,
         double price,
-        Long idArtist,
-        Long idGender
-
+        String artist,
+        String gender
 ) {
 }

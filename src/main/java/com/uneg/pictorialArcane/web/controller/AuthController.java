@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Auth", description = "Authentication functions")
+@Tag(name = "Auth", description = "Authentication functions / Funciones de autenticación")
 public class AuthController {
 
     private final AuthService authService;
@@ -27,22 +27,24 @@ public class AuthController {
     }
 
     /**
-     * @description
      * Endpoint to log in a registered User.
+     * Endpoint para iniciar sesión de un usuario registrado.
      */
     @PostMapping(value = "login")
     @Operation(
-            summary = "Allow to log in a User by his email and password",
-            description = "return LoginRequestDto (Record Object)",
+            summary = "Allow to log in a User by his email and password / Permite iniciar sesión a un usuario mediante su email y contraseña",
+            description = "return LoginRequestDto (Record Object) / Retorna LoginRequestDto (Objeto Record)",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "User logged-in successfully"),
+                    @ApiResponse(responseCode = "200", description = "User logged-in successfully / Usuario inició sesión exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid credentials or User not found / Credenciales inválidas o Usuario no encontrado")
             }
     )
-    public ResponseEntity<AuthResponseDto> login(@Parameter(description = "Email and password",
-                                                            example = "{\n" +
-                                                                    "    \"email\" : \"UserName@email.com\",\n" +
-                                                                    "    \"password\" : \"a01234567\"\n" +
-                                                                    "}")
+    public ResponseEntity<AuthResponseDto> login(@Parameter(description = "Email and password / Email y contraseña",
+                                                            example = """
+                                                                    {
+                                                                        "email" : "UserName@email.com",
+                                                                        "password" : "a01234567"
+                                                                    }""")
                                                      @RequestBody
                                                      @Valid LoginRequestDto requestDto){
 
@@ -50,25 +52,27 @@ public class AuthController {
     }
 
     /**
-     * @description
      * Endpoint to register a new User.
+     * Endpoint para registrar un nuevo usuario.
      */
     @PostMapping(value = "register")
     @Operation(
-            summary = "Allow to register a new User by an email, , dni, password, first name and last name.",
-            description = "return RegisterRequestDto (Record Object)",
+            summary = "Allow to register a new User by an email, , dni, password, first name and last name. / Permite registrar un nuevo usuario mediante email, dni, contraseña, nombre y apellido.",
+            description = "return RegisterRequestDto (Record Object) / Retorna RegisterRequestDto (Objeto Record)",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "new User registered successfully"),
+                    @ApiResponse(responseCode = "200", description = "new User registered successfully / Nuevo usuario registrado exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "User already exists or Invalid input data / Usuario ya existe o Datos de entrada inválidos")
             }
     )
-    public ResponseEntity<AuthResponseDto> register( @Parameter(description = "Dni, Email, password, first name, and last name",
-                                                                example = "{\n" +
-                                                                        "    \"Dni\" : \"12345678\",\n" +
-                                                                    "    \"email\" : \"UserName@email.com\",\n" +
-                                                                    "    \"password\" : \"a01234567\"\n" +
-                                                                    "    \"firstName\" : \"FirstNameExample\"\n" +
-                                                                    "    \"lastName\" : \"LastNameExample\"\n" +
-                                                                    "}")
+    public ResponseEntity<AuthResponseDto> register( @Parameter(description = "Dni, Email, password, first name, and last name / DNI, Email, contraseña, nombre y apellido",
+                                                                example = """
+                                                                    {
+                                                                        "Dni" : "12345678",
+                                                                        "email" : "UserName@email.com",
+                                                                        "password" : "a01234567"
+                                                                        "firstName" : "FirstNameExample"
+                                                                        "lastName" : "LastNameExample"
+                                                                    }""")
                                                          @RequestBody
                                                          @Valid RegisterRequestDto requestDto){
 

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +32,9 @@ public class ClientEntity {
     @MapsId
     @JoinColumn(name = "dni")
     private UserEntity user;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<ClientAnswerEntity> answers = new ArrayList<>();
 
     public Long getDniUser() {
         return dniUser;

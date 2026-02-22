@@ -34,6 +34,18 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(AnswersAreNotCorrectException.class)
+    public ResponseEntity<Error> handleException(AnswersAreNotCorrectException ex){
+        Error error = new Error("the-answers-are-not-correct", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(QuestionDoesNotExistsException.class)
+    public ResponseEntity<Error> handleException(QuestionDoesNotExistsException ex){
+        Error error = new Error("question-does-not-exist", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(ArtWorkDoesNotExistsException.class)
     public ResponseEntity<Error> handleException(ArtWorkDoesNotExistsException ex){
         Error error = new Error("artwork-does-not-exist", ex.getMessage());
