@@ -1,10 +1,7 @@
 package com.uneg.pictorialArcane.web.exception;
 
 
-import com.uneg.pictorialArcane.domain.exception.ArtWorkDoesNotExistsException;
-import com.uneg.pictorialArcane.domain.exception.ArtistDoesNotExistsException;
-import com.uneg.pictorialArcane.domain.exception.UserAlreadyExistsException;
-import com.uneg.pictorialArcane.domain.exception.UserDoesNotExistsException;
+import com.uneg.pictorialArcane.domain.exception.*;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +31,18 @@ public class RestExceptionHandler {
     @ExceptionHandler(UserDoesNotExistsException.class)
     public ResponseEntity<Error> handleException(UserDoesNotExistsException ex){
         Error error = new Error("user-does-not-exist", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(AnswersAreNotCorrectException.class)
+    public ResponseEntity<Error> handleException(AnswersAreNotCorrectException ex){
+        Error error = new Error("the-answers-are-not-correct", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(QuestionDoesNotExistsException.class)
+    public ResponseEntity<Error> handleException(QuestionDoesNotExistsException ex){
+        Error error = new Error("question-does-not-exist", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 

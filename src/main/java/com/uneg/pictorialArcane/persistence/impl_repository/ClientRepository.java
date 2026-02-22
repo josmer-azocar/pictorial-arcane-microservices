@@ -35,4 +35,14 @@ public class ClientRepository {
 
         return clientMappper.toResponseDto(crudClientRepository.save(client));
     }
+
+   public ClientResponseDto getClientByEmail(String email){
+        return this.clientMappper.toResponseDto(this.crudClientRepository.findByUser_Email(email));
+    }
+
+    public void assignClientCode(ClientResponseDto clientDto, String code){
+        ClientEntity clientEntity = this.crudClientRepository.findFirstByDniUser(clientDto.dniUser());
+        clientEntity.setSecurityCode(code);
+        this.crudClientRepository.save(clientEntity);
+    }
 }
