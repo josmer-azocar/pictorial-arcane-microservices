@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/client")
@@ -28,7 +25,16 @@ public class ClientController {
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<ClientResponseDto> updateClient(@Valid @RequestBody UpdateClientDto updateClientDto,
                                                           Authentication authentication){
-        String username = authentication.getName();
-        return ResponseEntity.ok(clientService.updateClient(updateClientDto, username));
+        String email = authentication.getName();
+        return ResponseEntity.ok(clientService.updateClient(updateClientDto, email));
     }
+
+    @PostMapping("/createSecurityCode")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> createSecurityCode(Authentication authentication){
+        String email = authentication.getName();
+        clientService.createSecurityCode(email);
+        return ResponseEntity.ok().build();
+    }
+
 }

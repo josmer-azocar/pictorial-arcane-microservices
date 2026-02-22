@@ -58,6 +58,7 @@ public class AuthService {
 
     // Método para registro
     public AuthResponseDto register(RegisterRequestDto requestDto) {
+
          // Verifica si el usuario ya existe (usando variable temporal)
          if (this.crudUserRepository.findFirstByEmail(requestDto.email()) != null) {
             throw new UserAlreadyExistsException(requestDto.email()); // Lanza excepción si ya existe
@@ -76,18 +77,14 @@ public class AuthService {
         // Guarda el usuario en la base de datos
         crudUserRepository.save(user);
 
+        // Verifica si el Usuario es Cliente para crear un registro Client en la Base de Datos
         if (user.getRole().equals("CLIENT")) {
-
-            String code = SecurityCodeGenerator.generateNumericPin(6);
 
             ClientEntity client = ClientEntity.builder()
                             .user(user)
-                            .securityCode(passwordEncoder.encode(code))
                     .build();
 
             crudClientRepository.save(client);
-
-            emailService.sendSimpleEmail("josmer22azocar@gmail.com", "CODIGO DE SEGURIDAD DE PICTORIAL ARCANE", "Tu Codigo de Seguridad es el Siguiente: " + code);
         }
 
         // Retorna el token generado para el nuevo usuario

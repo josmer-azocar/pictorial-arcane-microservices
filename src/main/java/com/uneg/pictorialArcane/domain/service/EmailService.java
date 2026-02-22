@@ -1,9 +1,12 @@
 package com.uneg.pictorialArcane.domain.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EmailService {
@@ -21,7 +24,7 @@ public class EmailService {
     public void sendSimpleEmail(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("user@example.com");
+            message.setFrom("PictorialArcane@gmail.com");
             message.setTo(to);
             message.setSubject(subject);
             message.setText(body);
@@ -29,7 +32,9 @@ public class EmailService {
             mailSender.send(message);
             System.out.println("Simple email sent successfully to: " + to);
         } catch (Exception e) {
-            System.err.println("Failed to send simple email: " + e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to send email: " + e.getMessage());
         }
     }
 }

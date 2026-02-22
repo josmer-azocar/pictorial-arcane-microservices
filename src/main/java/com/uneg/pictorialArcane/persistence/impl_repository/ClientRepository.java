@@ -23,10 +23,10 @@ public class ClientRepository {
         this.crudUserRepository = crudUserRepository;
     }
 
-    public ClientResponseDto updateClient(UpdateClientDto updateClientDto, String username) {
-        if (crudUserRepository.findFirstByEmail(username) == null) throw new UserDoesNotExistsException(username);
+    public ClientResponseDto updateClient(UpdateClientDto updateClientDto, String email) {
+        if (crudUserRepository.findFirstByEmail(email) == null) throw new UserDoesNotExistsException(email);
 
-        UserEntity user = crudUserRepository.findFirstByEmail(username);
+        UserEntity user = crudUserRepository.findFirstByEmail(email);
         Long clientDni = user.getDniUser();
 
         ClientEntity client = crudClientRepository.findFirstByDniUser(clientDni);
