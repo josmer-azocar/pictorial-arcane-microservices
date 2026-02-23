@@ -22,8 +22,8 @@ public class SculptureEntity extends ArtWorkEntity {
     @Column(name = "depth", nullable = false)
     private Double depth;
 
-    public SculptureEntity(Long idArtWork, String name, String status, double prize, ArtistEntity artist, GenderEntity gender, String material, Double weight, Double length, Double width, Double depth) {
-        super(idArtWork, name, status, prize, artist, gender);
+    public SculptureEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String material, Double weight, Double length, Double width, Double depth) {
+        super(idArtWork, name, status, price, artist, gender);
         this.material = material;
         this.weight = weight;
         this.length = length;

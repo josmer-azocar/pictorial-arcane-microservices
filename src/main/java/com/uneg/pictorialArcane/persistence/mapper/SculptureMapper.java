@@ -5,19 +5,15 @@ import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.ContainerSculptureResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SculptureResponseDto;
 import com.uneg.pictorialArcane.persistence.entity.SculptureEntity;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")//componentModel para inyectar en otras clases
 public interface SculptureMapper {
 
     @Mapping(source = "artWorkRequest.name", target = "name")
     @Mapping(source = "artWorkRequest.status", target = "status")
-    @Mapping(source = "artWorkRequest.prize", target = "prize")
+    @Mapping(source = "artWorkRequest.price", target = "price")
     @Mapping(source = "artWorkRequest.idArtist", target = "artist.idArtist")
     @Mapping(source = "artWorkRequest.idGender", target = "gender.idGender")
     @Mapping(source = "sculptureRequest.material", target = "material")
@@ -28,7 +24,7 @@ public interface SculptureMapper {
     SculptureEntity toEntity(ContainerSculptureRequestDto request);
 
     @Mapping(source ="idArtWork", target ="idArtWork")
-    @Mapping(source = "prize", target = "prize")
+    @Mapping(source = "price", target = "price")
     @Mapping(source = "artist.idArtist", target = "idArtist")
     @Mapping(source = "gender.idGender", target = "idGender")
     ArtWorkResponseDto toArtWorkResponseDto(SculptureEntity entity);

@@ -31,7 +31,7 @@ public class ArtWorkEntity {
     @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
     private GenderEntity gender;
 
-    //reserva transaccional
+    /*//reserva transaccional
     @Version
     @Column(name = "version")
     private Long version; //para evitar las ventas dobles
@@ -40,7 +40,7 @@ public class ArtWorkEntity {
     private java.time.LocalDateTime reserved_at; //timestamp de la reserva
 
     @Column(name = "security_code", length = 50)
-    private String securityCode; //codigo de la reserva
+    private String securityCode; //codigo de la reserva*/
 
     public ArtWorkEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender) {
         this.idArtWork = idArtWork;
@@ -98,31 +98,7 @@ public class ArtWorkEntity {
         return price;
     }
 
-    public void setPrize(double price) {
+    public void setPrice(double price) {
         this.price = price;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public LocalDateTime getReserved_at() {
-        return reserved_at;
-    }
-
-    public void setReserved_at(LocalDateTime reserved_at) {
-        this.reserved_at = reserved_at;
-    }
-
-    public String getSecurityCode() {
-        return securityCode;
-    }
-
-    public void setSecurityCode(String securityCode) {
-        this.securityCode = securityCode;
     }
 }

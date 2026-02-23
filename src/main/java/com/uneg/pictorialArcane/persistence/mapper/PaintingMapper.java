@@ -14,7 +14,7 @@ public interface PaintingMapper {
     //mapeo de container a entidad
     @Mapping(source = "artWorkRequest.name", target = "name")
     @Mapping(source = "artWorkRequest.status", target = "status")
-    @Mapping(source = "artWorkRequest.prize", target = "prize")
+    @Mapping(source = "artWorkRequest.price", target = "price")
     @Mapping(source = "artWorkRequest.idArtist", target = "artist.idArtist")
     @Mapping(source = "artWorkRequest.idGender", target = "gender.idGender")
     @Mapping(source = "paintingRequest.technique", target = "technique")
@@ -27,7 +27,7 @@ public interface PaintingMapper {
 
     //convertir la entidad en un response
     @Mapping(source = "idArtWork", target = "idArtWork")
-    @Mapping(source = "prize", target = "prize") // Mapeo de price (Entity) a prize (Dto)
+    @Mapping(source = "price", target = "price") // Mapeo de price (Entity) a price (Dto)
     @Mapping(source = "artist.idArtist", target = "idArtist")
     @Mapping(source = "gender.idGender", target = "idGender")
     ArtWorkResponseDto toArtWorkResponseDto(PaintingEntity entity);

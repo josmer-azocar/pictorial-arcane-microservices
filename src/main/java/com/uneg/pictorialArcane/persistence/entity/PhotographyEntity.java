@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "photography")
-@PrimaryKeyJoinColumn(name = "id_artwork", referencedColumnName="id_artwork")
+@PrimaryKeyJoinColumn(name = "id_artwork")
 public class PhotographyEntity extends ArtWorkEntity{
 
     @Column(name = "print_type", length = 15)
@@ -27,8 +27,8 @@ public class PhotographyEntity extends ArtWorkEntity{
 
     public PhotographyEntity(){}
 
-    public PhotographyEntity(Long idArtWork, String name, String status, double prize, ArtistEntity artist, GenderEntity gender, String printType, String resolution, String color, String serialNumber, String camera) {
-        super(idArtWork, name, status, prize, artist, gender);
+    public PhotographyEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String printType, String resolution, String color, String serialNumber, String camera) {
+        super(idArtWork, name, status, price, artist, gender);
         this.printType = printType;
         this.resolution = resolution;
         this.color = color;

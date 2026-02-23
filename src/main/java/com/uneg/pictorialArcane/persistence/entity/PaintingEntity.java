@@ -25,8 +25,8 @@ public class PaintingEntity extends ArtWorkEntity {
     @Column(name = "height", nullable = false)
     private Double height;
 
-    public PaintingEntity(Long idArtWork, String name, String status, double prize, ArtistEntity artist, GenderEntity gender, String technique, String holder, String style, String framed, Double width, Double height) {
-        super(idArtWork, name, status, prize, artist, gender);
+    public PaintingEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String technique, String holder, String style, String framed, Double width, Double height) {
+        super(idArtWork, name, status, price, artist, gender);
         this.technique = technique;
         this.holder = holder;
         this.style = style;

@@ -41,7 +41,7 @@ public class SculptureController {
                     @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
             }
     )
-    ResponseEntity<ContainerSculptureResponseDto> addSculpture(@Parameter(description = "Sculpture data / Datos de la escultura") @RequestBody @Valid ContainerSculptureResponseDto sculptureDto){
+    ResponseEntity<ContainerSculptureResponseDto> addSculpture(@Parameter(description = "Sculpture data / Datos de la escultura") @RequestBody @Valid ContainerSculptureRequestDto sculptureDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(this.sculptureService.createSculpture(sculptureDto));
     }
 }

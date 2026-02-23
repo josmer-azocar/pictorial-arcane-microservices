@@ -20,8 +20,8 @@ public class GoldsmithEntity extends ArtWorkEntity{
     @Column(name = "weight")
     private Double weight;
 
-    public GoldsmithEntity(Long idArtWork, String name, String status, double prize, ArtistEntity artist, GenderEntity gender, String material, String preciousStones, Double weight) {
-        super(idArtWork, name, status, prize, artist, gender);
+    public GoldsmithEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String material, String preciousStones, Double weight) {
+        super(idArtWork, name, status, price, artist, gender);
         this.material = material;
         this.preciousStones = preciousStones;
         this.weight = weight;
