@@ -1,6 +1,7 @@
 package com.uneg.pictorialArcane.persistence.mapper;
 
 import com.uneg.pictorialArcane.domain.dto.request.ArtWorkRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
 import com.uneg.pictorialArcane.domain.dto.update.UpdateArtWorkDto;
 import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;

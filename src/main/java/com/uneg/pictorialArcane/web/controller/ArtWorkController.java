@@ -67,7 +67,7 @@ public class ArtWorkController {
                     @ApiResponse(responseCode = "200", description = "List of art works retrieved successfully / Lista de obras de arte obtenida exitosamente")
             }
     )
-    ResponseEntity<List<ArtWorkEntity>> getAllArtWorks(){
+    ResponseEntity<List<ArtWorkResponseDto>> getAllArtWorks(){
         return ResponseEntity.ok(this.artWorkService.getAllArtWorks());
     }
 

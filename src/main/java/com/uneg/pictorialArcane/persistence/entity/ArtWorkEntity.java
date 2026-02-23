@@ -31,16 +31,6 @@ public class ArtWorkEntity {
     @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
     private GenderEntity gender;
 
-    /*//reserva transaccional
-    @Version
-    @Column(name = "version")
-    private Long version; //para evitar las ventas dobles
-
-    @Column(name = "reserved_at")
-    private java.time.LocalDateTime reserved_at; //timestamp de la reserva
-
-    @Column(name = "security_code", length = 50)
-    private String securityCode; //codigo de la reserva*/
 
     public ArtWorkEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender) {
         this.idArtWork = idArtWork;
