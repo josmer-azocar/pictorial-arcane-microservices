@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class ArtWorkRespository {
@@ -34,9 +33,9 @@ public class ArtWorkRespository {
         return artWorkMapper.toResponseDto(this.crudArtWorkRepository.save(entity));
     }
 
-    public List<ArtWorkEntity> findAllArtWorks() {
-
-        return (List<ArtWorkEntity>) this.crudArtWorkRepository.findAll();
+    public List<ArtWorkResponseDto> findAllArtWorks() {
+        List<ArtWorkEntity> entities = (List<ArtWorkEntity>) this.crudArtWorkRepository.findAll();
+        return this.artWorkMapper.toResponseDto(entities);
     }
 
     public ArtWorkResponseDto getArtWorkById(Long id) {

@@ -6,7 +6,7 @@ public record ArtWorkResponseDto(
         Long idArtWork,
         String name,
         String status,
-        double price,
+        Double price,
         Long idArtist,
         Long idGender
 

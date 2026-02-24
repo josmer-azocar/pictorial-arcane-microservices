@@ -4,15 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ceramic")
-public class CeramicEntity {
-    @Id
-    @Column(name = "id")
-    private Long id;
-
-    @OneToOne
-    @MapsId //mapea el id de Sculpture sea el mismo que el de ArtWork
-    @JoinColumn(name = "id_artwork")
-    private ArtWorkEntity artWork;
+@PrimaryKeyJoinColumn(name = "id_artwork")
+public class CeramicEntity extends ArtWorkEntity{
 
     @Column(name = "material_type", length = 15)
     private String materialType;
@@ -38,9 +31,8 @@ public class CeramicEntity {
     public CeramicEntity() {
     }
 
-    public CeramicEntity(Long id, ArtWorkEntity artWork, String materialType, String technique, String finish, Double cookingTemperature, Double weight, Double width, Double height) {
-        this.id = id;
-        this.artWork = artWork;
+    public CeramicEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String materialType, String technique, String finish, Double cookingTemperature, Double weight, Double width, Double height) {
+        super(idArtWork, name, status, price, artist, gender);
         this.materialType = materialType;
         this.technique = technique;
         this.finish = finish;
@@ -48,22 +40,6 @@ public class CeramicEntity {
         this.weight = weight;
         this.width = width;
         this.height = height;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ArtWorkEntity getArtWork() {
-        return artWork;
-    }
-
-    public void setArtWork(ArtWorkEntity artWork) {
-        this.artWork = artWork;
     }
 
     public String getMaterialType() {

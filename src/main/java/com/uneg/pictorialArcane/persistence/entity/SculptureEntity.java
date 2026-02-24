@@ -4,16 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "sculpture")
-public class SculptureEntity {
-
-    @Id
-    @Column(name = "id")
-    private Long id;
-
-    @OneToOne
-    @MapsId //mapea el id de Sculpture sea el mismo que el de ArtWork
-    @JoinColumn(name = "id_artwork") //aqui se unen
-    private ArtWorkEntity artWork;
+@PrimaryKeyJoinColumn(name = "id_artwork")
+public class SculptureEntity extends ArtWorkEntity {
 
     @Column(name = "material", nullable = false, length = 100)
     private String material;
@@ -30,25 +22,55 @@ public class SculptureEntity {
     @Column(name = "depth", nullable = false)
     private Double depth;
 
+    public SculptureEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String material, Double weight, Double length, Double width, Double depth) {
+        super(idArtWork, name, status, price, artist, gender);
+        this.material = material;
+        this.weight = weight;
+        this.length = length;
+        this.width = width;
+        this.depth = depth;
+    }
+
+    public SculptureEntity() {
+
+    }
+
     // --- GETTERS Y SETTERS ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public ArtWorkEntity getArtWork() {return artWork;}
-    public  void setArtWork(ArtWorkEntity artWork){this.artWork = artWork;}
+    public String getMaterial() {
+        return material;
+    }
 
-    public String getMaterial() { return material; }
-    public void setMaterial(String material) { this.material = material; }
+    public void setMaterial(String material) {
+        this.material = material;
+    }
 
-    public Double getWeight() { return weight; }
-    public void setWeight(Double weight) { this.weight = weight; }
+    public Double getWeight() {
+        return weight;
+    }
 
-    public Double getLength() { return length; }
-    public void setLength(Double length) { this.length = length; }
+    public void setWeight(Double weight) {this.weight = weight;}
 
-    public Double getWidth() { return width; }
-    public void setWidth(Double width) { this.width = width; }
+    public Double getLength() {
+        return length;
+    }
 
-    public Double getDepth() { return depth; }
-    public void setDepth(Double depth) { this.depth = depth; }
+    public void setLength(Double length) {this.length = length;}
+
+    public Double getWidth() {
+        return width;
+    }
+
+    public void setWidth(Double width) {
+        this.width = width;
+    }
+
+    public Double getDepth() {
+        return depth;
+    }
+
+    public void setDepth(Double depth) {
+        this.depth = depth;
+    }
+
 }

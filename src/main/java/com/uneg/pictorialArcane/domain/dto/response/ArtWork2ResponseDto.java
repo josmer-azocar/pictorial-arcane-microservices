@@ -4,7 +4,7 @@ public record ArtWork2ResponseDto(
         Long idArtWork,
         String name,
         String status,
-        double price,
+        Double price,
         String artist,
         String gender
 ) {

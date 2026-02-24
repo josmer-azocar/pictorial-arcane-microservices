@@ -1,6 +1,8 @@
 package com.uneg.pictorialArcane.web.controller;
 
+import com.uneg.pictorialArcane.domain.dto.request.ContainerSculptureRequestDto;
 import com.uneg.pictorialArcane.domain.dto.request.SculptureRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerSculptureResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SculptureResponseDto;
 import com.uneg.pictorialArcane.domain.service.SculptureService;
 import jakarta.validation.Valid;
@@ -39,7 +41,7 @@ public class SculptureController {
                     @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
             }
     )
-    ResponseEntity<SculptureResponseDto> addSculpture(@Parameter(description = "Sculpture data / Datos de la escultura") @RequestBody @Valid SculptureRequestDto sculptureDto){
+    ResponseEntity<ContainerSculptureResponseDto> addSculpture(@Parameter(description = "Sculpture data / Datos de la escultura") @RequestBody @Valid ContainerSculptureRequestDto sculptureDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(this.sculptureService.createSculpture(sculptureDto));
     }
 }

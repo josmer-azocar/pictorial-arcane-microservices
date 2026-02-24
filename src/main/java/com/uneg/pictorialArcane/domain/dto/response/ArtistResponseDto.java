@@ -5,6 +5,7 @@ public record ArtistResponseDto(
         String name,
         String lastName,
         String nationality,
-        String biography
+        String biography,
+        Double commissionRate
 ) {
 }

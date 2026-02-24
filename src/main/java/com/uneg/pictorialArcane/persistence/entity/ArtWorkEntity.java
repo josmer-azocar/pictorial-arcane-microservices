@@ -2,7 +2,10 @@ package com.uneg.pictorialArcane.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED) //la dice a jpa que use herencia con tablas separadas
 @Table(name = "artwork")
 public class ArtWorkEntity {
 
@@ -27,6 +30,7 @@ public class ArtWorkEntity {
     @ManyToOne(targetEntity = GenderEntity.class)
     @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
     private GenderEntity gender;
+
 
     public ArtWorkEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender) {
         this.idArtWork = idArtWork;
@@ -84,7 +88,7 @@ public class ArtWorkEntity {
         return price;
     }
 
-    public void setPrice(double prize) {
-        this.price = prize;
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

@@ -4,15 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "painting")
-public class PaintingEntity {
-    @Id
-    @Column(name = "id")
-    private Long id;
-
-    @OneToOne
-    @MapsId //mapea el id de Sculpture sea el mismo que el de ArtWork
-    @JoinColumn(name = "id_artwork")
-    private ArtWorkEntity artWork;
+@PrimaryKeyJoinColumn(name = "id_artwork")
+public class PaintingEntity extends ArtWorkEntity {
 
     @Column(name = "technique", length = 15)
     private String technique;
@@ -32,9 +25,8 @@ public class PaintingEntity {
     @Column(name = "height", nullable = false)
     private Double height;
 
-    public PaintingEntity(Long id, ArtWorkEntity artWork, String technique, String holder, String style, String framed, Double width, Double height) {
-        this.id = id;
-        this.artWork = artWork;
+    public PaintingEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String technique, String holder, String style, String framed, Double width, Double height) {
+        super(idArtWork, name, status, price, artist, gender);
         this.technique = technique;
         this.holder = holder;
         this.style = style;
@@ -44,22 +36,6 @@ public class PaintingEntity {
     }
 
     public PaintingEntity() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ArtWorkEntity getArtWork() {
-        return artWork;
-    }
-
-    public void setArtWork(ArtWorkEntity artWork) {
-        this.artWork = artWork;
     }
 
     public String getTechnique() {

@@ -25,7 +25,7 @@ public class ArtWorkService {
         return this.artWorkRespository.addArtWork(artWork);
     }
 
-    public List<ArtWorkEntity> getAllArtWorks() {
+    public List<ArtWorkResponseDto> getAllArtWorks() {
 
         return artWorkRespository.findAllArtWorks();
     }

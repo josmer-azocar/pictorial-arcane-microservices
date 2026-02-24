@@ -73,4 +73,10 @@ public class RestExceptionHandler {
         Error error = new Error("artist-does-not-exist", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
+    @ExceptionHandler(CommissionRateIncorrectException.class)
+    public ResponseEntity<Error> handleException(CommissionRateIncorrectException ex){
+        Error error = new Error("unknown-error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 }
