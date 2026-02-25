@@ -21,6 +21,21 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerCeramicRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerGoldsmithRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerPaintingRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerPhotographyRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerSculptureRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerCeramicResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerGoldsmithResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerPaintingResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerPhotographyResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerSculptureResponseDto;
+import com.uneg.pictorialArcane.domain.service.CeramicService;
+import com.uneg.pictorialArcane.domain.service.GoldsmithService;
+import com.uneg.pictorialArcane.domain.service.PaintingService;
+import com.uneg.pictorialArcane.domain.service.PhotographyService;
+import com.uneg.pictorialArcane.domain.service.SculptureService;
 
 
 @RestController
@@ -28,13 +43,29 @@ import java.util.List;
 @Tag(name = "ArtWork", description = "Art Work management functions / Funciones de gestión de obras de arte")
 public class ArtWorkController {
 
-    //Inyeccion del Service
+   
     private final ArtWorkService artWorkService;
-    public ArtWorkController(ArtWorkService artWorkService) {
+    private final CeramicService ceramicService;
+    private final GoldsmithService goldsmithService;
+    private final PaintingService paintingService;
+    private final PhotographyService photographyService;
+    private final SculptureService sculptureService;
+
+    public ArtWorkController(ArtWorkService artWorkService,
+                             CeramicService ceramicService,
+                             GoldsmithService goldsmithService,
+                             PaintingService paintingService,
+                             PhotographyService photographyService,
+                             SculptureService sculptureService) {
         this.artWorkService = artWorkService;
+        this.ceramicService = ceramicService;
+        this.goldsmithService = goldsmithService;
+        this.paintingService = paintingService;
+        this.photographyService = photographyService;
+        this.sculptureService = sculptureService;
     }
 
-    //Metodos HTTP
+
     @PostMapping("/addArtWork")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
@@ -143,5 +174,80 @@ public class ArtWorkController {
         // Pageable ya trae: página actual, cuántos elementos traer y el ordenamiento
         Page<ArtWork2ResponseDto> pageResults = artWorkService.filterArtWorks(idGender, idArtist, title, min, max, pageable);
         return ResponseEntity.ok(pageResults);
+    }
+
+    @PostMapping("/ceramic/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Ceramic / Agregar nueva cerámica",
+            description = "Requires ADMIN role. Creates a new ceramic art work. / Requiere rol ADMIN. Crea una nueva obra de cerámica.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Ceramic created successfully / Cerámica creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerCeramicResponseDto> addCeramic(@RequestBody @Valid ContainerCeramicRequestDto ceramicDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.ceramicService.createCeramic(ceramicDto));
+    }
+
+    @PostMapping("/goldsmith/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Goldsmith / Agregar nueva orfebrería",
+            description = "Requires ADMIN role. Creates a new goldsmith art work. / Requiere rol ADMIN. Crea una nueva obra de orfebrería.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Goldsmith created successfully / Orfebrería creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerGoldsmithResponseDto> addGoldsmith(@RequestBody @Valid ContainerGoldsmithRequestDto goldsmithDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.goldsmithService.createGoldsmith(goldsmithDto));
+    }
+
+    @PostMapping("/painting/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Painting / Agregar nueva pintura",
+            description = "Requires ADMIN role. Creates a new painting art work. / Requiere rol ADMIN. Crea una nueva obra de pintura.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Painting created successfully / Pintura creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerPaintingResponseDto> addPainting(@RequestBody @Valid ContainerPaintingRequestDto paintingDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.paintingService.createPainting(paintingDto));
+    }
+
+    @PostMapping("/photography/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Photography / Agregar nueva fotografía",
+            description = "Requires ADMIN role. Creates a new photography art work. / Requiere rol ADMIN. Crea una nueva obra de fotografía.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Photography created successfully / Fotografía creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerPhotographyResponseDto> addPhotography(@RequestBody @Valid ContainerPhotographyRequestDto photographyDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.photographyService.createPhotography(photographyDto));
+    }
+
+    @PostMapping("/sculpture/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Sculpture / Agregar nueva escultura",
+            description = "Requires ADMIN role. Creates a new sculpture. / Requiere rol ADMIN. Crea una nueva escultura.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Sculpture created successfully / Escultura creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerSculptureResponseDto> addSculpture(@RequestBody @Valid ContainerSculptureRequestDto sculptureDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.sculptureService.createSculpture(sculptureDto));
     }
 }
