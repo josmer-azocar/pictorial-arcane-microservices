@@ -42,7 +42,7 @@ public class SecurityConfig {
                         authRequest
                                 .requestMatchers("/auth/**","/swagger-ui.html", // Permite acceso público a estas rutas
                                         "/swagger-ui/**","/v3/api-docs/**",
-                                        "/webjars/**")
+                                        "/webjars/**","/artwork/search/**")
 
                                 .permitAll() // Permite el acceso sin autenticación
                                 .anyRequest().authenticated() // Cualquier otra petición requiere autenticación

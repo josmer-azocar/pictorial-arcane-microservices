@@ -155,6 +155,7 @@ public class ArtWorkController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("permitAll()")
     @Operation(
             summary = "Search Art Works with filters / Buscar obras de arte con filtros",
             description = "Search and filter art works by gender, artist, title, price range with pagination. / Busca y filtra obras de arte por género, artista, título, rango de precio con paginación.",
@@ -249,5 +250,57 @@ public class ArtWorkController {
     )
     ResponseEntity<ContainerSculptureResponseDto> addSculpture(@RequestBody @Valid ContainerSculptureRequestDto sculptureDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.sculptureService.createSculpture(sculptureDto));
+    }
+
+    // Nuevo endpoint: obtener el contenedor específico (subtipo) de una obra por su id
+    @GetMapping("/search/specificArtWork/{id}")
+    @Operation(
+            summary = "Get specific Art Work subtype container by ArtWork ID / Obtener el contenedor específico de una obra por su ID",
+            description = "Dado el ID de la obra, detecta su género/subtipo (ceramic, painting, photography, sculpture, goldsmith, etc.) y retorna el ContainerXResponseDto correspondiente.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Subtype container retrieved successfully / Contenedor de subtipo obtenido exitosamente"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found or subtype not found / Obra de arte o subtipo no encontrado")
+            }
+    )
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getArtWorkContainerById(@Parameter(description = "Art Work ID / ID de la obra de arte") @PathVariable Long id) {
+        // 1. Obtener la entidad de obra para conocer su género
+        ArtWorkEntity artWorkEntity = this.artWorkService.getArtWorkEntityById(id);
+
+        String genderName = artWorkEntity.getGender().getName();
+        if (genderName == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La obra no tiene un género asociado");
+        }
+
+        // 2. Determinar el subtipo según el nombre del género
+        String normalized = genderName.trim().toUpperCase();
+
+        switch (normalized) {
+            case "CERAMIC", "CERÁMICA", "CERAMICA" -> {
+                ContainerCeramicResponseDto dto = this.ceramicService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "PAINTING", "PINTURA" -> {
+                ContainerPaintingResponseDto dto = this.paintingService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "PHOTOGRAPHY", "FOTOGRAFÍA", "FOTOGRAFIA" -> {
+                ContainerPhotographyResponseDto dto = this.photographyService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "SCULPTURE", "ESCULTURA" -> {
+                ContainerSculptureResponseDto dto = this.sculptureService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "GOLDSMITH", "ORFEBRERÍA", "ORFEBRERIA" -> {
+                ContainerGoldsmithResponseDto dto = this.goldsmithService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            default -> {
+                // Género definido pero aún no soportado por un subtipo específico
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No existe un subtipo manejado para el género: " + genderName);
+            }
+        }
     }
 }

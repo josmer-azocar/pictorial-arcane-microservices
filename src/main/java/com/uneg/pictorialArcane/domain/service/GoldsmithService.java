@@ -18,4 +18,8 @@ public class GoldsmithService {
     public ContainerGoldsmithResponseDto createGoldsmith(ContainerGoldsmithRequestDto dto) {
         return this.goldsmithRepository.addGoldsmith(dto);
     }
+
+    public ContainerGoldsmithResponseDto getByArtWorkId(Long artWorkId) {
+        return this.goldsmithRepository.findByArtWorkId(artWorkId);
+    }
 }

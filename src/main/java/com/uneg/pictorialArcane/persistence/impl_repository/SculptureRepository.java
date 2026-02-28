@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 import com.uneg.pictorialArcane.domain.dto.request.ContainerSculptureRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ContainerSculptureResponseDto;
 import com.uneg.pictorialArcane.domain.exception.ArtistDoesNotExistsException;
+import com.uneg.pictorialArcane.domain.exception.ArtWorkDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudArtistRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudSculptureRepository;
 import com.uneg.pictorialArcane.persistence.entity.SculptureEntity;
@@ -33,4 +34,9 @@ public class SculptureRepository {
         return sculptureMapper.toContainerResponseDto(saved);
     }
 
+    public ContainerSculptureResponseDto findByArtWorkId(Long artWorkId) {
+        SculptureEntity entity = this.crudSculptureRepository.findFirstByIdArtWork(artWorkId)
+                .orElseThrow(() -> new ArtWorkDoesNotExistsException(artWorkId));
+        return sculptureMapper.toContainerResponseDto(entity);
+    }
 }

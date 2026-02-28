@@ -50,4 +50,8 @@ public class ArtWorkService {
     public Page<ArtWork2ResponseDto> filterArtWorks(Long idGender, Long idArtist, String title, Double min, Double max, Pageable pageable) {
         return this.artWorkRespository.filterArtWorks(idGender,idArtist,title, min, max, pageable);
     }
+
+    public ArtWorkEntity getArtWorkEntityById(Long id) {
+        return this.artWorkRespository.getArtWorkEntityById(id);
+    }
 }

@@ -44,6 +44,14 @@ public class ArtWorkRespository {
         return artWorkMapper.toResponseDto(this.crudArtWorkRepository.findFirstByIdArtWork(id));
     }
 
+    public ArtWorkEntity getArtWorkEntityById(Long id) {
+        ArtWorkEntity entity = this.crudArtWorkRepository.findFirstByIdArtWork(id);
+        if (entity == null) {
+            throw new ArtWorkDoesNotExistsException(id);
+        }
+        return entity;
+    }
+
     public void eraseArtWorkById(Long id) {
         this.crudArtWorkRepository.deleteById(id);
     }

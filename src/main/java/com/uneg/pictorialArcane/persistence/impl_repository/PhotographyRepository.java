@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 import com.uneg.pictorialArcane.domain.dto.request.ContainerPhotographyRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ContainerPhotographyResponseDto;
 import com.uneg.pictorialArcane.domain.exception.ArtistDoesNotExistsException;
+import com.uneg.pictorialArcane.domain.exception.ArtWorkDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudArtistRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudPhotographyRepository;
 import com.uneg.pictorialArcane.persistence.entity.PhotographyEntity;
@@ -29,4 +30,9 @@ public class PhotographyRepository {
         return photographyMapper.toContainerResponseDto(saved);
     }
 
+    public ContainerPhotographyResponseDto findByArtWorkId(Long artWorkId) {
+        PhotographyEntity entity = this.crudPhotographyRepository.findFirstByIdArtWork(artWorkId)
+                .orElseThrow(() -> new ArtWorkDoesNotExistsException(artWorkId));
+        return photographyMapper.toContainerResponseDto(entity);
+    }
 }

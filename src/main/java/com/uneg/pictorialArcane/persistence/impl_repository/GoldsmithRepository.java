@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 import com.uneg.pictorialArcane.domain.dto.request.ContainerGoldsmithRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ContainerGoldsmithResponseDto;
 import com.uneg.pictorialArcane.domain.exception.ArtistDoesNotExistsException;
+import com.uneg.pictorialArcane.domain.exception.ArtWorkDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudArtistRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudGoldsmithRepository;
 import com.uneg.pictorialArcane.persistence.entity.GoldsmithEntity;
@@ -28,5 +29,11 @@ public class GoldsmithRepository {
         GoldsmithEntity entity = goldsmithMapper.toEntity(dto);
         GoldsmithEntity saved = this.crudGoldsmithRepository.save(entity);
         return goldsmithMapper.toContainerResponseDto(saved);
+    }
+
+    public ContainerGoldsmithResponseDto findByArtWorkId(Long artWorkId) {
+        GoldsmithEntity entity = this.crudGoldsmithRepository.findFirstByIdArtWork(artWorkId)
+                .orElseThrow(() -> new ArtWorkDoesNotExistsException(artWorkId));
+        return goldsmithMapper.toContainerResponseDto(entity);
     }
 }
