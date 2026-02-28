@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
+import java.util.List;
+
 @Entity
 @Table(name = "photography")
 @PrimaryKeyJoinColumn(name = "id_artwork")
@@ -27,8 +29,8 @@ public class PhotographyEntity extends ArtWorkEntity{
 
     public PhotographyEntity(){}
 
-    public PhotographyEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String printType, String resolution, String color, String serialNumber, String camera) {
-        super(idArtWork, name, status, price, artist, gender);
+    public PhotographyEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String printType, String resolution, String color, String serialNumber, String camera, List sales) {
+        super(idArtWork, name, status, price, artist, gender, sales);
         this.printType = printType;
         this.resolution = resolution;
         this.color = color;

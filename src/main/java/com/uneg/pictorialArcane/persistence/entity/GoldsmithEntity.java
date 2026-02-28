@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
+import java.util.List;
+
 @Entity
 @Table(name = "goldsmith")
 @PrimaryKeyJoinColumn(name = "id_artwork")
@@ -20,8 +22,8 @@ public class GoldsmithEntity extends ArtWorkEntity{
     @Column(name = "weight")
     private Double weight;
 
-    public GoldsmithEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String material, String preciousStones, Double weight) {
-        super(idArtWork, name, status, price, artist, gender);
+    public GoldsmithEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String material, String preciousStones, Double weight, List sales) {
+        super(idArtWork, name, status, price, artist, gender, sales);
         this.material = material;
         this.preciousStones = preciousStones;
         this.weight = weight;

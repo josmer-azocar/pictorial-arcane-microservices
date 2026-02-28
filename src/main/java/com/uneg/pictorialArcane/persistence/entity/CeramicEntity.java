@@ -2,6 +2,8 @@ package com.uneg.pictorialArcane.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "ceramic")
 @PrimaryKeyJoinColumn(name = "id_artwork")
@@ -31,8 +33,8 @@ public class CeramicEntity extends ArtWorkEntity{
     public CeramicEntity() {
     }
 
-    public CeramicEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String materialType, String technique, String finish, Double cookingTemperature, Double weight, Double width, Double height) {
-        super(idArtWork, name, status, price, artist, gender);
+    public CeramicEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String materialType, String technique, String finish, Double cookingTemperature, Double weight, Double width, Double height, List sales) {
+        super(idArtWork, name, status, price, artist, gender, sales);
         this.materialType = materialType;
         this.technique = technique;
         this.finish = finish;
