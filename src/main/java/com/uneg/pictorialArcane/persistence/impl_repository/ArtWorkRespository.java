@@ -1,5 +1,6 @@
 package com.uneg.pictorialArcane.persistence.impl_repository;
 
+import com.uneg.pictorialArcane.domain.Enum.ArtWorkStatus;
 import com.uneg.pictorialArcane.domain.dto.request.ArtWorkRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
@@ -71,10 +72,14 @@ public class ArtWorkRespository {
         return artWorksPage.map(artWork -> new ArtWork2ResponseDto(
                 artWork.getIdArtWork(),
                 artWork.getName(),
-                artWork.getStatus(),
+                ArtWorkStatus.valueOf(artWork.getStatus().toUpperCase()),
                 artWork.getPrice(),
                 artWork.getArtist().getName(),
                 artWork.getGender().getName()
         ));
+    }
+
+    public ArtWorkEntity saveEntity(ArtWorkEntity entity) {
+        return this.crudArtWorkRepository.save(entity);
     }
 }
