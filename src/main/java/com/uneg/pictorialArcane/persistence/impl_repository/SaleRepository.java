@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class SaleRepository {
 
     private final CrudSaleRepositoy crudSaleRepositoy;
+    private final Double TAX_AMOUNT = 0.16;
 
     public SaleRepository(CrudSaleRepositoy crudSaleRepositoy) {
         this.crudSaleRepositoy = crudSaleRepositoy;
@@ -24,13 +25,16 @@ public class SaleRepository {
         sale.setArtWork(artWork);
         sale.setClient(client);
         sale.setAdmin(null);
-        sale.setDate(LocalDate.now());
+        sale.setDate(null);
         sale.setDescription(null);
         sale.setPrice(artWork.getPrice());
-        sale.setProfitPercentage(null);
-        sale.setProfitAmount(null);
-        sale.setTaxAmount(null);
-        sale.setTotalPaid(null);
+
+        Double commissionRate = artWork.getArtist().getCommissionRate();
+
+        sale.setProfitPercentage(commissionRate);
+        sale.setProfitAmount(commissionRate * sale.getPrice());
+        sale.setTaxAmount(sale.getPrice() * TAX_AMOUNT);
+        sale.setTotalPaid(sale.getPrice() + sale.getTaxAmount());
         sale.setShippingAddress(null);
         sale.setShippingStatus(null);
         sale.setSaleStatus(SaleStatus.PENDING.name());

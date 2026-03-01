@@ -22,7 +22,7 @@ public class ArtWorkEntity {
     @Column(name = "id_artwork")
     private Long idArtWork;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
 
     @Column(name = "status", nullable = false, length = 15)

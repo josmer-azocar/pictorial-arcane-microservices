@@ -49,6 +49,7 @@ public class ArtistController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.artistService.addArtist(artist));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/all")
     @Operation(
             summary = "Get all Artists / Obtener todos los artistas",
@@ -61,6 +62,7 @@ public class ArtistController {
         return ResponseEntity.ok(this.artistService.getAllArtist());
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     @Operation(
             summary = "Get Artist by ID / Obtener artista por ID",

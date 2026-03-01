@@ -90,6 +90,7 @@ public class ArtWorkController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.artWorkService.addArtWork(artWork));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/all")
     @Operation(
             summary = "Get all Art Works / Obtener todas las obras de arte",
@@ -102,6 +103,7 @@ public class ArtWorkController {
         return ResponseEntity.ok(this.artWorkService.getAllArtWorks());
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     @Operation(
             summary = "Get Art Work by ID / Obtener obra de arte por ID",

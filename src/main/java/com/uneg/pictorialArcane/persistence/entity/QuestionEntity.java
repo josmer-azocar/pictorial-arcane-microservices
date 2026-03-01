@@ -21,7 +21,7 @@ public class QuestionEntity {
     @Column(name = "id_question")
     private Long idQuestion;
 
-    @Column(name = "wording", nullable = false, length = 50)
+    @Column(name = "wording", nullable = false, length = 50, unique = true)
     private String wording;
 
     @OneToMany(mappedBy = "question")
