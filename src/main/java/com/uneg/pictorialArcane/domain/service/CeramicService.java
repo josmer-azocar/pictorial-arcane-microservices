@@ -14,9 +14,12 @@ public class CeramicService {
         this.ceramicRepository = ceramicRepository;
     }
 
-
     @Transactional
     public ContainerCeramicResponseDto createCeramic(ContainerCeramicRequestDto dto) {
         return this.ceramicRepository.addCeramic(dto);
+    }
+
+    public ContainerCeramicResponseDto getByArtWorkId(Long artWorkId) {
+        return this.ceramicRepository.findByArtWorkId(artWorkId);
     }
 }

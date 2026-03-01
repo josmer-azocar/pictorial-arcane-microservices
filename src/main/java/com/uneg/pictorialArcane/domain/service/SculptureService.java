@@ -18,4 +18,8 @@ public class SculptureService {
     public ContainerSculptureResponseDto createSculpture(ContainerSculptureRequestDto dto) {
         return this.sculptureRepository.addSculpture(dto);
     }
+
+    public ContainerSculptureResponseDto getByArtWorkId(Long artWorkId) {
+        return this.sculptureRepository.findByArtWorkId(artWorkId);
+    }
 }

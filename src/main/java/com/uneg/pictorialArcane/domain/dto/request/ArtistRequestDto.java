@@ -1,8 +1,6 @@
 package com.uneg.pictorialArcane.domain.dto.request;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record ArtistRequestDto(
         @NotNull(message = "name cant be empty")
@@ -11,12 +9,13 @@ public record ArtistRequestDto(
         @NotNull(message = "Last name cant be empty")
         String lastName,
 
-        @NotNull
         String nationality,
 
-        @Size(max = 120, message = "Biography must be under 120 characters")
+        @Size(max = 250, message = "Biography must be under 250 characters")
         String biography,
 
-        @Positive
+        @NotNull
+        @DecimalMax(value = "0.1", message = "commission rate must be between 0.1 and 0.05")
+        @DecimalMin(value = "0.05", message = "commission rate must be between 0.1 and 0.05")
         Double commissionRate
 ) {}

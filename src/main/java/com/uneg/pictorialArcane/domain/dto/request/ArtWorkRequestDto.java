@@ -1,5 +1,6 @@
 package com.uneg.pictorialArcane.domain.dto.request;
 
+import com.uneg.pictorialArcane.domain.Enum.ArtWorkStatus;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -9,7 +10,7 @@ public record ArtWorkRequestDto(
         String name,
 
         @NotNull
-        String status,
+        ArtWorkStatus status,
 
         @Positive
         Double price,

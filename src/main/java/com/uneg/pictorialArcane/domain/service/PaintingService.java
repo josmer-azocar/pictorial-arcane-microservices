@@ -18,4 +18,8 @@ public class PaintingService {
     public ContainerPaintingResponseDto createPainting(ContainerPaintingRequestDto dto) {
         return this.paintingRepository.addPainting(dto);
     }
+
+    public ContainerPaintingResponseDto getByArtWorkId(Long artWorkId) {
+        return this.paintingRepository.findByArtWorkId(artWorkId);
+    }
 }

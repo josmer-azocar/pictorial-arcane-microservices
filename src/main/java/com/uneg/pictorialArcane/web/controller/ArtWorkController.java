@@ -21,6 +21,21 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerCeramicRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerGoldsmithRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerPaintingRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerPhotographyRequestDto;
+import com.uneg.pictorialArcane.domain.dto.request.ContainerSculptureRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerCeramicResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerGoldsmithResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerPaintingResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerPhotographyResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.ContainerSculptureResponseDto;
+import com.uneg.pictorialArcane.domain.service.CeramicService;
+import com.uneg.pictorialArcane.domain.service.GoldsmithService;
+import com.uneg.pictorialArcane.domain.service.PaintingService;
+import com.uneg.pictorialArcane.domain.service.PhotographyService;
+import com.uneg.pictorialArcane.domain.service.SculptureService;
 
 
 @RestController
@@ -28,13 +43,29 @@ import java.util.List;
 @Tag(name = "ArtWork", description = "Art Work management functions / Funciones de gestión de obras de arte")
 public class ArtWorkController {
 
-    //Inyeccion del Service
+   
     private final ArtWorkService artWorkService;
-    public ArtWorkController(ArtWorkService artWorkService) {
+    private final CeramicService ceramicService;
+    private final GoldsmithService goldsmithService;
+    private final PaintingService paintingService;
+    private final PhotographyService photographyService;
+    private final SculptureService sculptureService;
+
+    public ArtWorkController(ArtWorkService artWorkService,
+                             CeramicService ceramicService,
+                             GoldsmithService goldsmithService,
+                             PaintingService paintingService,
+                             PhotographyService photographyService,
+                             SculptureService sculptureService) {
         this.artWorkService = artWorkService;
+        this.ceramicService = ceramicService;
+        this.goldsmithService = goldsmithService;
+        this.paintingService = paintingService;
+        this.photographyService = photographyService;
+        this.sculptureService = sculptureService;
     }
 
-    //Metodos HTTP
+
     @PostMapping("/addArtWork")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
@@ -59,6 +90,7 @@ public class ArtWorkController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.artWorkService.addArtWork(artWork));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/all")
     @Operation(
             summary = "Get all Art Works / Obtener todas las obras de arte",
@@ -71,6 +103,7 @@ public class ArtWorkController {
         return ResponseEntity.ok(this.artWorkService.getAllArtWorks());
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     @Operation(
             summary = "Get Art Work by ID / Obtener obra de arte por ID",
@@ -124,6 +157,7 @@ public class ArtWorkController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("permitAll()")
     @Operation(
             summary = "Search Art Works with filters / Buscar obras de arte con filtros",
             description = "Search and filter art works by gender, artist, title, price range with pagination. / Busca y filtra obras de arte por género, artista, título, rango de precio con paginación.",
@@ -143,5 +177,132 @@ public class ArtWorkController {
         // Pageable ya trae: página actual, cuántos elementos traer y el ordenamiento
         Page<ArtWork2ResponseDto> pageResults = artWorkService.filterArtWorks(idGender, idArtist, title, min, max, pageable);
         return ResponseEntity.ok(pageResults);
+    }
+
+    @PostMapping("/ceramic/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Ceramic / Agregar nueva cerámica",
+            description = "Requires ADMIN role. Creates a new ceramic art work. / Requiere rol ADMIN. Crea una nueva obra de cerámica.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Ceramic created successfully / Cerámica creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerCeramicResponseDto> addCeramic(@RequestBody @Valid ContainerCeramicRequestDto ceramicDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.ceramicService.createCeramic(ceramicDto));
+    }
+
+    @PostMapping("/goldsmith/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Goldsmith / Agregar nueva orfebrería",
+            description = "Requires ADMIN role. Creates a new goldsmith art work. / Requiere rol ADMIN. Crea una nueva obra de orfebrería.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Goldsmith created successfully / Orfebrería creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerGoldsmithResponseDto> addGoldsmith(@RequestBody @Valid ContainerGoldsmithRequestDto goldsmithDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.goldsmithService.createGoldsmith(goldsmithDto));
+    }
+
+    @PostMapping("/painting/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Painting / Agregar nueva pintura",
+            description = "Requires ADMIN role. Creates a new painting art work. / Requiere rol ADMIN. Crea una nueva obra de pintura.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Painting created successfully / Pintura creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerPaintingResponseDto> addPainting(@RequestBody @Valid ContainerPaintingRequestDto paintingDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.paintingService.createPainting(paintingDto));
+    }
+
+    @PostMapping("/photography/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Photography / Agregar nueva fotografía",
+            description = "Requires ADMIN role. Creates a new photography art work. / Requiere rol ADMIN. Crea una nueva obra de fotografía.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Photography created successfully / Fotografía creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerPhotographyResponseDto> addPhotography(@RequestBody @Valid ContainerPhotographyRequestDto photographyDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.photographyService.createPhotography(photographyDto));
+    }
+
+    @PostMapping("/sculpture/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Add new Sculpture / Agregar nueva escultura",
+            description = "Requires ADMIN role. Creates a new sculpture. / Requiere rol ADMIN. Crea una nueva escultura.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Sculpture created successfully / Escultura creada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data / Datos de entrada inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found / Obra de arte no encontrada")
+            }
+    )
+    ResponseEntity<ContainerSculptureResponseDto> addSculpture(@RequestBody @Valid ContainerSculptureRequestDto sculptureDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.sculptureService.createSculpture(sculptureDto));
+    }
+
+    // Nuevo endpoint: obtener el contenedor específico (subtipo) de una obra por su id
+    @GetMapping("/search/specificArtWork/{id}")
+    @Operation(
+            summary = "Get specific Art Work subtype container by ArtWork ID / Obtener el contenedor específico de una obra por su ID",
+            description = "Dado el ID de la obra, detecta su género/subtipo (ceramic, painting, photography, sculpture, goldsmith, etc.) y retorna el ContainerXResponseDto correspondiente.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Subtype container retrieved successfully / Contenedor de subtipo obtenido exitosamente"),
+                    @ApiResponse(responseCode = "404", description = "Art Work not found or subtype not found / Obra de arte o subtipo no encontrado")
+            }
+    )
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getArtWorkContainerById(@Parameter(description = "Art Work ID / ID de la obra de arte") @PathVariable Long id) {
+        // 1. Obtener la entidad de obra para conocer su género
+        ArtWorkEntity artWorkEntity = this.artWorkService.getArtWorkEntityById(id);
+
+        String genderName = artWorkEntity.getGender().getName();
+        if (genderName == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La obra no tiene un género asociado");
+        }
+
+        // 2. Determinar el subtipo según el nombre del género
+        String normalized = genderName.trim().toUpperCase();
+
+        switch (normalized) {
+            case "CERAMIC", "CERÁMICA", "CERAMICA" -> {
+                ContainerCeramicResponseDto dto = this.ceramicService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "PAINTING", "PINTURA" -> {
+                ContainerPaintingResponseDto dto = this.paintingService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "PHOTOGRAPHY", "FOTOGRAFÍA", "FOTOGRAFIA" -> {
+                ContainerPhotographyResponseDto dto = this.photographyService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "SCULPTURE", "ESCULTURA" -> {
+                ContainerSculptureResponseDto dto = this.sculptureService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            case "GOLDSMITH", "ORFEBRERÍA", "ORFEBRERIA" -> {
+                ContainerGoldsmithResponseDto dto = this.goldsmithService.getByArtWorkId(id);
+                return ResponseEntity.ok(dto);
+            }
+            default -> {
+                // Género definido pero aún no soportado por un subtipo específico
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No existe un subtipo manejado para el género: " + genderName);
+            }
+        }
     }
 }

@@ -1,12 +1,20 @@
 package com.uneg.pictorialArcane.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED) //la dice a jpa que use herencia con tablas separadas
 @Table(name = "artwork")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class ArtWorkEntity {
 
     @Id
@@ -14,7 +22,7 @@ public class ArtWorkEntity {
     @Column(name = "id_artwork")
     private Long idArtWork;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
 
     @Column(name = "status", nullable = false, length = 15)
@@ -31,18 +39,9 @@ public class ArtWorkEntity {
     @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
     private GenderEntity gender;
 
+    @OneToMany(mappedBy = "artWork")
+    private List<SaleEntity> sales;
 
-    public ArtWorkEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender) {
-        this.idArtWork = idArtWork;
-        this.name = name;
-        this.status = status;
-        this.price = price;
-        this.artist = artist;
-        this.gender = gender;
-    }
-    public ArtWorkEntity() {
-
-    }
 
     public GenderEntity getGender() {
         return gender;

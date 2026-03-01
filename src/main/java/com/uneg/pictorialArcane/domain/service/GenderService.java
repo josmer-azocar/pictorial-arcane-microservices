@@ -1,7 +1,9 @@
 package com.uneg.pictorialArcane.domain.service;
 
 
-import com.uneg.pictorialArcane.persistence.entity.GenderEntity;
+import com.uneg.pictorialArcane.domain.dto.request.GenderRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.GenderResponseDto;
+import com.uneg.pictorialArcane.domain.dto.update.UpdateGenderDto;
 import com.uneg.pictorialArcane.persistence.impl_repository.GenderRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,29 +17,24 @@ public class GenderService {
         this.genderRepository = genderRepository;
     }
 
-    public GenderEntity saveGender(GenderEntity gender) {
-        return genderRepository.saveGender(gender);
-    }
-
-    public GenderEntity addGender(GenderEntity gender) {
+    public GenderResponseDto addGender(GenderRequestDto gender) {
         return this.genderRepository.addGender(gender);
     }
 
-    public List<GenderEntity> getAllGender() {
+    public List<GenderResponseDto> getAllGender() {
         return genderRepository.findAllGender();
     }
 
-    public GenderEntity getGenderById(Long id){
-        return genderRepository.getGenderById(id).orElseThrow(() -> new RuntimeException("Artista " +
-                "no encontrado ID: " + id));
+    public GenderResponseDto getGenderById(Long id){
+        return genderRepository.getGenderById(id);
     }
 
     public void deleteGenderById(Long id) {
-        if (genderRepository.getGenderById(id).isPresent()){
-            genderRepository.eraseGenderById(id);
-        }else {
-            throw new RuntimeException("No se puede eliminar el ID: " + id);
-        }
+        this.genderRepository.getGenderById(id);
+        this.genderRepository.eraseGenderById(id);
     }
 
+    public GenderResponseDto updateGender(Long id, UpdateGenderDto gender) {
+        return this.genderRepository.updateGender(id, gender);
+    }
 }

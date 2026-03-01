@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 import com.uneg.pictorialArcane.domain.dto.request.ContainerPaintingRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ContainerPaintingResponseDto;
 import com.uneg.pictorialArcane.domain.exception.ArtistDoesNotExistsException;
+import com.uneg.pictorialArcane.domain.exception.ArtWorkDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudArtistRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudPaintingRepository;
 import com.uneg.pictorialArcane.persistence.entity.PaintingEntity;
@@ -32,4 +33,10 @@ public class PaintingRepository {
         return paintingMapper.toContainerResponseDto(saved);
     }
 
+    // Nuevo: buscar por id de obra
+    public ContainerPaintingResponseDto findByArtWorkId(Long artWorkId) {
+        PaintingEntity entity = this.crudPaintingRepository.findFirstByIdArtWork(artWorkId)
+                .orElseThrow(() -> new ArtWorkDoesNotExistsException(artWorkId));
+        return paintingMapper.toContainerResponseDto(entity);
+    }
 }

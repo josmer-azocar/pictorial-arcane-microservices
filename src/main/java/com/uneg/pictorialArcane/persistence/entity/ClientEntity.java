@@ -36,6 +36,9 @@ public class ClientEntity {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<ClientAnswerEntity> answers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<SaleEntity> sales;
+
     public Long getDniUser() {
         return dniUser;
     }
@@ -74,5 +77,9 @@ public class ClientEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public String getFullName(){
+        return this.user.getFullName();
     }
 }

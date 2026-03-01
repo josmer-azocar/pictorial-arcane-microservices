@@ -56,8 +56,7 @@ public class QuestionService {
                     passwordEncoder.encode(code)
             );
 
-            emailService.sendSimpleEmail(
-                    "josmer22azocar@gmail.com",
+            emailService.sendSimpleEmail( email,
                     "CODIGO DE SEGURIDAD DE PICTORIAL ARCANE",
                     "Tu nuevo codigo de seguridad es el Siguiente: " + code);
         }

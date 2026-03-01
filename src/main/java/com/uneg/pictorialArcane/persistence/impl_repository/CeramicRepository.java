@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 import com.uneg.pictorialArcane.domain.dto.request.ContainerCeramicRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ContainerCeramicResponseDto;
 import com.uneg.pictorialArcane.domain.exception.ArtistDoesNotExistsException;
+import com.uneg.pictorialArcane.domain.exception.ArtWorkDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudArtistRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudCeramicRepository;
 import com.uneg.pictorialArcane.persistence.entity.CeramicEntity;
@@ -30,4 +31,9 @@ public class CeramicRepository {
         return ceramicMapper.toContainerResponseDto(saved);
     }
 
+    public ContainerCeramicResponseDto findByArtWorkId(Long artWorkId) {
+        CeramicEntity entity = this.crudCeramicRepository.findById(artWorkId)
+                .orElseThrow(() -> new ArtWorkDoesNotExistsException(artWorkId));
+        return ceramicMapper.toContainerResponseDto(entity);
+    }
 }

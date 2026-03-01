@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class AuthController {
      * Endpoint to log in a registered User.
      * Endpoint para iniciar sesión de un usuario registrado.
      */
+    @PreAuthorize("permitAll()")
     @PostMapping(value = "login")
     @Operation(
             summary = "Allow to log in a User by his email and password / Permite iniciar sesión a un usuario mediante su email y contraseña",
@@ -55,6 +57,7 @@ public class AuthController {
      * Endpoint to register a new User.
      * Endpoint para registrar un nuevo usuario.
      */
+    @PreAuthorize("permitAll()")
     @PostMapping(value = "register")
     @Operation(
             summary = "Allow to register a new User by an email, , dni, password, first name and last name. / Permite registrar un nuevo usuario mediante email, dni, contraseña, nombre y apellido.",

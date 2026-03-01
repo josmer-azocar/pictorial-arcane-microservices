@@ -7,12 +7,13 @@ import java.util.List;
 @Entity
 @Table(name = "gender")
 public class GenderEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_gender", nullable = false)
     private Long idGender;
 
-    @Column(name = "name", nullable = false, length = 15)
+    @Column(name = "name", nullable = false, length = 15, unique = true)
     private String name;
 
     @Column(name = "description", nullable = false, length = 120)

@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.net.http.HttpRequest;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -50,6 +51,9 @@ public class UserEntity extends AuditableEntity implements UserDetails, Serializ
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private ClientEntity client;
+
+    @OneToMany(mappedBy = "admin")
+    private List<SaleEntity> sales;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -144,6 +148,10 @@ public class UserEntity extends AuditableEntity implements UserDetails, Serializ
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getFullName(){
+        return this.firstName + " " + this.lastName;
     }
 
 }

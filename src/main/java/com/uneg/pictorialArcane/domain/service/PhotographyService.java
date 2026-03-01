@@ -19,4 +19,8 @@ public class PhotographyService {
     public ContainerPhotographyResponseDto createPhotography(ContainerPhotographyRequestDto dto) {
         return this.photographyRepository.addPhotography(dto);
     }
+
+    public ContainerPhotographyResponseDto getByArtWorkId(Long artWorkId) {
+        return this.photographyRepository.findByArtWorkId(artWorkId);
+    }
 }
