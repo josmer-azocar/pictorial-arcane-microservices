@@ -39,13 +39,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Deshabilita CSRF (Cross-Site Request Forgery) ya que usamos tokens, no sesiones
 
                 .authorizeHttpRequests(authRequest -> // Configura las reglas de autorización para las peticiones HTTP
-                        authRequest
-                                .requestMatchers("/auth/**","/swagger-ui.html", // Permite acceso público a estas rutas
-                                        "/swagger-ui/**","/v3/api-docs/**",
-                                        "/webjars/**","/artwork/search/**")
+                        authRequest.anyRequest().permitAll()
 
-                                .permitAll() // Permite el acceso sin autenticación
-                                .anyRequest().authenticated() // Cualquier otra petición requiere autenticación
+                        //DEPRECATED init
+//                                .requestMatchers("/auth/**","/swagger-ui.html", // Permite acceso público a estas rutas
+//                                        "/swagger-ui/**","/v3/api-docs/**",
+//                                        "/webjars/**","/artwork/search/**")
+//
+//                                .permitAll() // Permite el acceso sin autenticación
+//                                .anyRequest().authenticated() // Cualquier otra petición requiere autenticación
+                        //DEPRECATED end
+
                         )
 
                 .exceptionHandling(exception -> exception
