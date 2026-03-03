@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface CrudSaleRepositoy extends CrudRepository<SaleEntity, Long> {
 
-    List<SaleEntity> findAllBySaleStatusContainsAndCreatedAtAfterAndArtWork_Status(String saleStatus, LocalDateTime createdAtAfter, String artWorkStatus);
+    List<SaleEntity> findAllBySaleStatusContainsAndCreatedAtBeforeAndArtWork_Status(String saleStatus, LocalDateTime createdAtBefore, String artWorkStatus);
 
     SaleEntity findByIdSale(Long idSale);
 }

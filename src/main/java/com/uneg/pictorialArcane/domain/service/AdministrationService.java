@@ -20,7 +20,7 @@ public class AdministrationService {
     }
 
     public List<SaleResponseDto> getAllPendingSales() {
-        return saleRepository.getAllPendingSalesIn24HoursRange();
+        return saleRepository.getAllPendingSalesAfter24h();
     }
 
     public void rejectPendingSale(Long saleId, String email) {

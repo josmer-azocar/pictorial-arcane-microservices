@@ -57,9 +57,9 @@ public class SaleRepository {
         return crudSaleRepository.save(sale);
     }
 
-    public List<SaleResponseDto> getAllPendingSalesIn24HoursRange(){
+    public List<SaleResponseDto> getAllPendingSalesAfter24h(){
         return this.saleMapper.toResponseDto(
-                this.crudSaleRepository.findAllBySaleStatusContainsAndCreatedAtAfterAndArtWork_Status(
+                this.crudSaleRepository.findAllBySaleStatusContainsAndCreatedAtBeforeAndArtWork_Status(
                 SaleStatus.PENDING.name(), LocalDateTime.now().minusHours(24), ArtWorkStatus.RESERVED.name()));
 
     }
