@@ -79,6 +79,11 @@ public class RestExceptionHandler {
         Error error = new Error("gender-does-not-exist", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+    @ExceptionHandler(SaleDoesNotExistsException.class)
+    public ResponseEntity<Error> handleException(SaleDoesNotExistsException ex){
+        Error error = new Error("sale-does-not-exist", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
     @ExceptionHandler(CommissionRateIncorrectException.class)
     public ResponseEntity<Error> handleException(CommissionRateIncorrectException ex){

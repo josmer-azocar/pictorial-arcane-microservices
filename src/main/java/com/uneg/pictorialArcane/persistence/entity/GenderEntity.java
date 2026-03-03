@@ -1,12 +1,15 @@
 package com.uneg.pictorialArcane.persistence.entity;
 
+import com.uneg.pictorialArcane.persistence.audit.AuditableEntity;
 import jakarta.persistence.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 
 @Entity
 @Table(name = "gender")
-public class GenderEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class GenderEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

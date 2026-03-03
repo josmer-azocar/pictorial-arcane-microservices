@@ -1,10 +1,12 @@
 package com.uneg.pictorialArcane.persistence.entity;
 
+import com.uneg.pictorialArcane.persistence.audit.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class QuestionEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class QuestionEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_question")

@@ -27,7 +27,7 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
     @GetMapping("/getAllQuestions")
     @Operation(
             summary = "Get all questions / Obtener todas las preguntas",

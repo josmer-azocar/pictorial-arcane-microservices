@@ -1,10 +1,12 @@
 package com.uneg.pictorialArcane.persistence.entity;
 
+import com.uneg.pictorialArcane.persistence.audit.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
@@ -14,7 +16,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PaymentEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class PaymentEntity extends AuditableEntity {
 
     @Id
     @Column(name = "id_sale")
