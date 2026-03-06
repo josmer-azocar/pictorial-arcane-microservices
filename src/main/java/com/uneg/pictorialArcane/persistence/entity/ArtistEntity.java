@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -36,6 +37,9 @@ public class ArtistEntity extends AuditableEntity {
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
+
+    @Column(name = "birthdate")
+    private LocalDate birthdate;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<ArtWorkEntity> artWorks;
