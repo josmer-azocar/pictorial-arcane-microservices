@@ -1,5 +1,6 @@
 package com.uneg.pictorialArcane.web.controller;
 
+import com.uneg.pictorialArcane.domain.azure.AzureBlobService;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
 import com.uneg.pictorialArcane.domain.service.AdministrationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,8 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -20,9 +23,11 @@ import java.util.List;
 public class AdministrationController {
 
     private final AdministrationService administrationService;
+    private final AzureBlobService azureBlobService;
 
-    public AdministrationController(AdministrationService administrationService) {
+    public AdministrationController(AdministrationService administrationService, AzureBlobService azureBlobService) {
         this.administrationService = administrationService;
+        this.azureBlobService = azureBlobService;
     }
 
     @GetMapping("/getAllPendingSales")
@@ -54,5 +59,85 @@ public class AdministrationController {
                                            Authentication authentication){
         this.administrationService.rejectPendingSale(saleId, authentication.getName());
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/artorkImage")
+    @Operation(
+            summary = "Upload artwork image / Subir imagen de obra",
+            description = "Requires ADMIN role. Uploads artwork image for the given artwork id. / Requiere rol ADMIN. Sube la imagen de la obra para el id indicado.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Artwork image uploaded successfully / Imagen de obra subida exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid file or request / Archivo o solicitud invalida"),
+                    @ApiResponse(responseCode = "404", description = "Artwork not found / Obra no encontrada"),
+                    @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
+            }
+    )
+    public ResponseEntity<?> uploadArtworkImage(@Parameter(description = "Artwork ID / ID de la obra") @PathVariable Long id,
+                                                @Parameter(description = "Image file / Archivo de imagen") @RequestParam("file") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(this.azureBlobService.uploadArtworkImage(id, file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error al subir la imagen: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}/artworkImage")
+    @Operation(
+            summary = "Delete artwork image / Eliminar imagen de obra",
+            description = "Requires ADMIN role. Deletes artwork image for the given artwork id. / Requiere rol ADMIN. Elimina la imagen de la obra para el id indicado.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Artwork image deleted successfully / Imagen de obra eliminada exitosamente"),
+                    @ApiResponse(responseCode = "404", description = "Artwork or image not found / Obra o imagen no encontrada"),
+                    @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
+            }
+    )
+    public ResponseEntity<?> deleteArtworkImage(@Parameter(description = "Artwork ID / ID de la obra") @PathVariable Long id) {
+        try {
+            return this.azureBlobService.deleteArtworkImage(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of("error", "Error al procesar la solicitud: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{id}/artistImage")
+    @Operation(
+            summary = "Upload artist image / Subir imagen de artista",
+            description = "Requires ADMIN role. Uploads artist image for the given artist id. / Requiere rol ADMIN. Sube la imagen del artista para el id indicado.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Artist image uploaded successfully / Imagen de artista subida exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid file or request / Archivo o solicitud invalida"),
+                    @ApiResponse(responseCode = "404", description = "Artist not found / Artista no encontrado"),
+                    @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
+            }
+    )
+    public ResponseEntity<?> uploadArtistImage(@Parameter(description = "Artist ID / ID del artista") @PathVariable Long id,
+                                               @Parameter(description = "Image file / Archivo de imagen") @RequestParam("file") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(this.azureBlobService.uploadArtistImage(id, file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error al subir la imagen: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}/artistImage")
+    @Operation(
+            summary = "Delete artist image / Eliminar imagen de artista",
+            description = "Requires ADMIN role. Deletes artist image for the given artist id. / Requiere rol ADMIN. Elimina la imagen del artista para el id indicado.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Artist image deleted successfully / Imagen de artista eliminada exitosamente"),
+                    @ApiResponse(responseCode = "404", description = "Artist or image not found / Artista o imagen no encontrada"),
+                    @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
+            }
+    )
+    public ResponseEntity<?> deleteArtistImage(@Parameter(description = "Artist ID / ID del artista") @PathVariable Long id) {
+        try {
+            return this.azureBlobService.deleteArtistImage(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of("error", "Error al procesar la solicitud: " + e.getMessage()));
+        }
     }
 }

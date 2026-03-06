@@ -8,6 +8,7 @@ public record ArtWork2ResponseDto(
         ArtWorkStatus status,
         Double price,
         String artist,
-        String gender
+        String gender,
+        String imageUrl
 ) {
 }

@@ -42,6 +42,9 @@ public class ArtWorkEntity extends AuditableEntity {
     @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
     private GenderEntity gender;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     @OneToMany(mappedBy = "artWork")
     private List<SaleEntity> sales;
 

@@ -5,12 +5,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "goldsmith")
 @PrimaryKeyJoinColumn(name = "id_artwork")
+@AllArgsConstructor
+@NoArgsConstructor
 public class GoldsmithEntity extends ArtWorkEntity{
 
     @Column(name = "material", length = 15)
@@ -21,14 +25,6 @@ public class GoldsmithEntity extends ArtWorkEntity{
 
     @Column(name = "weight")
     private Double weight;
-
-    public GoldsmithEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String material, String preciousStones, Double weight, List sales) {
-        super(idArtWork, name, status, price, artist, gender, sales);
-        this.material = material;
-        this.preciousStones = preciousStones;
-        this.weight = weight;
-    }
-    public GoldsmithEntity() {}
 
     public String getMaterial() {
         return material;
