@@ -1,5 +1,7 @@
 package com.uneg.pictorialArcane.domain.dto.response;
 
+import java.time.LocalDate;
+
 public record ArtistResponseDto(
         Long idArtist,
         String name,
@@ -7,6 +9,7 @@ public record ArtistResponseDto(
         String nationality,
         String biography,
         Double commissionRate,
+        LocalDate birthdate,
         String imageUrl
 ) {
 }
