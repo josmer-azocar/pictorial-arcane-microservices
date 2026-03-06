@@ -2,6 +2,8 @@ package com.uneg.pictorialArcane.persistence.entity;
 
 import com.uneg.pictorialArcane.persistence.audit.AuditableEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "artist")
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 public class ArtistEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +33,9 @@ public class ArtistEntity extends AuditableEntity {
 
     @Column(name = "commission_rate")
     private Double commissionRate;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<ArtWorkEntity> artWorks;

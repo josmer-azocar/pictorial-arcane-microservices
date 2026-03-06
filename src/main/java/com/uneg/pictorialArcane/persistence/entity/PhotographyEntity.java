@@ -4,12 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "photography")
 @PrimaryKeyJoinColumn(name = "id_artwork")
+@AllArgsConstructor
+@NoArgsConstructor
 public class PhotographyEntity extends ArtWorkEntity{
 
     @Column(name = "print_type", length = 15)
@@ -27,16 +31,6 @@ public class PhotographyEntity extends ArtWorkEntity{
     @Column(name = "camera", length = 15)
     private String camera;
 
-    public PhotographyEntity(){}
-
-    public PhotographyEntity(Long idArtWork, String name, String status, double price, ArtistEntity artist, GenderEntity gender, String printType, String resolution, String color, String serialNumber, String camera, List sales) {
-        super(idArtWork, name, status, price, artist, gender, sales);
-        this.printType = printType;
-        this.resolution = resolution;
-        this.color = color;
-        this.serialNumber = serialNumber;
-        this.camera = camera;
-    }
 
     public String getPrintType() {
         return printType;

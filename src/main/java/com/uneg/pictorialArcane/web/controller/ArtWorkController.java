@@ -1,5 +1,6 @@
 package com.uneg.pictorialArcane.web.controller;
 
+import com.uneg.pictorialArcane.domain.azure.AzureBlobService;
 import com.uneg.pictorialArcane.domain.dto.request.ArtWorkRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWorkResponseDto;
@@ -20,7 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import com.uneg.pictorialArcane.domain.dto.request.ContainerCeramicRequestDto;
 import com.uneg.pictorialArcane.domain.dto.request.ContainerGoldsmithRequestDto;
 import com.uneg.pictorialArcane.domain.dto.request.ContainerPaintingRequestDto;
@@ -36,6 +40,7 @@ import com.uneg.pictorialArcane.domain.service.GoldsmithService;
 import com.uneg.pictorialArcane.domain.service.PaintingService;
 import com.uneg.pictorialArcane.domain.service.PhotographyService;
 import com.uneg.pictorialArcane.domain.service.SculptureService;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -56,7 +61,7 @@ public class ArtWorkController {
                              GoldsmithService goldsmithService,
                              PaintingService paintingService,
                              PhotographyService photographyService,
-                             SculptureService sculptureService) {
+                             SculptureService sculptureService, AzureBlobService azureBlobService) {
         this.artWorkService = artWorkService;
         this.ceramicService = ceramicService;
         this.goldsmithService = goldsmithService;
@@ -305,4 +310,5 @@ public class ArtWorkController {
             }
         }
     }
+
 }

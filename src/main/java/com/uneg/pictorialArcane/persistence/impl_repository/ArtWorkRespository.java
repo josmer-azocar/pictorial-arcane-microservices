@@ -75,7 +75,8 @@ public class ArtWorkRespository {
                 ArtWorkStatus.valueOf(artWork.getStatus().toUpperCase()),
                 artWork.getPrice(),
                 artWork.getArtist().getName(),
-                artWork.getGender().getName()
+                artWork.getGender().getName(),
+                artWork.getImageUrl()
         ));
     }
 
