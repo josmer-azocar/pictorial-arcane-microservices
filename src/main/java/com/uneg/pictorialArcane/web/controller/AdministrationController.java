@@ -61,7 +61,7 @@ public class AdministrationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{id}/artorkImage")
+    @PostMapping("/{id}/artworkImage")
     @Operation(
             summary = "Upload artwork image / Subir imagen de obra",
             description = "Requires ADMIN role. Uploads artwork image for the given artwork id. / Requiere rol ADMIN. Sube la imagen de la obra para el id indicado.",
