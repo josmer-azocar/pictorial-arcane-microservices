@@ -1,18 +1,17 @@
 package com.uneg.pictorialArcane.web.controller;
 
 
+import com.uneg.pictorialArcane.domain.dto.response.PurchaseResponseDto;
 import com.uneg.pictorialArcane.domain.service.SaleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/sale")
@@ -49,4 +48,26 @@ public class SaleController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('CLIENT')")
+    @GetMapping("/MyPurchases")
+    @Operation(
+            summary = "Get client purchases / Obtener compras del cliente",
+            description = "Returns a paginated list of purchases for the authenticated client. / Retorna una lista paginada de compras del cliente autenticado.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Purchases retrieved successfully / Compras obtenidas exitosamente"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden / Prohibido"),
+                    @ApiResponse(responseCode = "404", description = "Client not found / Cliente no encontrado")
+            }
+    )
+    public ResponseEntity<Page<PurchaseResponseDto>> getClientPurchases(
+            @Parameter(description = "Page index (0-based) / Indice de pagina (base 0)")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size / Tamano de pagina")
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication){
+
+        String clientEmail = authentication.getName();
+        return ResponseEntity.ok(this.saleService.getClientPurchases(page, size, clientEmail));
+    }
 }

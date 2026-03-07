@@ -1,11 +1,14 @@
 package com.uneg.pictorialArcane.persistence.crud_repository;
 
+import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
 import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDate;
 
 
 public interface CrudArtWorkRepository extends CrudRepository<ArtWorkEntity, Long> {
@@ -29,4 +32,11 @@ public interface CrudArtWorkRepository extends CrudRepository<ArtWorkEntity, Lon
             @Param("min_price") Double min,
             @Param("max_price") Double max,
             Pageable pageable);
+
+    @Query("SELECT v.artWork FROM SaleEntity v WHERE v.saleStatus = 'APPROVED' AND v.date >= :startDate AND v.date <= :endDate")
+    Page<ArtWorkEntity> findSoldArtWorksByDateRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            Pageable pageable
+    );
 }

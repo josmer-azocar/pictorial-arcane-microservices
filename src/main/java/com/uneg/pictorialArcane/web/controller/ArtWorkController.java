@@ -177,10 +177,12 @@ public class ArtWorkController {
             @Parameter(description = "Title (partial match) / Título (coincidencia parcial)") @RequestParam(required = false, defaultValue = "") String title,
             @Parameter(description = "Minimum price / Precio mínimo") @RequestParam(required = false) Double min,
             @Parameter(description = "Maximum price / Precio máximo") @RequestParam(required = false) Double max,
-            @Parameter(description = "Pagination information / Información de paginación", hidden = true) @PageableDefault(size = 9, sort = "price", direction = Sort.Direction.ASC) Pageable pageable
-    ) {
-        // Pageable ya trae: página actual, cuántos elementos traer y el ordenamiento
-        Page<ArtWork2ResponseDto> pageResults = artWorkService.filterArtWorks(idGender, idArtist, title, min, max, pageable);
+            @Parameter(description = "Page number / Numero de pagina") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Quantity results by page / Cantidad de resultados X pagina") @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Sort parameter / Parametro de ordenamiento") @RequestParam(defaultValue = "price", required = false) String sortBy ,
+            @Parameter(description = "(ASC/DESC) / Orden de los resultados") @RequestParam(defaultValue = "ASC", required = false) Sort.Direction direction
+            ) {
+        Page<ArtWork2ResponseDto> pageResults = artWorkService.filterArtWorks(idGender, idArtist, title, min, max, page, size, sortBy,direction);
         return ResponseEntity.ok(pageResults);
     }
 
