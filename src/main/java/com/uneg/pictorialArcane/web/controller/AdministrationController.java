@@ -1,18 +1,22 @@
 package com.uneg.pictorialArcane.web.controller;
 
 import com.uneg.pictorialArcane.domain.azure.AzureBlobService;
+import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
 import com.uneg.pictorialArcane.domain.service.AdministrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -139,5 +143,29 @@ public class AdministrationController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(Map.of("error", "Error al procesar la solicitud: " + e.getMessage()));
         }
+    }
+
+    @GetMapping("/getSoldArtworksByDate")
+    @Operation(
+            summary = "Get sold artworks by date range / Obtener obras vendidas por rango de fechas",
+            description = "Requires ADMIN role. Returns a paginated list of sold artworks within the given date range. / Requiere rol ADMIN. Retorna una lista paginada de obras vendidas dentro del rango de fechas indicado.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Sold artworks retrieved successfully / Obras vendidas obtenidas exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid date range or pagination params / Rango de fechas o parametros de paginacion invalidos"),
+                    @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
+            }
+    )
+    public ResponseEntity<Page<ArtWork2ResponseDto>> getSoldArtworks(
+            @Parameter(description = "Start date (YYYY-MM-DD) / Fecha inicial (YYYY-MM-DD)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "End date (YYYY-MM-DD) / Fecha final (YYYY-MM-DD)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @Parameter(description = "Page index (0-based) / Indice de pagina (base 0)")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size / Tamano de pagina")
+            @RequestParam(defaultValue = "10") int size
+    ) {
+            Page<ArtWork2ResponseDto> result = administrationService.getSoldArtworksByDate(startDate, endDate, page, size);
+            return ResponseEntity.ok(result);
     }
 }

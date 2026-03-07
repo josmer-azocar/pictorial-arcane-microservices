@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -82,5 +83,19 @@ public class ArtWorkRespository {
 
     public ArtWorkEntity saveEntity(ArtWorkEntity entity) {
         return this.crudArtWorkRepository.save(entity);
+    }
+
+    public Page<ArtWork2ResponseDto> findSoldArtWorksByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        Page<ArtWorkEntity> page = crudArtWorkRepository.findSoldArtWorksByDateRange(startDate,endDate,pageable);
+
+        return page.map(artWork -> new ArtWork2ResponseDto(
+                artWork.getIdArtWork(),
+                artWork.getName(),
+                ArtWorkStatus.valueOf(artWork.getStatus().toUpperCase()),
+                artWork.getPrice(),
+                artWork.getArtist().getName(),
+                artWork.getGender().getName(),
+                artWork.getImageUrl()
+        ));
     }
 }
