@@ -1,5 +1,6 @@
 package com.uneg.pictorialArcane.domain.service;
 
+import com.uneg.pictorialArcane.domain.dto.response.PurchaseResponseDto;
 import com.uneg.pictorialArcane.domain.exception.ArtWorkNotAvailableException;
 import com.uneg.pictorialArcane.domain.exception.InvalidSecurityCodeException;
 import com.uneg.pictorialArcane.domain.exception.UserDoesNotExistsException;
@@ -10,6 +11,7 @@ import com.uneg.pictorialArcane.persistence.entity.ClientEntity;
 import com.uneg.pictorialArcane.persistence.entity.UserEntity;
 import com.uneg.pictorialArcane.persistence.impl_repository.ArtWorkRespository;
 import com.uneg.pictorialArcane.persistence.impl_repository.SaleRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +62,19 @@ public class SaleService {
 
         artWork.setStatus("RESERVED");
         artWorkRespository.saveEntity(artWork);
+    }
+
+    public Page<PurchaseResponseDto> getClientPurchases(int page, int size, String clientEmail) {
+        UserEntity user = crudUserRepository.findFirstByEmail(clientEmail);
+        if (user == null) {
+            throw new UserDoesNotExistsException(clientEmail);
+        }
+
+        ClientEntity client = crudClientRepository.findFirstByDniUser(user.getDniUser());
+        if (client == null) {
+            throw new UserDoesNotExistsException(clientEmail);
+        }
+
+        return this.saleRepository.getClientPurchases(page, size, user.getDniUser());
     }
 }

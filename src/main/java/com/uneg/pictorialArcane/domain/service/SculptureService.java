@@ -14,6 +14,7 @@ public class SculptureService {
         this.sculptureRepository = sculptureRepository;
     }
 
+  //crea una escultura
     @Transactional
     public ContainerSculptureResponseDto createSculpture(ContainerSculptureRequestDto dto) {
         return this.sculptureRepository.addSculpture(dto);

@@ -2,6 +2,8 @@ package com.uneg.pictorialArcane.domain.dto.request;
 
 import jakarta.validation.constraints.*;
 
+import java.time.LocalDate;
+
 public record ArtistRequestDto(
         @NotNull(message = "name cant be empty")
         String name,
@@ -17,5 +19,8 @@ public record ArtistRequestDto(
         @NotNull
         @DecimalMax(value = "0.1", message = "commission rate must be between 0.1 and 0.05")
         @DecimalMin(value = "0.05", message = "commission rate must be between 0.1 and 0.05")
-        Double commissionRate
+        Double commissionRate,
+
+        @NotNull
+        LocalDate birthdate
 ) {}

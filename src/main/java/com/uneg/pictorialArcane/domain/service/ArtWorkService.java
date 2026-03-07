@@ -7,7 +7,9 @@ import com.uneg.pictorialArcane.domain.dto.update.UpdateArtWorkDto;
 import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
 import com.uneg.pictorialArcane.persistence.impl_repository.ArtWorkRespository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +49,8 @@ public class ArtWorkService {
     }
 
 
-    public Page<ArtWork2ResponseDto> filterArtWorks(Long idGender, Long idArtist, String title, Double min, Double max, Pageable pageable) {
+    public Page<ArtWork2ResponseDto> filterArtWorks(Long idGender, Long idArtist, String title, Double min, Double max, int page, int size, String sortBy, Sort.Direction direction) {
+        Pageable pageable = PageRequest.of(page, size, direction, sortBy);
         return this.artWorkRespository.filterArtWorks(idGender,idArtist,title, min, max, pageable);
     }
 

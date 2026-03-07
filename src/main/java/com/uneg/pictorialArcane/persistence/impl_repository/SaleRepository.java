@@ -3,6 +3,8 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 import com.uneg.pictorialArcane.domain.Enum.ArtWorkStatus;
 import com.uneg.pictorialArcane.domain.Enum.SaleStatus;
 import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
+import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.PurchaseResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudArtWorkRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudSaleRepositoy;
@@ -11,10 +13,14 @@ import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
 import com.uneg.pictorialArcane.persistence.entity.ClientEntity;
 import com.uneg.pictorialArcane.persistence.entity.SaleEntity;
 import com.uneg.pictorialArcane.persistence.mapper.SaleMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class SaleRepository {
@@ -76,6 +82,28 @@ public class SaleRepository {
         ArtWorkEntity artWork = sale.getArtWork();
         artWork.setStatus(ArtWorkStatus.AVAILABLE.name());
         this.crudArtWorkRepository.save(artWork);
+    }
+
+    public Page<PurchaseResponseDto> getClientPurchases(int page, int size, Long dniUser) {
+        return this.crudSaleRepository.getClientPurchases(dniUser, PageRequest.of(page, size))
+                .map(sale -> new PurchaseResponseDto(
+                        sale.getIdSale(),
+                        Optional.ofNullable(sale.getArtWork()).map(ArtWorkEntity::getName).orElse(null),
+                        sale.getDate(),
+                        sale.getDescription(),
+                        sale.getPrice(),
+                        sale.getTaxAmount(),
+                        sale.getTotalPaid(),
+                        sale.getShippingAddress(),
+                        Optional.ofNullable(sale.getShippingStatus())
+                                .map(String::toUpperCase)
+                                .map(ShippingStatus::valueOf)
+                                .orElse(null),
+                        Optional.ofNullable(sale.getSaleStatus())
+                                .map(String::toUpperCase)
+                                .map(SaleStatus::valueOf)
+                                .orElse(null)
+                ));
     }
 }
 
