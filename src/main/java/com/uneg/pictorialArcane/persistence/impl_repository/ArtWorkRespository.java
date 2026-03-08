@@ -66,8 +66,8 @@ public class ArtWorkRespository {
         return artWorkMapper.toResponseDto(this.crudArtWorkRepository.save(entity));
     }
 
-    public Page<ArtWork2ResponseDto> filterArtWorks(Long idGender, Long idArtist, String title, Double min, Double max, Pageable pageable) {
-        Page<ArtWorkEntity> artWorksPage = crudArtWorkRepository.searchArtWorkByFilters(idGender, idArtist, title, min, max, pageable);
+    public Page<ArtWork2ResponseDto> filterArtWorks(Long idGenre, Long idArtist, String title, Double min, Double max, Pageable pageable) {
+        Page<ArtWorkEntity> artWorksPage = crudArtWorkRepository.searchArtWorkByFilters(idGenre, idArtist, title, min, max, pageable);
 
         // Convertimos (Mapeamos) cada Obra a un DTO
         return artWorksPage.map(artWork -> new ArtWork2ResponseDto(
@@ -76,7 +76,7 @@ public class ArtWorkRespository {
                 ArtWorkStatus.valueOf(artWork.getStatus().toUpperCase()),
                 artWork.getPrice(),
                 artWork.getArtist().getName(),
-                artWork.getGender().getName(),
+                artWork.getGenre().getName(),
                 artWork.getImageUrl()
         ));
     }
@@ -94,7 +94,7 @@ public class ArtWorkRespository {
                 ArtWorkStatus.valueOf(artWork.getStatus().toUpperCase()),
                 artWork.getPrice(),
                 artWork.getArtist().getName(),
-                artWork.getGender().getName(),
+                artWork.getGenre().getName(),
                 artWork.getImageUrl()
         ));
     }

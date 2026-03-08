@@ -7,14 +7,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.List;
 
 @Entity
-@Table(name = "gender")
+@Table(name = "genre")
 @EntityListeners(AuditingEntityListener.class)
-public class GenderEntity extends AuditableEntity {
+public class GenreEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_gender", nullable = false)
-    private Long idGender;
+    @Column(name = "id_genre", nullable = false)
+    private Long idGenre;
 
     @Column(name = "name", nullable = false, length = 15, unique = true)
     private String name;
@@ -22,17 +22,17 @@ public class GenderEntity extends AuditableEntity {
     @Column(name = "description", nullable = false, length = 120)
     private String description;
 
-    @OneToMany(mappedBy = "gender", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
     private List<ArtWorkEntity> artWorkEntities;
 
-    public GenderEntity(Long idGender, String name, String description, List<ArtWorkEntity> artWorkEntities) {
-        this.idGender = idGender;
+    public GenreEntity(Long idGenre, String name, String description, List<ArtWorkEntity> artWorkEntities) {
+        this.idGenre = idGenre;
         this.name = name;
         this.description = description;
         this.artWorkEntities = artWorkEntities;
     }
 
-    public GenderEntity() {
+    public GenreEntity() {
     }
 
     public String getName() {
@@ -51,12 +51,12 @@ public class GenderEntity extends AuditableEntity {
         this.artWorkEntities = artWorkEntities;
     }
 
-    public Long getIdGender() {
-        return idGender;
+    public Long getIdGenre() {
+        return idGenre;
     }
 
-    public void setIdGender(Long idGender) {
-        this.idGender = idGender;
+    public void setIdGenre(Long idGenre) {
+        this.idGenre = idGenre;
     }
 
     public String getDescription() {

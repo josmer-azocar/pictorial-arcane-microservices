@@ -1,9 +1,8 @@
 package com.uneg.pictorialArcane.domain.dto.response;
 
-public record GenderResponseDto(
-        Long idGender,
+public record GenreResponseDto(
+        Long idGenre,
         String name,
         String description
 ) {
 }
-

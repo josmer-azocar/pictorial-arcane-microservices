@@ -13,7 +13,7 @@ import java.util.List;
 public interface ArtWorkMapper {
 
     @Mapping(source = "artist.idArtist", target = "idArtist")
-    @Mapping(source = "gender.idGender", target = "idGender")
+    @Mapping(source = "genre.idGenre", target = "idGenre")
     @Mapping(source = "status", target = "status", qualifiedByName = "stringToArtWorkStatus")
     ArtWorkResponseDto toResponseDto(ArtWorkEntity entity);
     List<ArtWorkResponseDto> toResponseDto(Iterable<ArtWorkEntity> entities);
@@ -21,7 +21,7 @@ public interface ArtWorkMapper {
 
     @InheritInverseConfiguration
     @Mapping(target = "artist.idArtist", source = "idArtist")
-    @Mapping(target = "gender.idGender", source = "idGender")
+    @Mapping(target = "genre.idGenre", source = "idGenre")
     @Mapping(source = "status", target = "status", qualifiedByName = "artWorkStatusToString")
     ArtWorkEntity toEntity(ArtWorkRequestDto requestDto);
 

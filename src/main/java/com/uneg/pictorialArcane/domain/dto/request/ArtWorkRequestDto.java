@@ -19,7 +19,7 @@ public record ArtWorkRequestDto(
         Long idArtist,
 
         @NotNull
-        Long idGender
+        Long idGenre
 
 ) {
 }

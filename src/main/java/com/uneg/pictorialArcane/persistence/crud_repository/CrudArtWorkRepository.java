@@ -18,7 +18,7 @@ public interface CrudArtWorkRepository extends CrudRepository<ArtWorkEntity, Lon
     ArtWorkEntity deleteByIdArtWork(Long id);
 
     @Query("SELECT o FROM ArtWorkEntity o WHERE " +
-            "(:id_gender IS NULL OR o.gender.idGender = :id_gender) AND " +
+            "(:id_genre IS NULL OR o.genre.idGenre = :id_genre) AND " +
             "(:id_artist IS NULL OR o.artist.idArtist = :id_artist) AND " +
             "(:min_price IS NULL OR o.price >= :min_price) AND " +
             "(:max_price IS NULL OR o.price <= :max_price) AND " +
@@ -26,7 +26,7 @@ public interface CrudArtWorkRepository extends CrudRepository<ArtWorkEntity, Lon
             "(LOWER(o.name) LIKE LOWER(CONCAT('%', :title, '%')))"
     )
     Page<ArtWorkEntity> searchArtWorkByFilters(
-            @Param("id_gender") Long idGender,
+            @Param("id_genre") Long idGenre,
             @Param("id_artist") Long idArtist,
             @Param("title") String title,
             @Param("min_price") Double min,
