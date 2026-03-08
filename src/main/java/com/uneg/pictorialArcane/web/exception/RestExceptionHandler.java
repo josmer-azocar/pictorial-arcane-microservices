@@ -21,6 +21,12 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler(SaleException.class)
+    public ResponseEntity<Error> handleException(SaleException ex){
+        Error error = new Error("sale-error", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Error> handleBadRequestException(BadRequestException exception){
         Error error = new Error("error-in-the-request",
@@ -74,9 +80,9 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(GenderDoesNotExistsException.class)
-    public ResponseEntity<Error> handleException(GenderDoesNotExistsException ex){
-        Error error = new Error("gender-does-not-exist", ex.getMessage());
+    @ExceptionHandler(GenreDoesNotExistsException.class)
+    public ResponseEntity<Error> handleException(GenreDoesNotExistsException ex){
+        Error error = new Error("genre-does-not-exist", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
     @ExceptionHandler(SaleDoesNotExistsException.class)
