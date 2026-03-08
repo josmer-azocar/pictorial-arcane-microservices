@@ -12,13 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
 
-    @Mapping(source = "sale.idSale", target = "saleId")
     PaymentResponseDto toResponseDto(PaymentEntity entity);
 
     List<PaymentResponseDto> toResponseDto(Iterable<PaymentEntity> entities);
 
     @InheritInverseConfiguration
-    @Mapping(target = "sale.idSale", source = "saleId")
     PaymentEntity toEntity(PaymentRequestDto requestDto);
 }
 

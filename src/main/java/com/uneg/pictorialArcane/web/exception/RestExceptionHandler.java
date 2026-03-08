@@ -21,6 +21,12 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler(SaleException.class)
+    public ResponseEntity<Error> handleException(SaleException ex){
+        Error error = new Error("sale-error", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Error> handleBadRequestException(BadRequestException exception){
         Error error = new Error("error-in-the-request",

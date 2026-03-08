@@ -3,21 +3,23 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 import com.uneg.pictorialArcane.domain.Enum.ArtWorkStatus;
 import com.uneg.pictorialArcane.domain.Enum.SaleStatus;
 import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
-import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
+import com.uneg.pictorialArcane.domain.dto.request.PaymentRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.PurchaseResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
+import com.uneg.pictorialArcane.domain.exception.ArtWorkNotAvailableException;
+import com.uneg.pictorialArcane.domain.exception.SaleException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudArtWorkRepository;
+import com.uneg.pictorialArcane.persistence.crud_repository.CrudPaymentRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudSaleRepositoy;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudUserRepository;
-import com.uneg.pictorialArcane.persistence.entity.ArtWorkEntity;
-import com.uneg.pictorialArcane.persistence.entity.ClientEntity;
-import com.uneg.pictorialArcane.persistence.entity.SaleEntity;
+import com.uneg.pictorialArcane.persistence.entity.*;
+import com.uneg.pictorialArcane.persistence.mapper.PaymentMapper;
 import com.uneg.pictorialArcane.persistence.mapper.SaleMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,12 +32,17 @@ public class SaleRepository {
     private final SaleMapper saleMapper;
     private final Double TAX_AMOUNT = 0.16;
     private final CrudArtWorkRepository crudArtWorkRepository;
+    private final PaymentMapper paymentMapper;
+    private final CrudPaymentRepository crudPaymentRepository;
 
-    public SaleRepository(CrudSaleRepositoy crudSaleRepository, CrudUserRepository crudUserRepository, SaleMapper saleMapper, CrudArtWorkRepository crudArtWorkRepository) {
+
+    public SaleRepository(CrudSaleRepositoy crudSaleRepository, CrudUserRepository crudUserRepository, SaleMapper saleMapper, CrudArtWorkRepository crudArtWorkRepository, PaymentMapper paymentMapper, CrudPaymentRepository crudPaymentRepository) {
         this.crudSaleRepository = crudSaleRepository;
         this.crudUserRepository = crudUserRepository;
         this.saleMapper = saleMapper;
         this.crudArtWorkRepository = crudArtWorkRepository;
+        this.paymentMapper = paymentMapper;
+        this.crudPaymentRepository = crudPaymentRepository;
     }
 
     public SaleResponseDto getSaleById(Long saleId){
@@ -57,7 +64,7 @@ public class SaleRepository {
         sale.setTaxAmount(sale.getPrice() * TAX_AMOUNT);
         sale.setTotalPaid(sale.getPrice() + sale.getTaxAmount());
         sale.setShippingAddress(null);
-        sale.setShippingStatus(null);
+        sale.setShippingStatus(ShippingStatus.PENDING.name());
         sale.setSaleStatus(SaleStatus.PENDING.name());
 
         return crudSaleRepository.save(sale);
@@ -104,6 +111,43 @@ public class SaleRepository {
                                 .map(SaleStatus::valueOf)
                                 .orElse(null)
                 ));
+    }
+
+    public SaleResponseDto confirmSale(Long saleId, String email, PaymentRequestDto paymentRequestDto, String description, String direction) {
+        SaleEntity saleEntity = crudSaleRepository.findByIdSale(saleId);
+        UserEntity admin = crudUserRepository.findFirstByEmail(email);
+        ArtWorkEntity artWork = crudArtWorkRepository.findFirstByIdArtWork(saleEntity.getArtWork().getIdArtWork());
+
+        if (!saleEntity.getSaleStatus().equals(SaleStatus.PENDING.name())) throw new SaleException(saleId);
+        if (artWork.getStatus().equals(ArtWorkStatus.SOLD.name())) throw new ArtWorkNotAvailableException(artWork.getIdArtWork());
+
+
+        // Se registra el pago de la venta ingresado por el admin
+        PaymentEntity payment = paymentMapper.toEntity(paymentRequestDto);
+        payment.setSale(saleEntity);
+        crudPaymentRepository.save(payment);
+
+        saleEntity.setAdmin(admin);
+        saleEntity.setDate(LocalDate.now());
+        saleEntity.setDescription(description);
+        saleEntity.setShippingAddress(direction);
+        saleEntity.setSaleStatus(SaleStatus.APPROVED.name());
+
+        artWork.setStatus(ArtWorkStatus.SOLD.name());
+        crudArtWorkRepository.save(artWork);
+
+        return saleMapper.toResponseDto(crudSaleRepository.save(saleEntity));
+    }
+
+    public SaleResponseDto updateShippingStatus(Long saleId, ShippingStatus shippingStatus) {
+        SaleEntity saleEntity = crudSaleRepository.findByIdSale(saleId);
+
+        if (!saleEntity.getShippingStatus().equals(ShippingStatus.PENDING.name())) throw new RuntimeException("The current Shipping Status must be PENDING to be updated");
+        if (!saleEntity.getSaleStatus().equals(SaleStatus.APPROVED.name())) throw new SaleException(saleId, saleEntity.getSaleStatus());
+
+        saleEntity.setShippingStatus(shippingStatus.name());
+
+        return saleMapper.toResponseDto(crudSaleRepository.save(saleEntity));
     }
 }
 

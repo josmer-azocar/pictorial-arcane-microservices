@@ -8,6 +8,6 @@ public record PaymentResponseDto(
         Double amount,
         LocalDate paymentDate,
         String bankName,
-        Long saleId
+        String reference
 ) {
 }

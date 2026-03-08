@@ -1,6 +1,8 @@
 package com.uneg.pictorialArcane.web.controller;
 
+import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
 import com.uneg.pictorialArcane.domain.azure.AzureBlobService;
+import com.uneg.pictorialArcane.domain.dto.request.PaymentRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
 import com.uneg.pictorialArcane.domain.service.AdministrationService;
@@ -8,8 +10,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -40,7 +45,9 @@ public class AdministrationController {
             description = "Requires ADMIN role. Returns pending sales or no content if empty. / Requiere rol ADMIN. Retorna ventas pendientes o no content si no hay.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Pending sales retrieved successfully / Ventas pendientes obtenidas exitosamente"),
-                    @ApiResponse(responseCode = "204", description = "No pending sales / No hay ventas pendientes")
+                    @ApiResponse(responseCode = "204", description = "No pending sales / No hay ventas pendientes"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN")
             }
     )
     ResponseEntity<List<SaleResponseDto>> getAllPendingSales(){
@@ -50,13 +57,56 @@ public class AdministrationController {
         return ResponseEntity.ok(this.administrationService.getAllPendingSales());
     }
 
+    @PutMapping("/confirmSale/{saleId}")
+    @Operation(
+            summary = "Confirm a sale / Confirmar una venta",
+            description = "Requires ADMIN role. Confirms a pending sale with payment information, description and shipping address. / Requiere rol ADMIN. Confirma una venta pendiente con informacion de pago, descripcion y direccion de envio.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Sale confirmed successfully / Venta confirmada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid payment data or request body / Datos de pago o cuerpo de solicitud invalidos"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
+                    @ApiResponse(responseCode = "404", description = "Sale not found or not pending / Venta no encontrada o no pendiente"),
+                    @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
+            }
+    )
+    ResponseEntity<SaleResponseDto> confirmSale(@Parameter(description = "Sale ID / ID de la venta") @PathVariable Long saleId,
+                                                Authentication authentication,
+                                                @Parameter(description = "Payment data / Datos del pago")
+                                                @RequestBody @Valid PaymentRequestDto paymentRequestDto,
+                                                @Parameter(description = "Sale Description / Descripcion de la venta") @RequestParam String description,
+                                                @Parameter(description = "Direction / Direccion de envio") @RequestParam String direction){
+        return ResponseEntity.ok(this.administrationService.confirmSale(saleId, authentication.getName(), paymentRequestDto, description, direction));
+    }
+
+    @PutMapping("/updateShippingStatus/{saleId}")
+    @Operation(
+            summary = "Update shipping status / Actualizar estado de envio",
+            description = "Requires ADMIN role. Updates the shipping status of a sale by id. / Requiere rol ADMIN. Actualiza el estado de envio de una venta por su id.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Shipping status updated successfully / Estado de envio actualizado exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid shipping status / Estado de envio invalido"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
+                    @ApiResponse(responseCode = "404", description = "Sale not found / Venta no encontrada"),
+                    @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
+            }
+    )
+    ResponseEntity<SaleResponseDto> updateShippingStatus(@Parameter(description = "Sale ID / ID de la venta") @PathVariable Long saleId,
+                                                         @Parameter(description = "New shipping status / Nuevo estado de envio") @RequestParam @NotNull ShippingStatus shippingStatus){
+        return ResponseEntity.ok(this.administrationService.updateShippingStatus(saleId, shippingStatus));
+    }
+
     @PutMapping("/rejectPendingSale/{saleId}")
     @Operation(
             summary = "Reject a pending sale / Rechazar una venta pendiente",
             description = "Requires ADMIN role. Rejects a pending sale by id using current user. / Requiere rol ADMIN. Rechaza una venta pendiente por id usando el usuario actual.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Pending sale rejected successfully / Venta pendiente rechazada exitosamente"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
                     @ApiResponse(responseCode = "404", description = "Pending sale not found / Venta pendiente no encontrada")
+
             }
     )
     ResponseEntity<Void> rejectPendingSale(@Parameter(description = "Sale ID / ID de la venta") @PathVariable Long saleId,
@@ -72,6 +122,8 @@ public class AdministrationController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Artwork image uploaded successfully / Imagen de obra subida exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Invalid file or request / Archivo o solicitud invalida"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
                     @ApiResponse(responseCode = "404", description = "Artwork not found / Obra no encontrada"),
                     @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
             }
@@ -92,6 +144,8 @@ public class AdministrationController {
             description = "Requires ADMIN role. Deletes artwork image for the given artwork id. / Requiere rol ADMIN. Elimina la imagen de la obra para el id indicado.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Artwork image deleted successfully / Imagen de obra eliminada exitosamente"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
                     @ApiResponse(responseCode = "404", description = "Artwork or image not found / Obra o imagen no encontrada"),
                     @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
             }
@@ -112,6 +166,8 @@ public class AdministrationController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Artist image uploaded successfully / Imagen de artista subida exitosamente"),
                     @ApiResponse(responseCode = "400", description = "Invalid file or request / Archivo o solicitud invalida"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
                     @ApiResponse(responseCode = "404", description = "Artist not found / Artista no encontrado"),
                     @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
             }
@@ -132,6 +188,8 @@ public class AdministrationController {
             description = "Requires ADMIN role. Deletes artist image for the given artist id. / Requiere rol ADMIN. Elimina la imagen del artista para el id indicado.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Artist image deleted successfully / Imagen de artista eliminada exitosamente"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
                     @ApiResponse(responseCode = "404", description = "Artist or image not found / Artista o imagen no encontrada"),
                     @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
             }
@@ -151,6 +209,8 @@ public class AdministrationController {
             description = "Requires ADMIN role. Returns a paginated list of sold artworks within the given date range. / Requiere rol ADMIN. Retorna una lista paginada de obras vendidas dentro del rango de fechas indicado.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Sold artworks retrieved successfully / Obras vendidas obtenidas exitosamente"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
                     @ApiResponse(responseCode = "400", description = "Invalid date range or pagination params / Rango de fechas o parametros de paginacion invalidos"),
                     @ApiResponse(responseCode = "500", description = "Server error / Error del servidor")
             }
