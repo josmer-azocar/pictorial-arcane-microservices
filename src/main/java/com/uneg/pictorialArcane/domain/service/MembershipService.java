@@ -6,10 +6,13 @@ import com.uneg.pictorialArcane.domain.exception.ActiveMembershipAlreadyExistsEx
 import com.uneg.pictorialArcane.domain.exception.ActiveMembershipNotFoundException;
 import com.uneg.pictorialArcane.domain.exception.UserDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudClientRepository;
-import com.uneg.pictorialArcane.persistence.crud_repository.CrudMembershipRepository;
 import com.uneg.pictorialArcane.persistence.entity.ClientEntity;
 import com.uneg.pictorialArcane.persistence.entity.MembershipEntity;
 import com.uneg.pictorialArcane.persistence.impl_repository.MembershipRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -55,5 +58,21 @@ public class MembershipService {
         newMembership.setStatus(MembershipStatus.ACTIVE.name());
 
         return membershipRepository.save(newMembership);
+    }
+
+    public Page<MembershipResponseDto> filterMemberships(LocalDate startDate, LocalDate endDate, String status, int page, int size, String sortBy, Sort.Direction direction) {
+        LocalDateTime start = (startDate != null) ? startDate.atStartOfDay() : null;
+        LocalDateTime end = (endDate != null) ? endDate.atTime(23, 59, 59) : LocalDateTime.now();
+
+        Pageable pageable = PageRequest.of(page, size, direction, sortBy);
+        return membershipRepository.searchMemberships(status, start, end, pageable);
+    }
+
+    public MembershipResponseDto cancelMembership(Long id) {
+        MembershipEntity entity = membershipRepository.findById(id)
+                .orElseThrow(() -> new ActiveMembershipNotFoundException("Membership not found with ID: " + id));
+
+        entity.setStatus(MembershipStatus.CANCELLED.name());
+        return membershipRepository.save(entity);
     }
 }

@@ -6,8 +6,11 @@ import com.uneg.pictorialArcane.persistence.crud_repository.CrudMembershipReposi
 import com.uneg.pictorialArcane.persistence.entity.MembershipEntity;
 import com.uneg.pictorialArcane.persistence.mapper.MembershipMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -29,5 +32,14 @@ public class MembershipRepository {
 
     public MembershipResponseDto save(MembershipEntity entity) {
         return membershipMapper.toResponseDto(crudMembershipRepository.save(entity));
+    }
+
+    public Page<MembershipResponseDto> searchMemberships(String status, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        return crudMembershipRepository.searchMembershipsByFilters(status, startDate, endDate, pageable)
+                .map(membershipMapper::toResponseDto);
+    }
+
+    public Optional<MembershipEntity> findById(Long id) {
+        return crudMembershipRepository.findById(id);
     }
 }
