@@ -49,9 +49,9 @@ public class ArtWorkService {
     }
 
 
-    public Page<ArtWork2ResponseDto> filterArtWorks(Long idGender, Long idArtist, String title, Double min, Double max, int page, int size, String sortBy, Sort.Direction direction) {
+    public Page<ArtWork2ResponseDto> filterArtWorks(Long idGenre, Long idArtist, String title, Double min, Double max, int page, int size, String sortBy, Sort.Direction direction) {
         Pageable pageable = PageRequest.of(page, size, direction, sortBy);
-        return this.artWorkRespository.filterArtWorks(idGender,idArtist,title, min, max, pageable);
+        return this.artWorkRespository.filterArtWorks(idGenre,idArtist,title, min, max, pageable);
     }
 
     public ArtWorkEntity getArtWorkEntityById(Long id) {

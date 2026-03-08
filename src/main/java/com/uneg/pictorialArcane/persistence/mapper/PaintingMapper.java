@@ -16,7 +16,7 @@ public interface PaintingMapper {
     @Mapping(source = "artWorkRequest.status", target = "status")
     @Mapping(source = "artWorkRequest.price", target = "price")
     @Mapping(source = "artWorkRequest.idArtist", target = "artist.idArtist")
-    @Mapping(source = "artWorkRequest.idGender", target = "gender.idGender")
+    @Mapping(source = "artWorkRequest.idGenre", target = "genre.idGenre")
     @Mapping(source = "paintingRequest.technique", target = "technique")
     @Mapping(source = "paintingRequest.holder", target = "holder")
     @Mapping(source = "paintingRequest.style", target = "style")
@@ -29,7 +29,7 @@ public interface PaintingMapper {
     @Mapping(source = "idArtWork", target = "idArtWork")
     @Mapping(source = "price", target = "price") // Mapeo de price (Entity) a price (Dto)
     @Mapping(source = "artist.idArtist", target = "idArtist")
-    @Mapping(source = "gender.idGender", target = "idGender")
+    @Mapping(source = "genre.idGenre", target = "idGenre")
     ArtWorkResponseDto toArtWorkResponseDto(PaintingEntity entity);
 
     PaintingResponseDto toPaintingResponseDto(PaintingEntity entity);

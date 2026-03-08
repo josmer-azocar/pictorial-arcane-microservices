@@ -31,7 +31,7 @@ public class UserEntityRepository {
             throw new UserDoesNotExistsException(email);
         }
 
-        UserEntity userEntity = this.crudUserRepository.findByEmail(email).orElse(null);
+        UserEntity userEntity = this.crudUserRepository.findFirstByEmail(email);
 
         this.userMapper.updateEntityFromDto(updateUserDto, userEntity);
 

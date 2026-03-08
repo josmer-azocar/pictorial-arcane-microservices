@@ -13,7 +13,7 @@ public interface PhotographyMapper {
     @Mapping(source = "artWorkRequest.status", target = "status")
     @Mapping(source = "artWorkRequest.price", target = "price")
     @Mapping(source = "artWorkRequest.idArtist", target = "artist.idArtist")
-    @Mapping(source = "artWorkRequest.idGender", target = "gender.idGender")
+    @Mapping(source = "artWorkRequest.idGenre", target = "genre.idGenre")
     @Mapping(source = "photographyRequest.printType", target = "printType")
     @Mapping(source = "photographyRequest.resolution", target = "resolution")
     @Mapping(source = "photographyRequest.color", target = "color")
@@ -24,7 +24,7 @@ public interface PhotographyMapper {
     @Mapping(source = "idArtWork", target = "idArtWork")
     @Mapping(source = "price", target = "price")
     @Mapping(source = "artist.idArtist", target = "idArtist")
-    @Mapping(source = "gender.idGender", target = "idGender")
+    @Mapping(source = "genre.idGenre", target = "idGenre")
     ArtWorkResponseDto toArtWorkResponseDto(PhotographyEntity entity);
 
     PhotographyResponseDto toPhotographyResponseDto(PhotographyEntity entity);

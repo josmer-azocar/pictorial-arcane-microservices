@@ -65,4 +65,7 @@ public class SaleEntity extends AuditableEntity {
 
     @Column(name = "sale_status")
     private String saleStatus;
+
+    @OneToOne(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PaymentEntity payment;
 }

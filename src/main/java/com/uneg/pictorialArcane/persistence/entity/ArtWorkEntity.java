@@ -38,9 +38,9 @@ public class ArtWorkEntity extends AuditableEntity {
     @JoinColumn(name = "id_artist", referencedColumnName = "id_artist")
     private ArtistEntity artist; //trae la informacion del artista solo de lectura
 
-    @ManyToOne(targetEntity = GenderEntity.class)
-    @JoinColumn(name = "id_gender", referencedColumnName = "id_gender")
-    private GenderEntity gender;
+    @ManyToOne(targetEntity = GenreEntity.class)
+    @JoinColumn(name = "id_genre", referencedColumnName = "id_genre")
+    private GenreEntity genre;
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
@@ -49,12 +49,12 @@ public class ArtWorkEntity extends AuditableEntity {
     private List<SaleEntity> sales;
 
 
-    public GenderEntity getGender() {
-        return gender;
+    public GenreEntity getGenre() {
+        return genre;
     }
 
-    public void setGender(GenderEntity gender) {
-        this.gender = gender;
+    public void setGenre(GenreEntity genre) {
+        this.genre = genre;
     }
 
     public ArtistEntity getArtist() {

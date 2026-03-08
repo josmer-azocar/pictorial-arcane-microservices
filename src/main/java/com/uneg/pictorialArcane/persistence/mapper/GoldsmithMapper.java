@@ -13,7 +13,7 @@ public interface GoldsmithMapper {
     @Mapping(source = "artWorkRequest.status", target = "status")
     @Mapping(source = "artWorkRequest.price", target = "price")
     @Mapping(source = "artWorkRequest.idArtist", target = "artist.idArtist")
-    @Mapping(source = "artWorkRequest.idGender", target = "gender.idGender")
+    @Mapping(source = "artWorkRequest.idGenre", target = "genre.idGenre")
     @Mapping(source = "goldsmithRequest.material", target = "material")
     @Mapping(source = "goldsmithRequest.preciousStones", target = "preciousStones")
     @Mapping(source = "goldsmithRequest.weight", target = "weight")
@@ -22,7 +22,7 @@ public interface GoldsmithMapper {
     @Mapping(source ="idArtWork", target ="idArtWork")
     @Mapping(source = "price", target = "price")
     @Mapping(source = "artist.idArtist", target = "idArtist")
-    @Mapping(source = "gender.idGender", target = "idGender")
+    @Mapping(source = "genre.idGenre", target = "idGenre")
     ArtWorkResponseDto toArtWorkResponseDto(GoldsmithEntity entity);
 
     GoldsmithResponseDto toGoldsmithResponseDto(GoldsmithEntity entity);

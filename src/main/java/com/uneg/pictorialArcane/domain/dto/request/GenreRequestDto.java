@@ -3,7 +3,7 @@ package com.uneg.pictorialArcane.domain.dto.request;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record GenderRequestDto(
+public record GenreRequestDto(
         @NotNull(message = "name cant be empty")
         @Size(max = 15, message = "name must be under 15 characters")
         String name,

@@ -4,10 +4,12 @@ import com.uneg.pictorialArcane.domain.dto.request.UserRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.UserResponseDto;
 import com.uneg.pictorialArcane.domain.dto.update.UpdateUserDto;
 import com.uneg.pictorialArcane.persistence.entity.UserEntity;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ public interface UserMapper {
     @Mapping(source ="role", target = "role", qualifiedByName = "roleToString")
     UserEntity toEntity(UserRequestDto requestDto);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source ="gender", target = "gender", qualifiedByName = "genderToString")
     void updateEntityFromDto (UpdateUserDto updateUserDto, @MappingTarget UserEntity userEntity);
 }
-

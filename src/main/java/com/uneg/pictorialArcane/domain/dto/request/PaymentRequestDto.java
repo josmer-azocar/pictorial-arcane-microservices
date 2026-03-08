@@ -7,9 +7,6 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 
 public record PaymentRequestDto(
-        @NotNull(message = "El ID de la venta es obligatorio")
-        Long saleId,
-
         @NotNull(message = "El monto es obligatorio")
         @Positive(message = "El monto debe ser mayor a cero")
         Double amount,
@@ -18,6 +15,9 @@ public record PaymentRequestDto(
         LocalDate paymentDate,
 
         @NotBlank(message = "El nombre del banco es obligatorio")
-        String bankName
+        String bankName,
+
+        @NotBlank
+        String reference
 ) {
 }

@@ -172,7 +172,7 @@ public class ArtWorkController {
             }
     )
     public ResponseEntity<Page<ArtWork2ResponseDto>> searchArtWorks(
-            @Parameter(description = "Gender ID / ID del género") @RequestParam(required = false) Long idGender,
+            @Parameter(description = "Genre ID / ID del género") @RequestParam(required = false) Long idGenre,
             @Parameter(description = "Artist ID / ID del artista") @RequestParam(required = false) Long idArtist,
             @Parameter(description = "Title (partial match) / Título (coincidencia parcial)") @RequestParam(required = false, defaultValue = "") String title,
             @Parameter(description = "Minimum price / Precio mínimo") @RequestParam(required = false) Double min,
@@ -182,7 +182,7 @@ public class ArtWorkController {
             @Parameter(description = "Sort parameter / Parametro de ordenamiento") @RequestParam(defaultValue = "price", required = false) String sortBy ,
             @Parameter(description = "(ASC/DESC) / Orden de los resultados") @RequestParam(defaultValue = "ASC", required = false) Sort.Direction direction
             ) {
-        Page<ArtWork2ResponseDto> pageResults = artWorkService.filterArtWorks(idGender, idArtist, title, min, max, page, size, sortBy,direction);
+        Page<ArtWork2ResponseDto> pageResults = artWorkService.filterArtWorks(idGenre, idArtist, title, min, max, page, size, sortBy,direction);
         return ResponseEntity.ok(pageResults);
     }
 
@@ -276,13 +276,13 @@ public class ArtWorkController {
         // 1. Obtener la entidad de obra para conocer su género
         ArtWorkEntity artWorkEntity = this.artWorkService.getArtWorkEntityById(id);
 
-        String genderName = artWorkEntity.getGender().getName();
-        if (genderName == null) {
+        String genreName = artWorkEntity.getGenre().getName();
+        if (genreName == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La obra no tiene un género asociado");
         }
 
         // 2. Determinar el subtipo según el nombre del género
-        String normalized = genderName.trim().toUpperCase();
+        String normalized = genreName.trim().toUpperCase();
 
         switch (normalized) {
             case "CERAMIC", "CERÁMICA", "CERAMICA" -> {
@@ -308,7 +308,7 @@ public class ArtWorkController {
             default -> {
                 // Género definido pero aún no soportado por un subtipo específico
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("No existe un subtipo manejado para el género: " + genderName);
+                        .body("No existe un subtipo manejado para el género: " + genreName);
             }
         }
     }

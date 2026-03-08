@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payments")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,8 +20,7 @@ import java.time.LocalDate;
 public class PaymentEntity extends AuditableEntity {
 
     @Id
-    @Column(name = "id_sale")
-    private Long id;
+    private Long idSale;
 
     @OneToOne
     @MapsId
@@ -35,5 +34,8 @@ public class PaymentEntity extends AuditableEntity {
     private LocalDate paymentDate;
 
     @Column(name = "bank_name")
-    private String Bank;
+    private String bankName;
+
+    @Column(name = "reference")
+    private String reference;
 }
