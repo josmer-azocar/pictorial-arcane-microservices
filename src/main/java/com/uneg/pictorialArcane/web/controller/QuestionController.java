@@ -54,7 +54,7 @@ public class QuestionController {
                     @ApiResponse(responseCode = "404", description = "Question not found / Pregunta no encontrada")
             }
     )
-    public ResponseEntity<Void> updateQuestion(@Parameter(description = "New answer / Nueva respuesta", required = true) @Valid @RequestBody @NotBlank String answer,
+    public ResponseEntity<Void> updateQuestion(@Parameter(description = "New answer / Nueva respuesta", required = true) @RequestBody @NotBlank String answer,
                                                @Parameter(description = "ID of the question to update / ID de la pregunta a actualizar", required = true) @RequestParam Long questionId,
                                                Authentication authentication){
         String email = authentication.getName();
