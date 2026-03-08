@@ -276,13 +276,13 @@ public class ArtWorkController {
         // 1. Obtener la entidad de obra para conocer su género
         ArtWorkEntity artWorkEntity = this.artWorkService.getArtWorkEntityById(id);
 
-        String genderName = artWorkEntity.getGenre().getName();
-        if (genderName == null) {
+        String genreName = artWorkEntity.getGenre().getName();
+        if (genreName == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La obra no tiene un género asociado");
         }
 
         // 2. Determinar el subtipo según el nombre del género
-        String normalized = genderName.trim().toUpperCase();
+        String normalized = genreName.trim().toUpperCase();
 
         switch (normalized) {
             case "CERAMIC", "CERÁMICA", "CERAMICA" -> {
@@ -308,7 +308,7 @@ public class ArtWorkController {
             default -> {
                 // Género definido pero aún no soportado por un subtipo específico
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("No existe un subtipo manejado para el género: " + genderName);
+                        .body("No existe un subtipo manejado para el género: " + genreName);
             }
         }
     }
