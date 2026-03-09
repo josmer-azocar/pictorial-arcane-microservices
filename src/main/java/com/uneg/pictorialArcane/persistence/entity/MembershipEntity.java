@@ -36,7 +36,7 @@ public class MembershipEntity extends AuditableEntity {
     @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 20)
     private String status;
 
     public Long getIdMembership() {

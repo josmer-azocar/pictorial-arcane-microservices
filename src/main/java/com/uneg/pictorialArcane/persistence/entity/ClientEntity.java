@@ -28,18 +28,18 @@ public class ClientEntity {
     @Column(name = "postal_code")
     private Integer postalCode;
 
-    @OneToOne
+    @OneToOne(optional = false)
     @MapsId
-    @JoinColumn(name = "dni")
+    @JoinColumn(name = "dni", nullable = false)
     private UserEntity user;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ClientAnswerEntity> answers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client")
     private List<SaleEntity> sales;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client")
     private List<MembershipEntity> memberships;
 
     public Long getDniUser() {

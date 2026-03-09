@@ -31,15 +31,15 @@ public class ArtWorkEntity extends AuditableEntity {
     @Column(name = "status", nullable = false, length = 15)
     private String status;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private double price;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ArtistEntity.class)
-    @JoinColumn(name = "id_artist", referencedColumnName = "id_artist")
-    private ArtistEntity artist; //trae la informacion del artista solo de lectura
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = ArtistEntity.class)
+    @JoinColumn(name = "id_artist", referencedColumnName = "id_artist", nullable = false)
+    private ArtistEntity artist;
 
-    @ManyToOne(targetEntity = GenreEntity.class)
-    @JoinColumn(name = "id_genre", referencedColumnName = "id_genre")
+    @ManyToOne(optional = false, targetEntity = GenreEntity.class)
+    @JoinColumn(name = "id_genre", referencedColumnName = "id_genre", nullable = false)
     private GenreEntity genre;
 
     @Column(name = "image_url", length = 500)

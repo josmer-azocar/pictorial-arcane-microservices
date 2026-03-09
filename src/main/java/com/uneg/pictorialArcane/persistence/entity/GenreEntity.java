@@ -31,7 +31,7 @@ public class GenreEntity extends AuditableEntity {
     @Column(name = "description", nullable = false, length = 120)
     private String description;
 
-    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "genre", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ArtWorkEntity> artWorkEntities;
 
     @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
