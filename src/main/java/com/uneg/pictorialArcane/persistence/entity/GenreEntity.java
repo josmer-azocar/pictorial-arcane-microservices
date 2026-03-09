@@ -2,13 +2,22 @@ package com.uneg.pictorialArcane.persistence.entity;
 
 import com.uneg.pictorialArcane.persistence.audit.AuditableEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "genre")
 @EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
+@Getter
+@Setter
 public class GenreEntity extends AuditableEntity {
 
     @Id
@@ -24,6 +33,9 @@ public class GenreEntity extends AuditableEntity {
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
     private List<ArtWorkEntity> artWorkEntities;
+
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+    private Set<ArtistEntity> artists = new HashSet<>();
 
     public GenreEntity(Long idGenre, String name, String description, List<ArtWorkEntity> artWorkEntities) {
         this.idGenre = idGenre;

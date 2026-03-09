@@ -28,7 +28,7 @@ public class ClientAnswerEntity extends AuditableEntity {
     @JoinColumn(name = "question_id")
     private QuestionEntity question;
 
-    @Column(name = "answer", length = 20, nullable = false)
+    @Column(name = "answer", length = 280, nullable = false)
     private String answer;
 
 

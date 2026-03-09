@@ -1,8 +1,10 @@
 package com.uneg.pictorialArcane.web.controller;
 
 import com.uneg.pictorialArcane.domain.dto.request.GenreRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.ArtistResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.GenreResponseDto;
 import com.uneg.pictorialArcane.domain.dto.update.UpdateGenreDto;
+import com.uneg.pictorialArcane.domain.service.ArtistService;
 import com.uneg.pictorialArcane.domain.service.GenreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,8 +24,12 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService genreService;
+    private final ArtistService artistService;
 
-    public GenreController(GenreService genreService) { this.genreService = genreService; }
+    public GenreController(GenreService genreService, ArtistService artistService) {
+        this.genreService = genreService;
+        this.artistService = artistService;
+    }
 
     @PreAuthorize("permitAll()")
     @GetMapping("/all")
@@ -100,4 +106,75 @@ public class GenreController {
         this.genreService.deleteGenreById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/assign")
+    @Operation(
+            summary = "Assign Genre to Artist / Asignar género a artista",
+            description = "Assigns a genre to an artist. If the artist already has that genre, throws an exception / Asigna un género a un artista. Si el artista ya posee ese género, lanza una excepción",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Genre assigned successfully / Género asignado exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Artist already has the genre / El artista ya posee el género"),
+                    @ApiResponse(responseCode = "404", description = "Artist or Genre not found / Artista o Género no encontrado")
+            }
+    )
+    public ResponseEntity<Void> assignGenreToArtist(
+            @Parameter(description = "Artist ID / ID del artista") @RequestParam Long idArtist,
+            @Parameter(description = "Genre ID / ID del género") @RequestParam Long idGenre
+    ) {
+        this.artistService.assignGenreToArtist(idArtist, idGenre);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/unassign")
+    @Operation(
+            summary = "Unassign Genre from Artist / Desasignar género a artista",
+            description = "Unassigns a genre from an artist. If the artist does not have that genre, throws an exception / Desasigna un género de un artista. Si el artista no posee ese género, lanza una excepción",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Genre unassigned successfully / Género desasignado exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Artist does not have the genre / El artista no posee el género"),
+                    @ApiResponse(responseCode = "404", description = "Artist or Genre not found / Artista o Género no encontrado")
+            }
+    )
+    public ResponseEntity<Void> unassignGenreFromArtist(
+            @Parameter(description = "Artist ID / ID del artista") @RequestParam Long idArtist,
+            @Parameter(description = "Genre ID / ID del género") @RequestParam Long idGenre
+    ) {
+        this.artistService.unassignGenreFromArtist(idArtist, idGenre);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/getAllByArtist")
+    @Operation(
+            summary = "Get genres by Artist ID / Obtener géneros por ID de artista",
+            description = "Returns the list of genres assigned to an artist / Retorna la lista de géneros asignados a un artista",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Genres retrieved successfully / Géneros obtenidos exitosamente"),
+                    @ApiResponse(responseCode = "404", description = "Artist not found / Artista no encontrado")
+            }
+    )
+    public ResponseEntity<List<GenreResponseDto>> getGenresByArtistId(
+            @Parameter(description = "Artist ID / ID del artista") @RequestParam Long idArtist
+    ) {
+        return ResponseEntity.ok(this.artistService.getGenresByArtistId(idArtist));
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/getAllArtistsByGenre")
+    @Operation(
+            summary = "Get artists by Genre ID / Obtener artistas por ID de género",
+            description = "Returns the list of artists assigned to a genre / Retorna la lista de artistas asignados a un género",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Artists retrieved successfully / Artistas obtenidos exitosamente"),
+                    @ApiResponse(responseCode = "404", description = "Genre not found / Género no encontrado")
+            }
+    )
+    public ResponseEntity<List<ArtistResponseDto>> getArtistsByGenreId(
+            @Parameter(description = "Genre ID / ID del género") @RequestParam Long idGenre
+    ) {
+        return ResponseEntity.ok(this.artistService.getArtistsByGenreId(idGenre));
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.uneg.pictorialArcane.web.controller;
 
+import com.uneg.pictorialArcane.domain.dto.response.UserProfileResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.UserResponseDto;
 import com.uneg.pictorialArcane.domain.dto.update.UpdateUserDto;
 import com.uneg.pictorialArcane.domain.service.UserService;
@@ -11,10 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -25,6 +23,22 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(
+            summary = "Get authenticated user profile / Obtener perfil del usuario autenticado",
+            description = "Returns the authenticated user's profile. If role is ADMIN, returns only user data. If role is CLIENT, returns user and client data. / Retorna el perfil del usuario autenticado. Si el rol es ADMIN, retorna solo datos de usuario. Si el rol es CLIENT, retorna datos de usuario y cliente.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Profile retrieved successfully / Perfil obtenido exitosamente"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "404", description = "User not found / Usuario no encontrado")
+            }
+    )
+    public ResponseEntity<UserProfileResponseDto> getAuthenticatedProfile(Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(userService.getAuthenticatedProfile(email));
     }
 
     @PutMapping("/update")
@@ -46,4 +60,6 @@ public class UserController {
         String email = authentication.getName();
         return ResponseEntity.ok(userService.updateUser(email, updateUserDto));
     }
+
+
 }

@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.domain.service;
 
 import com.uneg.pictorialArcane.domain.dto.request.ArtistRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtistResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.GenreResponseDto;
 import com.uneg.pictorialArcane.domain.dto.update.UpdateArtistDto;
 import com.uneg.pictorialArcane.domain.exception.CommissionRateIncorrectException;
 import com.uneg.pictorialArcane.persistence.impl_repository.ArtistRepository;
@@ -48,5 +49,20 @@ public class ArtistService {
         }
         return this.artistRepository.updateCommission(id, newRate);
     }
-}
 
+    public ArtistResponseDto assignGenreToArtist(Long idArtist, Long idGenre) {
+        return this.artistRepository.assignGenreToArtist(idArtist, idGenre);
+    }
+
+    public ArtistResponseDto unassignGenreFromArtist(Long idArtist, Long idGenre) {
+        return this.artistRepository.unassignGenreFromArtist(idArtist, idGenre);
+    }
+
+    public List<GenreResponseDto> getGenresByArtistId(Long idArtist) {
+        return this.artistRepository.getGenresByArtistId(idArtist);
+    }
+
+    public List<ArtistResponseDto> getArtistsByGenreId(Long idGenre) {
+        return this.artistRepository.getArtistsByGenreId(idGenre);
+    }
+}

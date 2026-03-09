@@ -30,7 +30,7 @@ public class MembershipController {
     @ApiResponse(responseCode = "200", description = "Active membership found / Membresía activa encontrada")
     @ApiResponse(responseCode = "404", description = "No active membership found / No se encontró membresía activa")
     @GetMapping("/active")
-    @PreAuthorize("hasAuthority('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<MembershipResponseDto> checkActiveMembership(Authentication authentication) {
         String email = authentication.getName();
         return ResponseEntity.ok(membershipService.getActiveMembership(email));
@@ -40,7 +40,7 @@ public class MembershipController {
     @ApiResponse(responseCode = "200", description = "Membership created/renewed successfully / Membresía creada/renovada exitosamente")
     @ApiResponse(responseCode = "400", description = "Active membership already exists / Ya existe una membresía activa")
     @PostMapping("/renew")
-    @PreAuthorize("hasAuthority('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<MembershipResponseDto> renewMembership(Authentication authentication) {
         String email = authentication.getName();
         return ResponseEntity.ok(membershipService.renewMembership(email));

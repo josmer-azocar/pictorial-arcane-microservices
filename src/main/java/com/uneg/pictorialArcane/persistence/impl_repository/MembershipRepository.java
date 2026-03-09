@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -41,5 +42,9 @@ public class MembershipRepository {
 
     public Optional<MembershipEntity> findById(Long id) {
         return crudMembershipRepository.findById(id);
+    }
+
+    public int expireMemberships(LocalDate today) {
+        return crudMembershipRepository.expireMemberships(today, MembershipStatus.ACTIVE.name(), MembershipStatus.EXPIRED.name());
     }
 }
