@@ -159,6 +159,8 @@ public class SaleRepository {
                 .map(sale -> new BillingSaleItemResponseDto(
                         sale.getIdSale(),
                         sale.getDate(),
+                        sale.getArtWork().getIdArtWork(),
+                        sale.getArtWork().getName(),
                         sale.getPrice(),
                         sale.getProfitPercentage(),
                         sale.getProfitAmount(),
