@@ -23,17 +23,20 @@ public class SaleService {
     private final CrudClientRepository crudClientRepository;
     private final SaleRepository saleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MembershipService membershipService;
 
     public SaleService(ArtWorkRespository artWorkRespository,
                        CrudUserRepository crudUserRepository,
                        CrudClientRepository crudClientRepository,
                        SaleRepository saleRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       MembershipService membershipService) {
         this.artWorkRespository = artWorkRespository;
         this.crudUserRepository = crudUserRepository;
         this.crudClientRepository = crudClientRepository;
         this.saleRepository = saleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.membershipService = membershipService;
     }
 
     public void reserveArtWork(Long artworkId, String securityCode, String email) {
@@ -47,6 +50,10 @@ public class SaleService {
         if (client == null) {
             throw new UserDoesNotExistsException(email);
         }
+
+        //validación de membresia
+        membershipService.getActiveMembership(email);
+
 
         if (!passwordEncoder.matches(securityCode, client.getSecurityCode())) {
             throw new InvalidSecurityCodeException();

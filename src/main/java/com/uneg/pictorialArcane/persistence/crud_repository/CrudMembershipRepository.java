@@ -3,10 +3,12 @@ package com.uneg.pictorialArcane.persistence.crud_repository;
 import com.uneg.pictorialArcane.persistence.entity.MembershipEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -22,4 +24,11 @@ public interface CrudMembershipRepository extends CrudRepository<MembershipEntit
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE MembershipEntity m SET m.status = :expiredStatus " +
+            "WHERE m.status = :activeStatus AND m.expiryDate <= :today")
+    int expireMemberships(@Param("today") LocalDate today,
+                          @Param("activeStatus") String activeStatus,
+                          @Param("expiredStatus") String expiredStatus);
 }
