@@ -96,4 +96,16 @@ public class RestExceptionHandler {
         Error error = new Error("unknown-error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
+    @ExceptionHandler(ActiveMembershipNotFoundException.class)
+    public ResponseEntity<Error> handleException(ActiveMembershipNotFoundException ex){
+        Error error = new Error("active-membership-not-found", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(ActiveMembershipAlreadyExistsException.class)
+    public ResponseEntity<Error> handleException(ActiveMembershipAlreadyExistsException ex){
+        Error error = new Error("active-membership-already-exists", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
 }

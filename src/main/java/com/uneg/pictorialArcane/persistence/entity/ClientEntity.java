@@ -39,6 +39,9 @@ public class ClientEntity {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<SaleEntity> sales;
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<MembershipEntity> memberships;
+
     public Long getDniUser() {
         return dniUser;
     }
