@@ -24,4 +24,10 @@ public interface CrudSaleRepositoy extends CrudRepository<SaleEntity, Long> {
             @Param("dniUser") Long dniUser,
             Pageable pageable
     );
+
+    @Query("SELECT s FROM SaleEntity s WHERE s.saleStatus = 'APPROVED' AND s.date >= :startDate AND s.date <= :endDate")
+    List<SaleEntity> findApprovedSalesByDateRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

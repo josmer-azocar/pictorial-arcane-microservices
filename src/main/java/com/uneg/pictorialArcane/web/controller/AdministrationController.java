@@ -4,6 +4,7 @@ import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
 import com.uneg.pictorialArcane.domain.azure.AzureBlobService;
 import com.uneg.pictorialArcane.domain.dto.request.PaymentRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.BillingSummaryResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.UserProfileResponseDto;
 import com.uneg.pictorialArcane.domain.service.AdministrationService;
@@ -247,4 +248,25 @@ public class AdministrationController {
     ) {
         return ResponseEntity.ok(this.administrationService.getClientProfileByDni(dni));
     }
+
+    @GetMapping("/billingSummary")
+    @Operation(
+            summary = "Billing summary by period / Resumen de facturación por periodo",
+            description = "Requires ADMIN role. Returns total collected and list of approved sales in the given date range. / Requiere rol ADMIN. Retorna total recaudado y lista de ventas aprobadas en el rango de fechas.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Billing summary retrieved successfully / Resumen obtenido exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid date range / Rango de fechas inválido"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN")
+            }
+    )
+    public ResponseEntity<BillingSummaryResponseDto> getBillingSummaryByPeriod(
+            @Parameter(description = "Start date (YYYY-MM-DD) / Fecha inicial (YYYY-MM-DD)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "End date (YYYY-MM-DD) / Fecha final (YYYY-MM-DD)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        return ResponseEntity.ok(this.administrationService.getBillingSummaryByPeriod(startDate, endDate));
+    }
+
 }

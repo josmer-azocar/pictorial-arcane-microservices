@@ -4,6 +4,8 @@ import com.uneg.pictorialArcane.domain.Enum.ArtWorkStatus;
 import com.uneg.pictorialArcane.domain.Enum.SaleStatus;
 import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
 import com.uneg.pictorialArcane.domain.dto.request.PaymentRequestDto;
+import com.uneg.pictorialArcane.domain.dto.response.BillingSaleItemResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.BillingSummaryResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.PurchaseResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
 import com.uneg.pictorialArcane.domain.exception.ArtWorkNotAvailableException;
@@ -149,5 +151,33 @@ public class SaleRepository {
 
         return saleMapper.toResponseDto(crudSaleRepository.save(saleEntity));
     }
-}
 
+    public BillingSummaryResponseDto getBillingSummary(LocalDate startDate, LocalDate endDate) {
+        List<SaleEntity> sales = this.crudSaleRepository.findApprovedSalesByDateRange(startDate, endDate);
+
+        List<BillingSaleItemResponseDto> items = sales.stream()
+                .map(sale -> new BillingSaleItemResponseDto(
+                        sale.getIdSale(),
+                        sale.getDate(),
+                        sale.getPrice(),
+                        sale.getProfitPercentage(),
+                        sale.getProfitAmount(),
+                        sale.getTotalPaid()
+                ))
+                .toList();
+
+        double totalCollected = sales.stream()
+                .map(SaleEntity::getTotalPaid)
+                .filter(v -> v != null)
+                .mapToDouble(Double::doubleValue)
+                .sum();
+
+        double totalMuseumProfit = sales.stream()
+                .map(SaleEntity::getProfitAmount)
+                .filter(v -> v != null)
+                .mapToDouble(Double::doubleValue)
+                .sum();
+
+        return new BillingSummaryResponseDto(startDate, endDate, totalCollected, totalMuseumProfit, items);
+    }
+}

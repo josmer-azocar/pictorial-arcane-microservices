@@ -120,4 +120,10 @@ public class RestExceptionHandler {
         Error error = new Error("artist-does-not-have-genre", ex.getMessage());
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Error> handleException(IllegalArgumentException ex){
+        Error error = new Error("invalid-argument", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
 }

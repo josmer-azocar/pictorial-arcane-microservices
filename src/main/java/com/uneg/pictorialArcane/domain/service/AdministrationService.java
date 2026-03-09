@@ -3,6 +3,7 @@ package com.uneg.pictorialArcane.domain.service;
 import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
 import com.uneg.pictorialArcane.domain.dto.request.PaymentRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.BillingSummaryResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.UserProfileResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.UserResponseDto;
@@ -74,5 +75,15 @@ public class AdministrationService {
     public UserProfileResponseDto getClientProfileByDni(Long dniUser) {
         UserResponseDto user = this.userEntityRepository.getByIdUser(dniUser);
         return new UserProfileResponseDto(user, this.clientRepository.getClientByDni(dniUser));
+    }
+
+    public BillingSummaryResponseDto getBillingSummaryByPeriod(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("startDate y endDate son requeridos");
+        }
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("startDate no puede ser mayor que endDate");
+        }
+        return this.saleRepository.getBillingSummary(startDate, endDate);
     }
 }
