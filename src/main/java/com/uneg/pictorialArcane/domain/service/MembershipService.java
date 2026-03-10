@@ -16,14 +16,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class MembershipService {
 
+    private static final Double MEMBERSHIP_COST = 10.0;
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "idMembership",
+            "amountPaid",
+            "paymentDate",
+            "expiryDate",
+            "status"
+    );
+
     private final MembershipRepository membershipRepository;
     private final CrudClientRepository crudClientRepository;
-    private static final Double MEMBERSHIP_COST = 10.0;
 
     public MembershipService(MembershipRepository membershipRepository, CrudClientRepository crudClientRepository) {
         this.membershipRepository = membershipRepository;
@@ -61,9 +69,10 @@ public class MembershipService {
     }
 
     public Page<MembershipResponseDto> filterMemberships(LocalDate startDate, LocalDate endDate, String status, int page, int size, String sortBy, Sort.Direction direction) {
+        validateMembershipFilters(startDate, endDate, page, size, sortBy);
 
-        Pageable pageable = PageRequest.of(page, size, direction, sortBy);
-        return membershipRepository.searchMemberships(status, startDate, endDate, pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, normalizeSortBy(sortBy)));
+        return membershipRepository.searchMemberships(normalizeStatus(status), startDate, endDate, pageable);
     }
 
     public MembershipResponseDto cancelMembership(Long id) {
@@ -72,5 +81,36 @@ public class MembershipService {
 
         entity.setStatus(MembershipStatus.CANCELLED.name());
         return membershipRepository.save(entity);
+    }
+
+    private void validateMembershipFilters(LocalDate startDate, LocalDate endDate, int page, int size, String sortBy) {
+        if (page < 0) {
+            throw new IllegalArgumentException("Page number cannot be negative");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Page size must be greater than zero");
+        }
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date cannot be after end date");
+        }
+
+        String normalizedSortBy = normalizeSortBy(sortBy);
+        if (!ALLOWED_SORT_FIELDS.contains(normalizedSortBy)) {
+            throw new IllegalArgumentException("Invalid sort field: " + normalizedSortBy);
+        }
+    }
+
+    private String normalizeStatus(String status) {
+        if (status == null || status.isBlank()) {
+            return null;
+        }
+        return status.trim().toUpperCase();
+    }
+
+    private String normalizeSortBy(String sortBy) {
+        if (sortBy == null || sortBy.isBlank()) {
+            return "paymentDate";
+        }
+        return sortBy.trim();
     }
 }

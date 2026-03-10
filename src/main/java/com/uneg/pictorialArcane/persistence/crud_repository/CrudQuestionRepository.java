@@ -9,4 +9,5 @@ public interface CrudQuestionRepository extends CrudRepository<QuestionEntity, L
 
     QuestionEntity findByIdQuestion(Long idQuestion);
     List<QuestionEntity> findQuestionEntitiesByClientAnswers_Client_User_email(String email);
+
 }

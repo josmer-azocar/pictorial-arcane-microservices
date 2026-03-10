@@ -45,11 +45,20 @@ public class QuestionRepository {
         ClientEntity client = crudClientRepository.findByUser_Email(email);
         QuestionEntity question = crudQuestionRepository.findByIdQuestion(questionId);
 
+    if(crudClientAnswerRepository.findByClient_User_EmailAndQuestion_IdQuestion(email,questionId) == null){
+
         ClientAnswerEntity clientAnswerEntity = new ClientAnswerEntity();
         clientAnswerEntity.setClient(client);
         clientAnswerEntity.setQuestion(question);
         clientAnswerEntity.setAnswer(passwordEncoder.encode(answer.toLowerCase()));
         this.crudClientAnswerRepository.save(clientAnswerEntity);
+
+    }else{
+        ClientAnswerEntity clientAnswerEntity = crudClientAnswerRepository
+                .findByClient_User_EmailAndQuestion_IdQuestion(email,questionId);
+        clientAnswerEntity.setAnswer(passwordEncoder.encode(answer.toLowerCase()));
+        this.crudClientAnswerRepository.save(clientAnswerEntity);
+    }
     }
 
     public List<QuestionResponseDto> getAssignedQuestions(String email) {
