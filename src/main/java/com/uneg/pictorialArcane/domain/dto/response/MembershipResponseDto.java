@@ -9,7 +9,7 @@ public record MembershipResponseDto(
         Long idMembership,
         Long clientId,
         Double amountPaid,
-        LocalDateTime paymentDate,
+        LocalDate paymentDate,
         LocalDate expiryDate,
         MembershipStatus status
 ) {

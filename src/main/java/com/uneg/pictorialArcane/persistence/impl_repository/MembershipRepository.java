@@ -35,7 +35,7 @@ public class MembershipRepository {
         return membershipMapper.toResponseDto(crudMembershipRepository.save(entity));
     }
 
-    public Page<MembershipResponseDto> searchMemberships(String status, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+    public Page<MembershipResponseDto> searchMemberships(String status, LocalDate startDate, LocalDate endDate, Pageable pageable) {
         return crudMembershipRepository.searchMembershipsByFilters(status, startDate, endDate, pageable)
                 .map(membershipMapper::toResponseDto);
     }

@@ -21,8 +21,8 @@ public interface CrudMembershipRepository extends CrudRepository<MembershipEntit
             "(:endDate IS NULL OR m.paymentDate <= :endDate)")
     Page<MembershipEntity> searchMembershipsByFilters(
             @Param("status") String status,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
             Pageable pageable);
 
     @Modifying

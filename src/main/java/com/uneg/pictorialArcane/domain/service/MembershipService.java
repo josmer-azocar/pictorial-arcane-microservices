@@ -53,7 +53,7 @@ public class MembershipService {
         MembershipEntity newMembership = new MembershipEntity();
         newMembership.setClient(client);
         newMembership.setAmountPaid(MEMBERSHIP_COST);
-        newMembership.setPaymentDate(LocalDateTime.now());
+        newMembership.setPaymentDate(LocalDate.now());
         newMembership.setExpiryDate(LocalDate.now().plusYears(1));
         newMembership.setStatus(MembershipStatus.ACTIVE.name());
 
@@ -61,11 +61,9 @@ public class MembershipService {
     }
 
     public Page<MembershipResponseDto> filterMemberships(LocalDate startDate, LocalDate endDate, String status, int page, int size, String sortBy, Sort.Direction direction) {
-        LocalDateTime start = (startDate != null) ? startDate.atStartOfDay() : null;
-        LocalDateTime end = (endDate != null) ? endDate.atTime(23, 59, 59) : LocalDateTime.now();
 
         Pageable pageable = PageRequest.of(page, size, direction, sortBy);
-        return membershipRepository.searchMemberships(status, start, end, pageable);
+        return membershipRepository.searchMemberships(status, startDate, endDate, pageable);
     }
 
     public MembershipResponseDto cancelMembership(Long id) {
