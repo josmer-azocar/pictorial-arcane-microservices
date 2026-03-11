@@ -50,13 +50,14 @@ public class QuestionRepository {
         ClientAnswerEntity clientAnswerEntity = new ClientAnswerEntity();
         clientAnswerEntity.setClient(client);
         clientAnswerEntity.setQuestion(question);
-        clientAnswerEntity.setAnswer(passwordEncoder.encode(answer.toLowerCase()));
+        clientAnswerEntity.setAnswer(answer.toLowerCase());
+
         this.crudClientAnswerRepository.save(clientAnswerEntity);
 
     }else{
         ClientAnswerEntity clientAnswerEntity = crudClientAnswerRepository
                 .findByClient_User_EmailAndQuestion_IdQuestion(email,questionId);
-        clientAnswerEntity.setAnswer(passwordEncoder.encode(answer.toLowerCase()));
+        clientAnswerEntity.setAnswer(answer.toLowerCase());
         this.crudClientAnswerRepository.save(clientAnswerEntity);
     }
     }
