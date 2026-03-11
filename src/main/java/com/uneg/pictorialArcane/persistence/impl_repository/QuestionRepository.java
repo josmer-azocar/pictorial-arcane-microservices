@@ -57,7 +57,7 @@ public class QuestionRepository {
     }else{
         ClientAnswerEntity clientAnswerEntity = crudClientAnswerRepository
                 .findByClient_User_EmailAndQuestion_IdQuestion(email,questionId);
-        clientAnswerEntity.setAnswer(answer.toLowerCase());
+        clientAnswerEntity.setAnswer(passwordEncoder.encode(answer.toLowerCase()));
         this.crudClientAnswerRepository.save(clientAnswerEntity);
     }
     }
