@@ -54,11 +54,10 @@ public class QuestionController {
                     @ApiResponse(responseCode = "404", description = "Question not found / Pregunta no encontrada")
             }
     )
-    public ResponseEntity<Void> updateQuestion(@Parameter(description = "New answer / Nueva respuesta", required = true) @RequestBody @NotBlank String answer,
-                                               @Parameter(description = "ID of the question to update / ID de la pregunta a actualizar", required = true) @RequestParam Long questionId,
+    public ResponseEntity<Void> updateQuestion(@Parameter(description = "Id de la pregunta y respuesta del cliente", required = true) @RequestBody @Valid RequestClientAnswerDto requestClientAnswerDto,
                                                Authentication authentication){
         String email = authentication.getName();
-        questionService.updateQuestion(answer,questionId,email);
+        questionService.updateQuestion(requestClientAnswerDto.Answer(),requestClientAnswerDto.idQuestion(),email);
         return ResponseEntity.ok().build();
     }
 

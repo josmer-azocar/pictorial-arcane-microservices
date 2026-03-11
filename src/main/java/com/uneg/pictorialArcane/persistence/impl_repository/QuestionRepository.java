@@ -50,7 +50,7 @@ public class QuestionRepository {
         ClientAnswerEntity clientAnswerEntity = new ClientAnswerEntity();
         clientAnswerEntity.setClient(client);
         clientAnswerEntity.setQuestion(question);
-        clientAnswerEntity.setAnswer(answer.toLowerCase());
+        clientAnswerEntity.setAnswer(passwordEncoder.encode(answer.toLowerCase()));
 
         this.crudClientAnswerRepository.save(clientAnswerEntity);
 
