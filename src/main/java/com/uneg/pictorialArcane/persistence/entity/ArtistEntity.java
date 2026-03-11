@@ -43,7 +43,7 @@ public class ArtistEntity extends AuditableEntity {
     @Column(name = "birthdate")
     private LocalDate birthdate;
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "artist", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ArtWorkEntity> artWorks;
 
     @ManyToMany(fetch = FetchType.LAZY)

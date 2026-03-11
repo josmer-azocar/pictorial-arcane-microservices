@@ -1,9 +1,11 @@
 package com.uneg.pictorialArcane.persistence.entity;
 
+import com.uneg.pictorialArcane.persistence.audit.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -14,7 +16,8 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "clients")
-public class ClientEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class ClientEntity extends AuditableEntity {
 
     @Id
     private Long dniUser;
@@ -28,18 +31,18 @@ public class ClientEntity {
     @Column(name = "postal_code")
     private Integer postalCode;
 
-    @OneToOne
+    @OneToOne(optional = false)
     @MapsId
-    @JoinColumn(name = "dni")
+    @JoinColumn(name = "dni", nullable = false)
     private UserEntity user;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ClientAnswerEntity> answers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client")
     private List<SaleEntity> sales;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client")
     private List<MembershipEntity> memberships;
 
     public Long getDniUser() {

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -51,8 +52,8 @@ public class MembershipController {
     @GetMapping("/search")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<MembershipResponseDto>> searchMemberships(
-            @Parameter(description = "Start date (yyyy-MM-dd) / Fecha de inicio") @RequestParam(required = false) LocalDate startDate,
-            @Parameter(description = "End date (yyyy-MM-dd) / Fecha de fin") @RequestParam(required = false) LocalDate endDate,
+            @Parameter(description = "Start date (yyyy-MM-dd) / Fecha de inicio") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "End date (yyyy-MM-dd) / Fecha de fin") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @Parameter(description = "Status / Estado") @RequestParam(required = false) String status,
             @Parameter(description = "Page number / Número de página") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Quantity results by page / Cantidad de resultados por página") @RequestParam(defaultValue = "10") int size,

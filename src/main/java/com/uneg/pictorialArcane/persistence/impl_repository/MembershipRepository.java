@@ -8,10 +8,10 @@ import com.uneg.pictorialArcane.persistence.mapper.MembershipMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -35,8 +35,20 @@ public class MembershipRepository {
         return membershipMapper.toResponseDto(crudMembershipRepository.save(entity));
     }
 
-    public Page<MembershipResponseDto> searchMemberships(String status, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
-        return crudMembershipRepository.searchMembershipsByFilters(status, startDate, endDate, pageable)
+    public Page<MembershipResponseDto> searchMemberships(String status, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        Specification<MembershipEntity> specification = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+
+        if (status != null) {
+            specification = specification.and(hasStatus(status));
+        }
+        if (startDate != null) {
+            specification = specification.and(hasPaymentDateOnOrAfter(startDate));
+        }
+        if (endDate != null) {
+            specification = specification.and(hasPaymentDateOnOrBefore(endDate));
+        }
+
+        return crudMembershipRepository.findAll(specification, pageable)
                 .map(membershipMapper::toResponseDto);
     }
 
@@ -46,5 +58,17 @@ public class MembershipRepository {
 
     public int expireMemberships(LocalDate today) {
         return crudMembershipRepository.expireMemberships(today, MembershipStatus.ACTIVE.name(), MembershipStatus.EXPIRED.name());
+    }
+
+    private Specification<MembershipEntity> hasStatus(String status) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("status"), status);
+    }
+
+    private Specification<MembershipEntity> hasPaymentDateOnOrAfter(LocalDate startDate) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("paymentDate"), startDate);
+    }
+
+    private Specification<MembershipEntity> hasPaymentDateOnOrBefore(LocalDate endDate) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("paymentDate"), endDate);
     }
 }

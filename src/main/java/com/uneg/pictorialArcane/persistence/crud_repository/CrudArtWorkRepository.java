@@ -13,7 +13,10 @@ import java.time.LocalDate;
 
 public interface CrudArtWorkRepository extends CrudRepository<ArtWorkEntity, Long> {
 
-    ArtWorkEntity findByName(String name);
+    @Query("SELECT a FROM ArtWorkEntity a WHERE a.name = :name")
+    ArtWorkEntity findByName(
+            @Param("name") String name);
+
     ArtWorkEntity findFirstByIdArtWork(Long id);
     ArtWorkEntity deleteByIdArtWork(Long id);
 

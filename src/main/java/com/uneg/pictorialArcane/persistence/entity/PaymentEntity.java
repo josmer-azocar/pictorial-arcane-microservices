@@ -22,20 +22,20 @@ public class PaymentEntity extends AuditableEntity {
     @Id
     private Long idSale;
 
-    @OneToOne
+    @OneToOne(optional = false)
     @MapsId
-    @JoinColumn(name = "id_sale")
+    @JoinColumn(name = "id_sale", nullable = false)
     private SaleEntity sale;
 
-    @Column(name = "amount")
+    @Column(name = "amount", nullable = false)
     private Double amount;
 
-    @Column(name = "payment_date")
+    @Column(name = "payment_date", nullable = false)
     private LocalDate paymentDate;
 
-    @Column(name = "bank_name")
+    @Column(name = "bank_name", length = 60, nullable = false)
     private String bankName;
 
-    @Column(name = "reference")
+    @Column(name = "reference", length = 60)
     private String reference;
 }
