@@ -108,4 +108,22 @@ public class RestExceptionHandler {
         Error error = new Error("active-membership-already-exists", ex.getMessage());
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(ArtistAlreadyHasGenreException.class)
+    public ResponseEntity<Error> handleException(ArtistAlreadyHasGenreException ex){
+        Error error = new Error("artist-already-has-genre", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(ArtistDoesNotHaveGenreException.class)
+    public ResponseEntity<Error> handleException(ArtistDoesNotHaveGenreException ex){
+        Error error = new Error("artist-does-not-have-genre", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Error> handleException(IllegalArgumentException ex){
+        Error error = new Error("invalid-argument", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
 }

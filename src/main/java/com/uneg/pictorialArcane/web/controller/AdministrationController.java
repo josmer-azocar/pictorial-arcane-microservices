@@ -4,7 +4,9 @@ import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
 import com.uneg.pictorialArcane.domain.azure.AzureBlobService;
 import com.uneg.pictorialArcane.domain.dto.request.PaymentRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.BillingSummaryResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.UserProfileResponseDto;
 import com.uneg.pictorialArcane.domain.service.AdministrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -228,4 +230,43 @@ public class AdministrationController {
             Page<ArtWork2ResponseDto> result = administrationService.getSoldArtworksByDate(startDate, endDate, page, size);
             return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/findClient/{dni}")
+    @Operation(
+            summary = "Get client profile by DNI / Obtener perfil de cliente por DNI",
+            description = "Requires ADMIN role. Returns user + client information for the specific client identified by DNI. / Requiere rol ADMIN. Retorna información de usuario + cliente del cliente identificado por su DNI.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Client profile retrieved successfully / Perfil del cliente obtenido exitosamente"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN"),
+                    @ApiResponse(responseCode = "404", description = "User / Client not found / Usuario / Cliente no encontrado")
+            }
+    )
+    public ResponseEntity<UserProfileResponseDto> getClientProfileByDni(
+            @Parameter(description = "Client DNI / DNI del cliente")
+            @PathVariable("dni") Long dni
+    ) {
+        return ResponseEntity.ok(this.administrationService.getClientProfileByDni(dni));
+    }
+
+    @GetMapping("/billingSummary")
+    @Operation(
+            summary = "Billing summary by period / Resumen de facturación por periodo",
+            description = "Requires ADMIN role. Returns total collected and list of approved sales in the given date range. / Requiere rol ADMIN. Retorna total recaudado y lista de ventas aprobadas en el rango de fechas.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Billing summary retrieved successfully / Resumen obtenido exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Invalid date range / Rango de fechas inválido"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden, ADMIN role required / Prohibido, se requiere rol ADMIN")
+            }
+    )
+    public ResponseEntity<BillingSummaryResponseDto> getBillingSummaryByPeriod(
+            @Parameter(description = "Start date (YYYY-MM-DD) / Fecha inicial (YYYY-MM-DD)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "End date (YYYY-MM-DD) / Fecha final (YYYY-MM-DD)")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        return ResponseEntity.ok(this.administrationService.getBillingSummaryByPeriod(startDate, endDate));
+    }
+
 }

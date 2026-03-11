@@ -3,11 +3,14 @@ package com.uneg.pictorialArcane.domain.service;
 import com.uneg.pictorialArcane.domain.Enum.ShippingStatus;
 import com.uneg.pictorialArcane.domain.dto.request.PaymentRequestDto;
 import com.uneg.pictorialArcane.domain.dto.response.ArtWork2ResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.BillingSummaryResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.SaleResponseDto;
+import com.uneg.pictorialArcane.domain.dto.response.UserProfileResponseDto;
 import com.uneg.pictorialArcane.domain.dto.response.UserResponseDto;
 import com.uneg.pictorialArcane.domain.exception.SaleDoesNotExistsException;
 import com.uneg.pictorialArcane.domain.exception.UserDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.impl_repository.ArtWorkRespository;
+import com.uneg.pictorialArcane.persistence.impl_repository.ClientRepository;
 import com.uneg.pictorialArcane.persistence.impl_repository.SaleRepository;
 import com.uneg.pictorialArcane.persistence.impl_repository.UserEntityRepository;
 import org.apache.coyote.BadRequestException;
@@ -25,11 +28,13 @@ public class AdministrationService {
     private final SaleRepository saleRepository;
     private final UserEntityRepository userEntityRepository;
     private final ArtWorkRespository artWorkRespository;
+    private final ClientRepository clientRepository;
 
-    public AdministrationService(SaleRepository saleRepository, UserEntityRepository userEntityRepository, ArtWorkRespository artWorkRespository) {
+    public AdministrationService(SaleRepository saleRepository, UserEntityRepository userEntityRepository, ArtWorkRespository artWorkRespository, ClientRepository clientRepository) {
         this.saleRepository = saleRepository;
         this.userEntityRepository = userEntityRepository;
         this.artWorkRespository = artWorkRespository;
+        this.clientRepository = clientRepository;
     }
 
     public List<SaleResponseDto> getAllPendingSales() {
@@ -65,5 +70,20 @@ public class AdministrationService {
         if (shippingStatus != ShippingStatus.CANCELED && shippingStatus != ShippingStatus.SHIPPED) throw new RuntimeException("The new shipping status must be SHIPPED or CANCELED to be updated");
 
         return saleRepository.updateShippingStatus(saleId, shippingStatus);
+    }
+
+    public UserProfileResponseDto getClientProfileByDni(Long dniUser) {
+        UserResponseDto user = this.userEntityRepository.getByIdUser(dniUser);
+        return new UserProfileResponseDto(user, this.clientRepository.getClientByDni(dniUser));
+    }
+
+    public BillingSummaryResponseDto getBillingSummaryByPeriod(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("startDate y endDate son requeridos");
+        }
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("startDate no puede ser mayor que endDate");
+        }
+        return this.saleRepository.getBillingSummary(startDate, endDate);
     }
 }

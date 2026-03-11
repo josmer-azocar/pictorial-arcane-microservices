@@ -7,7 +7,9 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "artist")
@@ -43,6 +45,14 @@ public class ArtistEntity extends AuditableEntity {
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<ArtWorkEntity> artWorks;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "artist_genre",
+            joinColumns = @JoinColumn(name = "id_artist", referencedColumnName = "id_artist"),
+            inverseJoinColumns = @JoinColumn(name = "id_genre", referencedColumnName = "id_genre")
+    )
+    private Set<GenreEntity> genres = new HashSet<>();
 
 
     public Double getCommissionRate() {

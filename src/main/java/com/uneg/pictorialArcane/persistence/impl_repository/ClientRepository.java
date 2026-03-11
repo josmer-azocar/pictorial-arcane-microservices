@@ -2,6 +2,7 @@ package com.uneg.pictorialArcane.persistence.impl_repository;
 
 import com.uneg.pictorialArcane.domain.dto.response.ClientResponseDto;
 import com.uneg.pictorialArcane.domain.dto.update.UpdateClientDto;
+import com.uneg.pictorialArcane.domain.exception.ClientDoesNotExistsException;
 import com.uneg.pictorialArcane.domain.exception.UserDoesNotExistsException;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudClientRepository;
 import com.uneg.pictorialArcane.persistence.crud_repository.CrudUserRepository;
@@ -38,6 +39,14 @@ public class ClientRepository {
 
    public ClientResponseDto getClientByEmail(String email){
         return this.clientMappper.toResponseDto(this.crudClientRepository.findByUser_Email(email));
+    }
+
+    public ClientResponseDto getClientByDni(Long dniUser) {
+        ClientEntity clientEntity = this.crudClientRepository.findFirstByDniUser(dniUser);
+        if (clientEntity == null) {
+            throw new ClientDoesNotExistsException(dniUser);
+        }
+        return this.clientMappper.toResponseDto(clientEntity);
     }
 
     public void assignClientCode(ClientResponseDto clientDto, String code){
