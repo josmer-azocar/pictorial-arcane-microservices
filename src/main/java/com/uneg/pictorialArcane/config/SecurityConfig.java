@@ -78,7 +78,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173")); // frontend Vite
+        config.setAllowedOrigins(List.of("http://localhost:5173","https://ambitious-ground-007308f1e.4.azurestaticapps.net")); // frontend Vite
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Origin", "Accept"));
         config.setExposedHeaders(List.of("Authorization"));
