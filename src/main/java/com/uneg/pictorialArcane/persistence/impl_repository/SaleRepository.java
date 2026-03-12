@@ -79,6 +79,13 @@ public class SaleRepository {
 
     }
 
+    public List<SaleResponseDto> getAllPendingSales(){
+        return this.saleMapper.toResponseDto(
+                this.crudSaleRepository.findAllBySaleStatusContainsAndCreatedAtBeforeAndArtWork_Status(
+                        SaleStatus.PENDING.name(), LocalDateTime.now(), ArtWorkStatus.RESERVED.name()));
+
+    }
+
     public void rejectPendingSale(Long saleId, Long adminId) {
         //update Sale DATA
         SaleEntity sale = this.crudSaleRepository.findByIdSale(saleId);
