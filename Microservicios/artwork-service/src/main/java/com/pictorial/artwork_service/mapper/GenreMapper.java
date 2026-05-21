@@ -1,0 +1,19 @@
+package com.pictorial.artwork_service.mapper;
+
+import com.pictorial.artwork_service.document.GenreDocument;
+import com.pictorial.artwork_service.dto.request.GenreRequestDto;
+import com.pictorial.artwork_service.dto.request.UpdateGenreDto;
+import com.pictorial.artwork_service.dto.response.GenreResponseDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface GenreMapper {
+
+    GenreResponseDto toResponseDto(GenreDocument document);
+
+    GenreDocument toDocument(GenreRequestDto dto);
+
+    void updateDocumentFromDto(UpdateGenreDto dto, @MappingTarget GenreDocument document);
+}

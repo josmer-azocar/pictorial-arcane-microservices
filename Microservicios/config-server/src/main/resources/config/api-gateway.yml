@@ -1,6 +1,15 @@
 server:
   port: 8060
 
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: artwork-service
+          uri: lb://artwork-service
+          predicates:
+            - Path=/artist/**,/artwork/**,/genre/**
+
 eureka:
   client:
     serviceUrl:
