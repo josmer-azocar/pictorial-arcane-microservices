@@ -8,7 +8,7 @@ public interface CrudUserRepository extends CrudRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByEmail(String email);
     UserEntity findFirstByEmail(String email);
-    Void deleteByDniUser(Long dniUser);
+    void deleteByDniUser(Long dniUser);
     UserEntity findByDniUser(Long dniUser);
 }
 

@@ -38,11 +38,11 @@ public class UserEntityRepository {
         return this.userMapper.toResponseDto(this.crudUserRepository.save(userEntity));
     }
 
-    public Void deleteByIdUser(Long dniUser) {
+    public void deleteByIdUser(Long dniUser) {
         if (this.crudUserRepository.findByDniUser(dniUser) == null) {
             throw new UserDoesNotExistsException(dniUser);
         }
-        return this.crudUserRepository.deleteByDniUser(dniUser);
+        this.crudUserRepository.deleteByDniUser(dniUser);
     }
 
     public UserResponseDto getByIdUser(Long dniUser) {
