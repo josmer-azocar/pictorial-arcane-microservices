@@ -17,8 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
-
 @Service // Define que esta clase es un servicio de la capa de negocio
 public class AuthService {
 
