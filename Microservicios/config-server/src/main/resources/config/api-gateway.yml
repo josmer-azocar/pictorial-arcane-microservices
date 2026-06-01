@@ -14,3 +14,14 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: core-service
+          uri: lb://core-service
+          predicates:
+            - Path=/core/**
+          filters:
+            - StripPrefix=1
