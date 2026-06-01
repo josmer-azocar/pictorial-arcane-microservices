@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    restart: unless-stopped
+    environment:
+      - 'POSTGRES_DB=pictorial_arcane_db'
+      - 'POSTGRES_PASSWORD=uneg2026'
+      - 'POSTGRES_USER=uneg'
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/data/postgres'
+volumes:
+  pgdata:
