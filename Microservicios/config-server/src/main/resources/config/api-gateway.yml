@@ -8,20 +8,15 @@ spring:
         - id: artwork-service
           uri: lb://artwork-service
           predicates:
-            - Path=/artist/**,/artwork/**,/genre/**
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
-spring:
-  cloud:
-    gateway:
-      routes:
+            - Path=/artist/**,/artwork/**,/genre/**,/migrate/**
         - id: core-service
           uri: lb://core-service
           predicates:
             - Path=/core/**
           filters:
             - StripPrefix=1
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

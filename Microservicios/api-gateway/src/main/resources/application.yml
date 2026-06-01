@@ -6,6 +6,10 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: artwork-service
+          uri: lb://artwork-service
+          predicates:
+            - Path=/artist/**,/artwork/**,/genre/**,/migrate/**
         - id: core-service
           uri: lb://core-service
           predicates:

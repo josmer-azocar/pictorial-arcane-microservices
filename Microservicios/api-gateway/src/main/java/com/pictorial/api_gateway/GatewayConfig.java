@@ -15,6 +15,9 @@ public class GatewayConfig {
                         .path("/core/**")
                         .filters(f -> f.stripPrefix(1))
                         .uri("lb://core-service"))
+                .route("artwork-service", r -> r
+                        .path("/artist/**", "/artwork/**", "/genre/**", "/migrate/**")
+                        .uri("lb://artwork-service"))
                 .build();
     }
 }

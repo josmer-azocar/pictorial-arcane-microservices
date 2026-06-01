@@ -2,8 +2,11 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Backend antiguo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Backend antiguo/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicios/api-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicios/artwork-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicios/config-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicios/core-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicios/service-registry/src/main/java" charset="UTF-8" />
   </component>
 </project>
