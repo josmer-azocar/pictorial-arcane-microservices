@@ -4,7 +4,6 @@ import com.pictorial.artwork_service.dto.request.GenreRequestDto;
 import com.pictorial.artwork_service.dto.request.UpdateGenreDto;
 import com.pictorial.artwork_service.dto.response.ArtistResponseDto;
 import com.pictorial.artwork_service.dto.response.GenreResponseDto;
-import com.pictorial.artwork_service.service.ArtistService;
 import com.pictorial.artwork_service.service.GenreService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -18,11 +17,9 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService genreService;
-    private final ArtistService artistService;
 
-    public GenreController(GenreService genreService, ArtistService artistService) {
+    public GenreController(GenreService genreService) {
         this.genreService = genreService;
-        this.artistService = artistService;
     }
 
     @GetMapping("/all")
@@ -56,7 +53,7 @@ public class GenreController {
     public ResponseEntity<Void> assignGenreToArtist(
             @RequestParam String idArtist,
             @RequestParam String idGenre) {
-        artistService.assignGenre(idArtist, idGenre);
+        genreService.assignGenre(idArtist, idGenre);
         return ResponseEntity.ok().build();
     }
 
@@ -64,19 +61,19 @@ public class GenreController {
     public ResponseEntity<Void> unassignGenreFromArtist(
             @RequestParam String idArtist,
             @RequestParam String idGenre) {
-        artistService.unassignGenre(idArtist, idGenre);
+        genreService.unassignGenre(idArtist, idGenre);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/getAllByArtist")
     public ResponseEntity<List<GenreResponseDto>> getGenresByArtistId(
             @RequestParam String idArtist) {
-        return ResponseEntity.ok(artistService.getGenresByArtistId(idArtist));
+        return ResponseEntity.ok(genreService.getGenresByArtistId(idArtist));
     }
 
     @GetMapping("/getAllArtistsByGenre")
     public ResponseEntity<List<ArtistResponseDto>> getArtistsByGenreId(
             @RequestParam String idGenre) {
-        return ResponseEntity.ok(artistService.getArtistsByGenreId(idGenre));
+        return ResponseEntity.ok(genreService.getArtistsByGenreId(idGenre));
     }
 }

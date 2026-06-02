@@ -12,6 +12,6 @@ public interface ArtistRepository extends MongoRepository<ArtistDocument, String
     List<ArtistDocument> findByNameContainingIgnoreCase(String name);
     List<ArtistDocument> findByLastNameContainingIgnoreCase(String lastName);
     List<ArtistDocument> findByNationalityContainingIgnoreCase(String nationality);
-    List<ArtistDocument> findByGenreIdsContains(String genreId);
+    List<ArtistDocument> findByGenresId(String genreId);
     Optional<ArtistDocument> findById(String id);
 }

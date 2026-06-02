@@ -30,6 +30,7 @@ public class ArtistDocument {
     private LocalDate birthdate;
 
     @DocumentReference
+    @Builder.Default
     private Set<GenreDocument> genres = new HashSet<>();
 
     private LocalDateTime createdAt;

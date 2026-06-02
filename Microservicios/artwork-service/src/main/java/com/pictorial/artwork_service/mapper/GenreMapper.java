@@ -9,10 +9,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface GenreMapper {
 
     GenreResponseDto toResponseDto(GenreDocument document);
+    List<GenreResponseDto> toResponseDto(Iterable<GenreDocument> documents);
 
     @InheritInverseConfiguration
     GenreDocument toDocument(GenreRequestDto dto);

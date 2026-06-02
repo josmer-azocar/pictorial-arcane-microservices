@@ -1,6 +1,5 @@
 package com.pictorial.artwork_service.web.controller;
 
-import com.pictorial.artwork_service.document.*;
 import com.pictorial.artwork_service.dto.request.*;
 import com.pictorial.artwork_service.dto.response.*;
 import com.pictorial.artwork_service.service.ArtWorkService;
@@ -97,56 +96,6 @@ public class ArtWorkController {
 
     @GetMapping("/search/specificArtWork/{id}")
     public ResponseEntity<?> getSpecificArtWork(@PathVariable String id) {
-        ArtWorkDocument doc = artWorkService.getArtWorkDocumentById(id);
-        String genreName = doc.getGenreName();
-        if (genreName == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ArtWork does not have an associated genre");
-        }
-
-        String normalized = genreName.trim().toUpperCase();
-        return switch (normalized) {
-            case "CERAMIC", "CERÁMICA", "CERAMICA" -> {
-                CeramicDocument ceramic = (CeramicDocument) doc;
-                ArtWorkResponseDto artResp = artWorkService.getById(id);
-                CeramicResponseDto cerResp = new CeramicResponseDto(
-                        ceramic.getId(), ceramic.getMaterialType(), ceramic.getTechnique(),
-                        ceramic.getFinish(), ceramic.getCookingTemperature(), ceramic.getWeight(),
-                        ceramic.getWidth(), ceramic.getHeight());
-                yield ResponseEntity.ok(new ContainerCeramicResponseDto(artResp, cerResp));
-            }
-            case "PAINTING", "PINTURA" -> {
-                PaintingDocument painting = (PaintingDocument) doc;
-                ArtWorkResponseDto artResp = artWorkService.getById(id);
-                PaintingResponseDto paintResp = new PaintingResponseDto(
-                        painting.getId(), painting.getTechnique(), painting.getHolder(),
-                        painting.getStyle(), painting.getFramed(), painting.getWidth(), painting.getHeight());
-                yield ResponseEntity.ok(new ContainerPaintingResponseDto(artResp, paintResp));
-            }
-            case "PHOTOGRAPHY", "FOTOGRAFÍA", "FOTOGRAFIA" -> {
-                PhotographyDocument photo = (PhotographyDocument) doc;
-                ArtWorkResponseDto artResp = artWorkService.getById(id);
-                PhotographyResponseDto photoResp = new PhotographyResponseDto(
-                        photo.getId(), photo.getPrintType(), photo.getResolution(),
-                        photo.getColor(), photo.getSerialNumber(), photo.getCamera());
-                yield ResponseEntity.ok(new ContainerPhotographyResponseDto(artResp, photoResp));
-            }
-            case "SCULPTURE", "ESCULTURA" -> {
-                SculptureDocument sculpture = (SculptureDocument) doc;
-                ArtWorkResponseDto artResp = artWorkService.getById(id);
-                SculptureResponseDto sculpResp = new SculptureResponseDto(
-                        sculpture.getId(), sculpture.getMaterial(), sculpture.getWeight(),
-                        sculpture.getLength(), sculpture.getWidth(), sculpture.getDepth());
-                yield ResponseEntity.ok(new ContainerSculptureResponseDto(sculpResp, artResp));
-            }
-            case "GOLDSMITH", "ORFEBRERÍA", "ORFEBRERIA" -> {
-                GoldsmithDocument goldsmith = (GoldsmithDocument) doc;
-                ArtWorkResponseDto artResp = artWorkService.getById(id);
-                GoldsmithResponseDto goldResp = new GoldsmithResponseDto(
-                        goldsmith.getId(), goldsmith.getMaterial(), goldsmith.getPreciousStones(), goldsmith.getWeight());
-                yield ResponseEntity.ok(new ContainerGoldsmithResponseDto(artResp, goldResp));
-            }
-            default -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No subtype handled for genre: " + genreName);
-        };
+        return ResponseEntity.ok(artWorkService.getSpecificArtWork(id));
     }
 }
