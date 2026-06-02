@@ -3,16 +3,21 @@ package com.pictorial.artwork_service.mapper;
 import com.pictorial.artwork_service.document.*;
 import com.pictorial.artwork_service.dto.request.*;
 import com.pictorial.artwork_service.dto.response.*;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+import java.util.List;
+
+@Mapper(componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        uses = {ArtWorkStatusMapper.class})
 public interface ArtWorkMapper {
 
+    @Mapping(source = "status", target = "status", qualifiedByName = "stringToArtWorkStatus")
     ArtWorkResponseDto toResponseDto(ArtWorkDocument document);
+    List<ArtWorkResponseDto> toResponseDto(Iterable<ArtWorkDocument> documents);
 
+    @InheritInverseConfiguration
+    @Mapping(source = "status", target = "status", qualifiedByName = "artWorkStatusToString")
     ArtWorkDocument toDocument(ArtWorkRequestDto dto);
 
     void updateDocumentFromDto(UpdateArtWorkDto dto, @MappingTarget ArtWorkDocument document);

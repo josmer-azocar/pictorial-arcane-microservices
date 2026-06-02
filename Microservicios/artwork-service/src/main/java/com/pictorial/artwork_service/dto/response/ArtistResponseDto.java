@@ -12,5 +12,5 @@ public record ArtistResponseDto(
         Double commissionRate,
         LocalDate birthdate,
         String imageUrl,
-        Set<String> genreIds
+        Set<String> genres
 ) {}

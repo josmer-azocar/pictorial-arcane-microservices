@@ -13,6 +13,7 @@ import com.pictorial.artwork_service.mapper.ArtistMapper;
 import com.pictorial.artwork_service.mapper.GenreMapper;
 import com.pictorial.artwork_service.repository.ArtistRepository;
 import com.pictorial.artwork_service.repository.GenreRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,101 +22,34 @@ import java.util.Set;
 
 @Service
 public class ArtistService {
-
     private final ArtistRepository artistRepository;
-    private final GenreRepository genreRepository;
     private final ArtistMapper artistMapper;
-    private final GenreMapper genreMapper;
 
-    public ArtistService(ArtistRepository artistRepository, GenreRepository genreRepository,
-                         ArtistMapper artistMapper, GenreMapper genreMapper) {
+    public ArtistService(ArtistRepository artistRepository, ArtistMapper artistMapper) {
         this.artistRepository = artistRepository;
-        this.genreRepository = genreRepository;
         this.artistMapper = artistMapper;
-        this.genreMapper = genreMapper;
+    }
+
+    public ArtistResponseDto create( ArtistRequestDto dto) {
+         return artistMapper.toResponseDto(artistRepository.save(artistMapper.toDocument(dto)));
     }
 
     public List<ArtistResponseDto> getAll() {
-        return artistRepository.findAll()
-                .stream()
-                .map(artistMapper::toResponseDto)
-                .toList();
+        return artistMapper.toResponseDto(artistRepository.findAll());
     }
 
     public ArtistResponseDto getById(String id) {
-        ArtistDocument document = artistRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found with id: " + id));
-        return artistMapper.toResponseDto(document);
+        ArtistDocument artist = artistRepository.findById(id).orElse(null);
+        return artistMapper.toResponseDto(artist);
     }
 
-    public ArtistResponseDto create(ArtistRequestDto dto) {
-        ArtistDocument document = artistMapper.toDocument(dto);
-        document.setCreatedAt(LocalDateTime.now());
-        document.setModifiedAt(LocalDateTime.now());
-        ArtistDocument saved = artistRepository.save(document);
-        return artistMapper.toResponseDto(saved);
-    }
-
-    public ArtistResponseDto update(String id, UpdateArtistDto dto) {
-        ArtistDocument document = artistRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found with id: " + id));
-        artistMapper.updateDocumentFromDto(dto, document);
-        document.setModifiedAt(LocalDateTime.now());
-        ArtistDocument saved = artistRepository.save(document);
-        return artistMapper.toResponseDto(saved);
+    public ArtistResponseDto update(String id, @Valid UpdateArtistDto dto) {
+            ArtistDocument artist = artistRepository.findById(id).orElse(null);
+            artistMapper.updateDocumentFromDto(dto,artist);
+            return artistMapper.toResponseDto(artistRepository.save(artist));
     }
 
     public void delete(String id) {
-        if (!artistRepository.existsById(id)) {
-            throw new ResourceNotFoundException("artist", "Artist not found with id: " + id);
-        }
         artistRepository.deleteById(id);
-    }
-
-    public ArtistResponseDto assignGenre(String artistId, String genreId) {
-        ArtistDocument artist = artistRepository.findById(artistId)
-                .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found with id: " + artistId));
-        GenreDocument genre = genreRepository.findById(genreId)
-                .orElseThrow(() -> new ResourceNotFoundException("genre", "Genre not found with id: " + genreId));
-
-        if (artist.getGenreIds().contains(genreId)) {
-            throw new ArtistAlreadyHasGenreException("Artist already has genre: " + genre.getName());
-        }
-
-        artist.getGenreIds().add(genreId);
-        artist.setModifiedAt(LocalDateTime.now());
-        ArtistDocument saved = artistRepository.save(artist);
-        return artistMapper.toResponseDto(saved);
-    }
-
-    public ArtistResponseDto unassignGenre(String artistId, String genreId) {
-        ArtistDocument artist = artistRepository.findById(artistId)
-                .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found with id: " + artistId));
-
-        if (!artist.getGenreIds().contains(genreId)) {
-            throw new ArtistDoesNotHaveGenreException("Artist does not have genre with id: " + genreId);
-        }
-
-        artist.getGenreIds().remove(genreId);
-        artist.setModifiedAt(LocalDateTime.now());
-        ArtistDocument saved = artistRepository.save(artist);
-        return artistMapper.toResponseDto(saved);
-    }
-
-    public List<GenreResponseDto> getGenresByArtistId(String artistId) {
-        ArtistDocument artist = artistRepository.findById(artistId)
-                .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found with id: " + artistId));
-        Set<String> genreIds = artist.getGenreIds();
-        return genreRepository.findAllById(genreIds)
-                .stream()
-                .map(genreMapper::toResponseDto)
-                .toList();
-    }
-
-    public List<ArtistResponseDto> getArtistsByGenreId(String genreId) {
-        return artistRepository.findByGenreIdsContains(genreId)
-                .stream()
-                .map(artistMapper::toResponseDto)
-                .toList();
     }
 }

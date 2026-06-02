@@ -23,7 +23,7 @@ public class ArtistController {
 
     @PostMapping("/add")
     public ResponseEntity<ArtistResponseDto> create(@RequestBody @Valid ArtistRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(artistService.create(dto));
+        return ResponseEntity.ok(artistService.create(dto));
     }
 
     @GetMapping("/all")

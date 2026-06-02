@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ArtistRepository extends MongoRepository<ArtistDocument, String> {
@@ -12,4 +13,5 @@ public interface ArtistRepository extends MongoRepository<ArtistDocument, String
     List<ArtistDocument> findByLastNameContainingIgnoreCase(String lastName);
     List<ArtistDocument> findByNationalityContainingIgnoreCase(String nationality);
     List<ArtistDocument> findByGenreIdsContains(String genreId);
+    Optional<ArtistDocument> findById(String id);
 }
