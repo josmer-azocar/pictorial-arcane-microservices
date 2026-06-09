@@ -5,6 +5,7 @@ import com.pictorial.audit_service.persistence.tables.BillingByMonthTable;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -15,4 +16,9 @@ public interface BillingByMonthRepository extends CassandraRepository<BillingByM
      * Esto traerá los registros ordenados de forma descendente por fecha de venta de forma nativa.
      */
     List<BillingByMonthTable> findByKeyYearMonth(String yearMonth);
+
+    /**
+     * Obtiene la facturación de un mes específico dentro de un rango de fechas.
+     */
+    List<BillingByMonthTable> findByKeyYearMonthAndKeySaleDateBetween(String yearMonth, LocalDate startDate, LocalDate endDate);
 }
