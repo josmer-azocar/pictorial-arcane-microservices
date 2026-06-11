@@ -1,11 +1,9 @@
 package com.pictorial.artwork_service.document;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDateTime;
 
@@ -19,8 +17,11 @@ import java.time.LocalDateTime;
 public class ArtWorkDocument {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
+
+    // Clave de negocio numérica compartida con core-service y audit-service (que usan Long).
+    @Indexed(unique = true)
+    private Long artworkId;
 
     private String name;
     private String status;

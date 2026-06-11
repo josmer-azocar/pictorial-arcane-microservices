@@ -1,5 +1,6 @@
 package com.pictorialarcane.core_service.domain.service;
 
+import com.pictorialarcane.core_service.client.ArtworkClient;
 import com.pictorialarcane.core_service.domain.Enum.SaleStatus;
 import com.pictorialarcane.core_service.domain.Enum.ShippingStatus;
 import com.pictorialarcane.core_service.domain.dto.response.SaleResponseDto;
@@ -20,13 +21,16 @@ public class ScheduledService {
     private final SaleRepository saleRepository;
     private final CrudSaleRepositoy crudSaleRepositoy;
     private final MembershipRepository membershipRepository;
+    private final ArtworkClient artworkClient;
 
     public ScheduledService(SaleRepository saleRepository,
                             CrudSaleRepositoy crudSaleRepositoy,
-                            MembershipRepository membershipRepository) {
+                            MembershipRepository membershipRepository,
+                            ArtworkClient artworkClient) {
         this.saleRepository = saleRepository;
         this.crudSaleRepositoy = crudSaleRepositoy;
         this.membershipRepository = membershipRepository;
+        this.artworkClient = artworkClient;
     }
 
     @Scheduled(cron = "0 0 * * * *")
@@ -49,7 +53,8 @@ public class ScheduledService {
                 sale.setShippingStatus(ShippingStatus.CANCELED.name());
                 this.crudSaleRepositoy.save(sale);
 
-                // TODO: notificar al artwork-service (MongoDB) que la obra idArtwork vuelve a estar disponible.
+                // La obra vuelve a estar disponible en artwork-service (changedBy null = sistema).
+                artworkClient.release(sale.getIdArtwork(), null);
                 System.out.println("Reserva cancelada automáticamente para la venta ID: " + sale.getIdSale());
             }
         }

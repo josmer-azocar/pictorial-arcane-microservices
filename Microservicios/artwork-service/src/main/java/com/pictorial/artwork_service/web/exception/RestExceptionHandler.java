@@ -3,6 +3,7 @@ package com.pictorial.artwork_service.web.exception;
 import com.pictorial.artwork_service.exception.ArtistAlreadyHasGenreException;
 import com.pictorial.artwork_service.exception.ArtistDoesNotHaveGenreException;
 import com.pictorial.artwork_service.exception.DuplicateResourceException;
+import com.pictorial.artwork_service.exception.InvalidArtworkStatusException;
 import com.pictorial.artwork_service.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,12 @@ public class RestExceptionHandler {
     public ResponseEntity<Error> handleDuplicate(DuplicateResourceException ex) {
         Error error = new Error("duplicate-resource", ex.getMessage());
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(InvalidArtworkStatusException.class)
+    public ResponseEntity<Error> handleInvalidArtworkStatus(InvalidArtworkStatusException ex) {
+        Error error = new Error("invalid-artwork-status", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(ArtistAlreadyHasGenreException.class)

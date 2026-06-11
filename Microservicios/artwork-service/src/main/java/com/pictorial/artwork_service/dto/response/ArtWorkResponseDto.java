@@ -4,6 +4,7 @@ import com.pictorial.artwork_service.document.ArtWorkStatus;
 
 public record ArtWorkResponseDto(
         String id,
+        Long artworkId,
         String name,
         ArtWorkStatus status,
         double price,

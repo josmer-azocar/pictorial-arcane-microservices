@@ -1,10 +1,14 @@
 package com.pictorial.artwork_service.service;
 
+import com.pictorial.artwork_service.client.AuditClient;
+import com.pictorial.artwork_service.client.dto.ArtworkStatusHistoryRequest;
 import com.pictorial.artwork_service.document.*;
 import com.pictorial.artwork_service.dto.request.*;
 import com.pictorial.artwork_service.dto.response.*;
+import com.pictorial.artwork_service.exception.InvalidArtworkStatusException;
 import com.pictorial.artwork_service.exception.ResourceNotFoundException;
 import com.pictorial.artwork_service.mapper.ArtWorkMapper;
+import com.pictorial.artwork_service.mapper.ArtWorkStatusMapper;
 import com.pictorial.artwork_service.repository.ArtistRepository;
 import com.pictorial.artwork_service.repository.ArtWorkRepository;
 import com.pictorial.artwork_service.repository.GenreRepository;
@@ -29,17 +33,23 @@ public class ArtWorkService {
     private final GenreRepository genreRepository;
     private final ArtWorkMapper artWorkMapper;
     private final MongoTemplate mongoTemplate;
+    private final SequenceGeneratorService sequenceGenerator;
+    private final AuditClient auditClient;
 
     public ArtWorkService(ArtWorkRepository artWorkRepository,
                           ArtistRepository artistRepository,
                           GenreRepository genreRepository,
                           ArtWorkMapper artWorkMapper,
-                          MongoTemplate mongoTemplate) {
+                          MongoTemplate mongoTemplate,
+                          SequenceGeneratorService sequenceGenerator,
+                          AuditClient auditClient) {
         this.artWorkRepository = artWorkRepository;
         this.artistRepository = artistRepository;
         this.genreRepository = genreRepository;
         this.artWorkMapper = artWorkMapper;
         this.mongoTemplate = mongoTemplate;
+        this.sequenceGenerator = sequenceGenerator;
+        this.auditClient = auditClient;
     }
 
     public ArtWorkResponseDto create(ArtWorkRequestDto dto) {
@@ -107,10 +117,12 @@ public class ArtWorkService {
             query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])));
         }
 
+        // Se cuenta el total ANTES de aplicar la paginación para no contaminar la query.
+        long total = mongoTemplate.count(query, ArtWorkDocument.class);
+
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, sortBy));
         query.with(pageRequest);
 
-        long total = mongoTemplate.count(query.skip(-1).limit(-1), ArtWorkDocument.class);
         List<ArtWorkDocument> results = mongoTemplate.find(query, ArtWorkDocument.class);
         return new PageImpl<>(artWorkMapper.toResponseDto(results), pageRequest, total);
     }
@@ -118,7 +130,7 @@ public class ArtWorkService {
     public ContainerCeramicResponseDto createCeramic(ContainerCeramicRequestDto dto) {
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         CeramicDocument ceramic = artWorkMapper.toCeramicDocument(dto.ceramicRequest());
-        ArtWorkDocument saved = saveWithDetailsId(document, ceramic);
+        ArtWorkDocument saved = saveWithDetails(document, ceramic);
         return artWorkMapper.toContainerCeramicResponse(
                 artWorkMapper.toResponseDto(saved),
                 buildCeramicResponse(saved.getId(), ceramic));
@@ -127,7 +139,7 @@ public class ArtWorkService {
     public ContainerGoldsmithResponseDto createGoldsmith(ContainerGoldsmithRequestDto dto) {
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         GoldsmithDocument goldsmith = artWorkMapper.toGoldsmithDocument(dto.goldsmithRequest());
-        ArtWorkDocument saved = saveWithDetailsId(document, goldsmith);
+        ArtWorkDocument saved = saveWithDetails(document, goldsmith);
         return artWorkMapper.toContainerGoldsmithResponse(
                 artWorkMapper.toResponseDto(saved),
                 buildGoldsmithResponse(saved.getId(), goldsmith));
@@ -136,7 +148,7 @@ public class ArtWorkService {
     public ContainerPaintingResponseDto createPainting(ContainerPaintingRequestDto dto) {
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         PaintingDocument painting = artWorkMapper.toPaintingDocument(dto.paintingRequest());
-        ArtWorkDocument saved = saveWithDetailsId(document, painting);
+        ArtWorkDocument saved = saveWithDetails(document, painting);
         return artWorkMapper.toContainerPaintingResponse(
                 artWorkMapper.toResponseDto(saved),
                 buildPaintingResponse(saved.getId(), painting));
@@ -145,7 +157,7 @@ public class ArtWorkService {
     public ContainerPhotographyResponseDto createPhotography(ContainerPhotographyRequestDto dto) {
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         PhotographyDocument photography = artWorkMapper.toPhotographyDocument(dto.photographyRequest());
-        ArtWorkDocument saved = saveWithDetailsId(document, photography);
+        ArtWorkDocument saved = saveWithDetails(document, photography);
         return artWorkMapper.toContainerPhotographyResponse(
                 artWorkMapper.toResponseDto(saved),
                 buildPhotographyResponse(saved.getId(), photography));
@@ -154,7 +166,7 @@ public class ArtWorkService {
     public ContainerSculptureResponseDto createSculpture(ContainerSculptureRequestDto dto) {
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         SculptureDocument sculpture = artWorkMapper.toSculptureDocument(dto.sculptureRequest());
-        ArtWorkDocument saved = saveWithDetailsId(document, sculpture);
+        ArtWorkDocument saved = saveWithDetails(document, sculpture);
         return artWorkMapper.toContainerSculptureResponse(
                 buildSculptureResponse(saved.getId(), sculpture),
                 artWorkMapper.toResponseDto(saved));
@@ -199,6 +211,7 @@ public class ArtWorkService {
                 .orElseThrow(() -> new ResourceNotFoundException("genre", "Genre not found"));
 
         ArtWorkDocument document = artWorkMapper.toDocument(dto);
+        document.setArtworkId(sequenceGenerator.nextValue(SequenceGeneratorService.ARTWORK_SEQUENCE));
         document.setArtistId(artist.getId());
         document.setArtistName(buildArtistName(artist));
         document.setGenre(genre);
@@ -270,11 +283,58 @@ public class ArtWorkService {
                 goldsmith.getWeight());
     }
 
-    private <T extends ArtWorkDocument> ArtWorkDocument saveWithDetailsId(ArtWorkDocument base, T details) {
+    // Los subtipos (Ceramic, Painting, etc.) se guardan embebidos en type_details como objetos
+    // planos; el id de la obra es el del documento base, por lo que basta con un único save.
+    private ArtWorkDocument saveWithDetails(ArtWorkDocument base, Object details) {
         base.setType_details(details);
-        ArtWorkDocument saved = artWorkRepository.save(base);
-        details.setId(saved.getId());
-        saved.setType_details(details);
-        return artWorkRepository.save(saved);
+        return artWorkRepository.save(base);
+    }
+
+    // ---------------------------------------------------------------------
+    // Transiciones de estado (invocadas por core-service vía la clave Long).
+    // ---------------------------------------------------------------------
+
+    /** AVAILABLE -> RESERVED. Falla si la obra no está disponible. */
+    public ArtWorkResponseDto reserve(Long artworkId, Long changedBy, String reason) {
+        return changeStatus(artworkId, ArtWorkStatus.AVAILABLE, ArtWorkStatus.RESERVED, changedBy, reason);
+    }
+
+    /** RESERVED -> SOLD. Falla si la obra no está reservada. */
+    public ArtWorkResponseDto markSold(Long artworkId, Long changedBy, String reason) {
+        return changeStatus(artworkId, ArtWorkStatus.RESERVED, ArtWorkStatus.SOLD, changedBy, reason);
+    }
+
+    /** RESERVED -> AVAILABLE. Libera una reserva. */
+    public ArtWorkResponseDto release(Long artworkId, Long changedBy, String reason) {
+        return changeStatus(artworkId, ArtWorkStatus.RESERVED, ArtWorkStatus.AVAILABLE, changedBy, reason);
+    }
+
+    private ArtWorkResponseDto changeStatus(Long artworkId, ArtWorkStatus expected, ArtWorkStatus target,
+                                            Long changedBy, String reason) {
+        ArtWorkDocument doc = artWorkRepository.findByArtworkId(artworkId)
+                .orElseThrow(() -> new ResourceNotFoundException("artwork", "Artwork not found for id " + artworkId));
+
+        ArtWorkStatus current = ArtWorkStatusMapper.stringToArtWorkStatus(doc.getStatus());
+        if (current != expected) {
+            throw new InvalidArtworkStatusException(
+                    "La obra " + artworkId + " está en estado " + doc.getStatus()
+                            + "; se requiere " + expected + " para pasar a " + target + ".");
+        }
+
+        String oldStatus = doc.getStatus();
+        doc.setStatus(target.name());
+        doc.setModifiedAt(LocalDateTime.now());
+        ArtWorkDocument saved = artWorkRepository.save(doc);
+
+        // Auditoría best-effort del cambio de estado.
+        auditClient.registerStatusChange(new ArtworkStatusHistoryRequest(
+                saved.getArtworkId(),
+                saved.getName(),
+                changedBy,
+                target.name(),
+                oldStatus,
+                reason));
+
+        return artWorkMapper.toResponseDto(saved);
     }
 }

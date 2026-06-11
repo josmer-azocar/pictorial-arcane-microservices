@@ -1,5 +1,8 @@
 package com.pictorialarcane.core_service.persistence.impl_repository;
 
+import com.pictorialarcane.core_service.client.ArtworkClient;
+import com.pictorialarcane.core_service.client.AuditClient;
+import com.pictorialarcane.core_service.client.dto.BillingByMonthRequest;
 import com.pictorialarcane.core_service.domain.Enum.SaleStatus;
 import com.pictorialarcane.core_service.domain.Enum.ShippingStatus;
 import com.pictorialarcane.core_service.domain.dto.request.PaymentRequestDto;
@@ -32,14 +35,18 @@ public class SaleRepository {
     private final Double TAX_AMOUNT = 0.16;
     private final PaymentMapper paymentMapper;
     private final CrudPaymentRepository crudPaymentRepository;
+    private final AuditClient auditClient;
+    private final ArtworkClient artworkClient;
 
 
-    public SaleRepository(CrudSaleRepositoy crudSaleRepository, CrudUserRepository crudUserRepository, SaleMapper saleMapper, PaymentMapper paymentMapper, CrudPaymentRepository crudPaymentRepository) {
+    public SaleRepository(CrudSaleRepositoy crudSaleRepository, CrudUserRepository crudUserRepository, SaleMapper saleMapper, PaymentMapper paymentMapper, CrudPaymentRepository crudPaymentRepository, AuditClient auditClient, ArtworkClient artworkClient) {
         this.crudSaleRepository = crudSaleRepository;
         this.crudUserRepository = crudUserRepository;
         this.saleMapper = saleMapper;
         this.paymentMapper = paymentMapper;
         this.crudPaymentRepository = crudPaymentRepository;
+        this.auditClient = auditClient;
+        this.artworkClient = artworkClient;
     }
 
     public SaleResponseDto getSaleById(Long saleId){
@@ -87,7 +94,8 @@ public class SaleRepository {
         sale.setShippingStatus(ShippingStatus.CANCELED.name());
         this.crudSaleRepository.save(sale);
 
-        // TODO: notificar al artwork-service (MongoDB) que la obra idArtwork vuelve a estar disponible.
+        // La obra vuelve a estar disponible en artwork-service (RESERVED -> AVAILABLE).
+        artworkClient.release(sale.getIdArtwork(), adminId);
     }
 
     public Page<PurchaseResponseDto> getClientPurchases(int page, int size, Long dniUser) {
@@ -131,7 +139,26 @@ public class SaleRepository {
 
         SaleResponseDto response = saleMapper.toResponseDto(crudSaleRepository.save(saleEntity));
 
-        // TODO: notificar al artwork-service (MongoDB) que la obra idArtwork quedó vendida (SOLD).
+        // Auditoría: registrar la venta facturada en el audit-service (billing_by_month).
+        auditClient.registerBilling(new BillingByMonthRequest(
+                saleEntity.getIdSale(),
+                saleEntity.getDate(),
+                admin != null ? admin.getDniUser() : null,
+                saleEntity.getIdArtwork(),
+                saleEntity.getClient().getDniUser(),
+                saleEntity.getDescription(),
+                saleEntity.getProfitAmount(),
+                saleEntity.getProfitPercentage(),
+                saleEntity.getPrice(),
+                saleEntity.getSaleStatus(),
+                saleEntity.getShippingAddress(),
+                saleEntity.getShippingStatus(),
+                saleEntity.getTaxAmount(),
+                saleEntity.getTotalPaid()
+        ));
+
+        // La obra queda vendida en artwork-service (RESERVED -> SOLD). Best-effort.
+        artworkClient.markSold(saleEntity.getIdArtwork(), admin != null ? admin.getDniUser() : null);
 
         return response;
     }

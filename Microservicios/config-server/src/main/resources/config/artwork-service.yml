@@ -8,3 +8,9 @@ eureka:
   instance:
     prefer-ip-address: true
 
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://josue:REDACTED@localhost:27017/pictorial-arcane?retryWrites=true&w=majority
+      database: pictorial-arcane
+

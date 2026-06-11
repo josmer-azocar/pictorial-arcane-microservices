@@ -1,5 +1,7 @@
 package com.pictorialarcane.core_service.domain.service;
 
+import com.pictorialarcane.core_service.client.AuditClient;
+import com.pictorialarcane.core_service.client.dto.SecurityLogRequest;
 import com.pictorialarcane.core_service.domain.Enum.Role;
 import com.pictorialarcane.core_service.domain.dto.request.LoginRequestDto;
 import com.pictorialarcane.core_service.domain.dto.request.RegisterRequestDto;
@@ -13,7 +15,6 @@ import com.pictorialarcane.core_service.persistence.entity.ClientEntity;
 import com.pictorialarcane.core_service.persistence.entity.UserEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +27,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder; // Encoder para contraseñas
     private final AuthenticationManager authenticationManager; // Manager de autenticación de Spring Security
     private final EmailService emailService;
+    private final AuditClient auditClient;
 
     // Inyección de dependencias
-    public AuthService(CrudUserRepository crudUserRepository, CrudClientRepository crudClientRepository, JwtService jwtService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService) {
+    public AuthService(CrudUserRepository crudUserRepository, CrudClientRepository crudClientRepository, JwtService jwtService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService, AuditClient auditClient) {
         this.crudUserRepository = crudUserRepository;
         this.crudClientRepository = crudClientRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
+        this.auditClient = auditClient;
     }
 
     // Método para login
@@ -43,10 +46,21 @@ public class AuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.email(), requestDto.password()));
 
         // Si la autenticación es exitosa, busca al usuario en la BD
-        UserDetails user = crudUserRepository.findByEmail(requestDto.email()).orElseThrow();
+        UserEntity user = crudUserRepository.findByEmail(requestDto.email()).orElseThrow();
 
         // Genera el token JWT
         String token = jwtService.getToken(user);
+
+        // Auditoría: registrar el inicio de sesión exitoso en el audit-service (security_log_by_event).
+        boolean isAdmin = Role.ADMIN.name().equals(user.getRole());
+        auditClient.registerSecurityLog(new SecurityLogRequest(
+                "LOGIN_SUCCESS",
+                isAdmin ? user.getDniUser() : null,
+                isAdmin ? null : user.getDniUser(),
+                "Inicio de sesión exitoso para " + user.getEmail(),
+                null,
+                null
+        ));
 
         // Retorna la respuesta con el token
         return AuthResponseDto.builder()

@@ -98,4 +98,10 @@ public class RestExceptionHandler {
         Error error = new Error("invalid-argument", ex.getMessage());
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(ArtworkNotAvailableException.class)
+    public ResponseEntity<Error> handleException(ArtworkNotAvailableException ex){
+        Error error = new Error("artwork-not-available", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
 }

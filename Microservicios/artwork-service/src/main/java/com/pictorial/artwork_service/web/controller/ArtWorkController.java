@@ -98,4 +98,27 @@ public class ArtWorkController {
     public ResponseEntity<?> getSpecificArtWork(@PathVariable String id) {
         return ResponseEntity.ok(artWorkService.getSpecificArtWork(id));
     }
+
+    // --- Transiciones de estado por clave de negocio (Long); invocadas por core-service ---
+
+    @PostMapping("/reserve/{artworkId}")
+    public ResponseEntity<ArtWorkResponseDto> reserve(@PathVariable Long artworkId,
+                                                      @RequestParam Long changedBy,
+                                                      @RequestParam(required = false) String reason) {
+        return ResponseEntity.ok(artWorkService.reserve(artworkId, changedBy, reason));
+    }
+
+    @PostMapping("/sell/{artworkId}")
+    public ResponseEntity<ArtWorkResponseDto> sell(@PathVariable Long artworkId,
+                                                   @RequestParam Long changedBy,
+                                                   @RequestParam(required = false) String reason) {
+        return ResponseEntity.ok(artWorkService.markSold(artworkId, changedBy, reason));
+    }
+
+    @PostMapping("/release/{artworkId}")
+    public ResponseEntity<ArtWorkResponseDto> release(@PathVariable Long artworkId,
+                                                      @RequestParam Long changedBy,
+                                                      @RequestParam(required = false) String reason) {
+        return ResponseEntity.ok(artWorkService.release(artworkId, changedBy, reason));
+    }
 }

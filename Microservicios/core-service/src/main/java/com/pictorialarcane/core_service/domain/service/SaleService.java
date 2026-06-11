@@ -1,5 +1,6 @@
 package com.pictorialarcane.core_service.domain.service;
 
+import com.pictorialarcane.core_service.client.ArtworkClient;
 import com.pictorialarcane.core_service.domain.dto.response.PurchaseResponseDto;
 import com.pictorialarcane.core_service.domain.exception.InvalidSecurityCodeException;
 import com.pictorialarcane.core_service.domain.exception.UserDoesNotExistsException;
@@ -20,17 +21,20 @@ public class SaleService {
     private final SaleRepository saleRepository;
     private final PasswordEncoder passwordEncoder;
     private final MembershipService membershipService;
+    private final ArtworkClient artworkClient;
 
     public SaleService(CrudUserRepository crudUserRepository,
                        CrudClientRepository crudClientRepository,
                        SaleRepository saleRepository,
                        PasswordEncoder passwordEncoder,
-                       MembershipService membershipService) {
+                       MembershipService membershipService,
+                       ArtworkClient artworkClient) {
         this.crudUserRepository = crudUserRepository;
         this.crudClientRepository = crudClientRepository;
         this.saleRepository = saleRepository;
         this.passwordEncoder = passwordEncoder;
         this.membershipService = membershipService;
+        this.artworkClient = artworkClient;
     }
 
     public void reserveArtWork(Long artworkId, Double price, Double commissionRate, String securityCode, String email) {
@@ -52,8 +56,11 @@ public class SaleService {
             throw new InvalidSecurityCodeException();
         }
 
-        // La disponibilidad de la obra la valida el artwork-service (MongoDB).
-        // Aquí solo se registra la reserva de forma plana con el id de la obra, su precio y la comisión.
+        // Reserva la obra en artwork-service (AVAILABLE -> RESERVED). Si no está disponible o el
+        // servicio no responde, lanza ArtworkNotAvailableException y la venta NO se crea.
+        artworkClient.reserve(artworkId, client.getDniUser());
+
+        // Una vez asegurada la reserva de la obra, se registra la venta en estado PENDING.
         saleRepository.createReservedSale(artworkId, price, commissionRate, client);
     }
 

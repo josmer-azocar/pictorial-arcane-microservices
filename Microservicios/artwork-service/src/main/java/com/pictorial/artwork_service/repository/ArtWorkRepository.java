@@ -6,9 +6,11 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ArtWorkRepository extends MongoRepository<ArtWorkDocument, String> {
+    Optional<ArtWorkDocument> findByArtworkId(Long artworkId);
     List<ArtWorkDocument> findByArtistId(String artistId);
     List<ArtWorkDocument> findByGenreId(String genreId);
     List<ArtWorkDocument> findByNameContainingIgnoreCase(String name);
