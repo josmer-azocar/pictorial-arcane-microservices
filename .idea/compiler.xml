@@ -21,7 +21,7 @@
         </processorPath>
         <module name="pictorialArcane" />
       </profile>
-      <profile name="Annotation profile for artwork-service" enabled="true">
+      <profile name="Annotation profile for core-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -30,8 +30,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.6.3/mapstruct-processor-1.6.3.jar" />
         </processorPath>
         <module name="audit-service" />
-        <module name="artwork-service" />
         <module name="core-service" />
+        <module name="artwork-service" />
       </profile>
     </annotationProcessing>
   </component>
