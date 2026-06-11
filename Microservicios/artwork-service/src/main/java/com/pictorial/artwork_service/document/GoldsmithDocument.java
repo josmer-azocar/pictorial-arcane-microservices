@@ -1,6 +1,6 @@
 package com.pictorial.artwork_service.document;
 
-public class GoldsmithDocument extends ArtWorkDocument {
+public class GoldsmithDocument {
 
     private String material;
     private String preciousStones;

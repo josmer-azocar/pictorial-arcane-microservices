@@ -47,12 +47,14 @@ public class GenreService {
     }
 
     public GenreResponseDto getById(String id) {
-        GenreDocument genre = genreRepository.findById(id).orElse(null);
+        GenreDocument genre = genreRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("genre", "Genre not found"));
         return genreMapper.toResponseDto(genre);
     }
 
     public GenreResponseDto update(String id, @Valid UpdateGenreDto dto) {
-        GenreDocument genre = genreRepository.findById(id).orElse(null);
+        GenreDocument genre = genreRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("genre", "Genre not found"));
         genreMapper.updateDocumentFromDto(dto, genre);
         return genreMapper.toResponseDto(genreRepository.save(genre));
     }
@@ -68,7 +70,7 @@ public class GenreService {
                 .orElseThrow(() -> new ResourceNotFoundException("genre", "Genre not found"));
 
         Set<GenreDocument> genres = artist.getGenres();
-        if (genres != null && genres.contains(genre)) {
+        if (genres != null && hasGenre(genres, idGenre)) {
             throw new ArtistAlreadyHasGenreException("Artist already has this genre");
         }
         artist.getGenres().add(genre);
@@ -82,11 +84,17 @@ public class GenreService {
                 .orElseThrow(() -> new ResourceNotFoundException("genre", "Genre not found"));
 
         Set<GenreDocument> genres = artist.getGenres();
-        if (genres == null || !genres.contains(genre)) {
+        if (genres == null || !hasGenre(genres, idGenre)) {
             throw new ArtistDoesNotHaveGenreException("Artist does not have this genre");
         }
-        artist.getGenres().remove(genre);
+        artist.getGenres().removeIf(g -> g.getId() != null && g.getId().equals(idGenre));
         artistRepository.save(artist);
+    }
+
+    // La identidad de un género se determina por su id, no por la igualdad de Lombok @Data
+    // (que compara todos los campos, incluidos timestamps mutables).
+    private boolean hasGenre(Set<GenreDocument> genres, String idGenre) {
+        return genres.stream().anyMatch(g -> g.getId() != null && g.getId().equals(idGenre));
     }
 
     public List<GenreResponseDto> getGenresByArtistId(String idArtist) {
@@ -105,7 +113,7 @@ public class GenreService {
         List<ArtistResponseDto> response = new ArrayList<>();
         for (ArtistDocument artist : artistRepository.findAll()) {
             Set<GenreDocument> genres = artist.getGenres();
-            if (genres != null && genres.contains(genre)) {
+            if (genres != null && hasGenre(genres, idGenre)) {
                 response.add(artistMapper.toResponseDto(artist));
             }
         }

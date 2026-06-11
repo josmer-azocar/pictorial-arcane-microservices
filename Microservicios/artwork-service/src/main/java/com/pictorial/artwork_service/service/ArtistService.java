@@ -39,12 +39,14 @@ public class ArtistService {
     }
 
     public ArtistResponseDto getById(String id) {
-        ArtistDocument artist = artistRepository.findById(id).orElse(null);
+        ArtistDocument artist = artistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found"));
         return artistMapper.toResponseDto(artist);
     }
 
     public ArtistResponseDto update(String id, @Valid UpdateArtistDto dto) {
-            ArtistDocument artist = artistRepository.findById(id).orElse(null);
+            ArtistDocument artist = artistRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found"));
             artistMapper.updateDocumentFromDto(dto,artist);
             return artistMapper.toResponseDto(artistRepository.save(artist));
     }

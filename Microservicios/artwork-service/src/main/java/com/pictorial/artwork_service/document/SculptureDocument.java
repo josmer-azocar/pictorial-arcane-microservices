@@ -1,6 +1,6 @@
 package com.pictorial.artwork_service.document;
 
-public class SculptureDocument extends ArtWorkDocument {
+public class SculptureDocument {
 
     private String material;
     private Double weight;

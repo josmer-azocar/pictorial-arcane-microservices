@@ -1,3 +1,6 @@
+server:
+  port: 8060
+
 spring:
   application:
     name: api-gateway
@@ -9,10 +12,21 @@ spring:
         - id: artwork-service
           uri: lb://artwork-service
           predicates:
-            - Path=/artist/**,/artwork/**,/genre/**,/migrate/**
+            - Path=/artist/**,/artwork/**,/genre/**
+        - id: audit-service
+          uri: lb://audit-service
+          predicates:
+            - Path=/artwork-status-history/**,/billing-by-month/**,/security-log-by-event/**
         - id: core-service
           uri: lb://core-service
           predicates:
             - Path=/core/**
           filters:
             - StripPrefix=1
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

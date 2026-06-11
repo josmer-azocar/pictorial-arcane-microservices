@@ -1,6 +1,6 @@
 package com.pictorial.artwork_service.document;
 
-public class CeramicDocument extends ArtWorkDocument {
+public class CeramicDocument {
 
     private String materialType;
     private String technique;

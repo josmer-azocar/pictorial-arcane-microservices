@@ -1,6 +1,6 @@
 package com.pictorial.artwork_service.document;
 
-public class PhotographyDocument extends ArtWorkDocument {
+public class PhotographyDocument {
 
     private String printType;
     private String resolution;

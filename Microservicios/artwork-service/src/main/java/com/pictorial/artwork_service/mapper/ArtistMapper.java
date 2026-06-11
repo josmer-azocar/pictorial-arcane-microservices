@@ -6,7 +6,6 @@ import com.pictorial.artwork_service.dto.request.ArtistRequestDto;
 import com.pictorial.artwork_service.dto.request.UpdateArtistDto;
 import com.pictorial.artwork_service.dto.response.ArtWorkResponseDto;
 import com.pictorial.artwork_service.dto.response.ArtistResponseDto;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -26,7 +25,6 @@ public interface ArtistMapper {
     ArtistResponseDto toResponseDto(ArtistDocument document);
     List<ArtistResponseDto> toResponseDto(Iterable<ArtistDocument> documents);
 
-    @InheritInverseConfiguration
     ArtistDocument toDocument(ArtistRequestDto dto);
 
     void updateDocumentFromDto(UpdateArtistDto dto, @MappingTarget ArtistDocument document);

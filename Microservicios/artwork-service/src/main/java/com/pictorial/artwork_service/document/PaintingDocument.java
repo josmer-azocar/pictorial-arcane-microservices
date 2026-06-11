@@ -1,6 +1,6 @@
 package com.pictorial.artwork_service.document;
 
-public class PaintingDocument extends ArtWorkDocument {
+public class PaintingDocument {
 
     private String technique;
     private String holder;

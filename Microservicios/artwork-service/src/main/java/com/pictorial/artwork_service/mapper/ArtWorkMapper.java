@@ -45,7 +45,7 @@ public interface ArtWorkMapper {
     PhotographyResponseDto toPhotographyResponse(PhotographyDocument document);
     GoldsmithResponseDto toGoldsmithResponse(GoldsmithDocument document);
 
-    @Mapping(target = "artWorkResponse", source = "artwork")
+    @Mapping(target = "artworkResponse", source = "artwork")
     @Mapping(target = "paintingResponse", source = "painting")
     ContainerPaintingResponseDto toContainerPaintingResponse(ArtWorkResponseDto artwork, PaintingResponseDto painting);
 
