@@ -1,5 +1,7 @@
 package com.pictorial.artwork_service.document;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 public class GenreDocument {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @Indexed(unique = true)
     private String name;

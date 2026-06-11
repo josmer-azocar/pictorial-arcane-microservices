@@ -1,5 +1,7 @@
 package com.pictorial.artwork_service.document;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,7 +19,9 @@ import java.time.LocalDateTime;
 public class ArtWorkDocument {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
+
     private String name;
     private String status;
     private Object type_details;
