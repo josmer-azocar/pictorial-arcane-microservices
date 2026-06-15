@@ -1,0 +1,237 @@
+:root {
+  --primary-purple: #4a0080;
+  --accent-gold: #ffd700;
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --text-dark: #2d0050;
+
+}
+
+.artp-page {
+  min-height: 100vh;
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/*  SECCIÓN SUPERIOR (Avatar y Nombre) */
+.artp-top-layout {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-left: 50px;
+}
+
+.artp-avatar-frame {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  padding: 5px;
+  background: linear-gradient(to bottom, var(--primary-purple), var(--accent-gold));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.artp-circle-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+}
+
+.artp-artist-name {
+  color: white;
+  font-size: 3.5rem;
+  font-weight: 800;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+.artp-layout-split {
+  display: flex;         /* Pone los hijos en fila */
+  align-items: flex-start;
+  gap: 30px;            /* Espacio entre biografía y galería */
+  width: 100%;
+}
+
+/* PANEL LATERAL IZQUIERDO (Biografía) */
+.artp-side-info {
+  width: 350px;         /* Ancho fijo para que no se mueva */
+  flex-shrink: 0;       /* Evita que se encoja */
+}
+
+.artp-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.artp-field {
+  margin-bottom: 20px;
+}
+
+.artp-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: var(--primary-purple);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.artp-value, .artp-bio-text {
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+/*SECCIÓN DE GALERÍA (DERECHA) */
+.artp-gallery-right {
+  flex: 1;              /* Ocupa todo el espacio restante a la derecha */
+  background: white;  
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.artp-section-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--primary-purple);
+}
+
+/* El contenedor que agrupa las tarjetas de escultura */
+.artp-works-container {
+  display: flex; 
+  flex-wrap: wrap;       /* Hace que las fotos bajen si no caben */
+  gap: 25px;            /* Espacio entre cada tarjeta */
+  padding: 10px 0;
+}
+
+/* TARJETAS DE ESCULTURA */
+/* SECCIÓN DE GALERÍA (DERECHA) */
+.artp-gallery-right {
+  flex: 1;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+/* GRID igual que la galería principal */
+.artp-genres-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 20px 0;
+}
+
+/* TARJETA igual que .art-piece */
+.artp-work-mini-card {
+  width: 100%;
+  height: 480px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.artp-work-mini-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+}
+
+/* IMAGEN igual que .art-piece img */
+/* SECCIÓN DE GALERÍA (DERECHA) */
+.artp-gallery-right {
+  flex: 1;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+/* GRID igual que la galería principal */
+.artp-genres-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 20px 0;
+}
+
+/* TARJETA igual que .art-piece */
+.artp-work-mini-card {
+  width: 100%;
+  height: 480px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.artp-work-mini-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+}
+
+/* IMAGEN igual que .art-piece img */
+.artp-genres-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 20px 0;
+}
+
+.artp-work-mini-card {
+  width: 100%;
+  height: 480px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.artp-work-mini-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+}
+
+.artp-genre-cover {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.artp-work-name {
+  font-weight: 400;
+  font-size: 1.15rem;
+  margin: 14px 16px 6px;
+  color: #111;
+  line-height: 1.3;
+}
+
+.artp-work-price {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: rgb(176, 91, 255);
+  text-align: right;
+  padding: 0 16px 14px;
+  margin-top: auto;
+  display: block;
+}
