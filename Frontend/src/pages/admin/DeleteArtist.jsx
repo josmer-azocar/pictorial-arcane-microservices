@@ -110,7 +110,7 @@ function DeleteArtist() {
   if (!window.confirm(`¿Eliminar a ${name}? Esta acción no se puede deshacer.`)) return;
   try {
     // PASO 1: borrar imagen del artista primero
-    await axios.delete(`${API_BASE_URL}/admin/${id}/artistImage`, {
+    await axios.delete(`${API_BASE_URL}/core/admin/${id}/artistImage`, {
       headers: { Authorization: `Bearer ${token}` }
     }).catch(() => {}); // si no tiene imagen no importa
 

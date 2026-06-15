@@ -1,5 +1,5 @@
 import axios from 'axios';
-const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 
 
@@ -25,7 +25,7 @@ export async function searchMemberships(
             sortBy: sortBy,
             direction: direction
         };
-        const memberships = await axios.get(`${url}/membership/search`, {
+        const memberships = await axios.get(`${API_BASE_URL}/core/membership/search`, {
             params, headers });
         console.log("Datos de membresías:", memberships.data);
         return memberships.data;
@@ -41,7 +41,7 @@ export async function obtainOrRenewMembership() {
         const token = localStorage.getItem('token');
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        const response = await axios.post(`${url}/membership/renew`, {}, { headers });
+        const response = await axios.post(`${API_BASE_URL}/core/membership/renew`, {}, { headers });
 
         console.log("Membership operation successful:", response.data);
         return response.data;
@@ -57,7 +57,7 @@ export async function cancelMembership(membershipId) {
         if (!token) throw new Error('No hay token de autenticación disponible');
 
         const response = await axios.put(
-            `${url}/membership/cancel/${membershipId}`,
+            `${API_BASE_URL}/core/membership/cancel/${membershipId}`,
             {},
             {
                 headers: {
@@ -80,7 +80,7 @@ export async function fetchMembershipStatus() {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No hay token de autenticación disponible');
 
-        const response = await axios.get(`${url}/membership/active`, {
+        const response = await axios.get(`${API_BASE_URL}/core/membership/active`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -101,7 +101,7 @@ export async function createSecurityCode (){
     try {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No hay token de autenticación disponible');
-        const response = await axios.post(`${url}/client/createSecurityCode`, {}, {
+        const response = await axios.post(`${API_BASE_URL}/core/client/createSecurityCode`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`, }
             });

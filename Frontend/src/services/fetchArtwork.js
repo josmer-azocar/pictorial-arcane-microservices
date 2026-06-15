@@ -3,9 +3,7 @@ import axios from "axios";
 //const API_BASE_URL = import.meta.env.VITE_API_URL;
 //const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
 
-//para probra patricia
-const API_BASE_URL = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
-const url = API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function showArtwork(idGenre = null, 
     idArtist = null, 
@@ -28,7 +26,7 @@ export async function showArtwork(idGenre = null,
         };
         if (minPrice != null) searchParams.min = minPrice;
         if (maxPrice != null) searchParams.max = maxPrice;
-        const response = await axios.get(`${url}/artwork/search`, {
+        const response = await axios.get(`${API_BASE_URL}/artwork/search`, {
             params: searchParams
         });
         console.log("Datos recibidos:", response.data);
@@ -42,7 +40,7 @@ export async function showArtwork(idGenre = null,
 
 export async function showArtist() {
     try{
-      const fetchedArtist = await axios.get(`${url}/artist/all`, {timeout: 0});
+      const fetchedArtist = await axios.get(`${API_BASE_URL}/artist/all`, {timeout: 0});
         return fetchedArtist.data;
 
     } catch (error){
@@ -55,7 +53,7 @@ export async function showArtist() {
 
 export async function getAllArtworks() {
     try {
-        const response = await axios.get(`${url}/artwork/all`);
+        const response = await axios.get(`${API_BASE_URL}/artwork/all`);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -357,34 +355,12 @@ export const createGoldsmith = async (goldsmithData, token) => {
     }
 };
 
-/**
- * Sube una imagen para una obra de arte.
- * artworkId - El ID de la obra para la que se sube la imagen.
- * file - El archivo de imagen a subir.
- * token - El token de autenticación del administrador.
- * retorna {Promise<any>} La respuesta del servidor.
- */
-export const uploadArtworkImage = async (artworkId, file, token) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    return await axios.post(`${API_BASE_URL}/admin/${artworkId}/artworkImage`, formData, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-        }
-    });
+// TODO: Imágenes deshabilitadas - backend no implementa endpoints de imágenes
+export const uploadArtworkImage = async () => {
+    throw new Error('Upload de imágenes no disponible - endpoint no implementado en backend');
 };
-
-export const uploadArtistImage = async (artistId, file, token) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return await axios.post(`${API_BASE_URL}/admin/${artistId}/artistImage`, formData, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-        }
-    });
+export const uploadArtistImage = async () => {
+    throw new Error('Upload de imágenes no disponible - endpoint no implementado en backend');
 };
 
 // *Generos
@@ -461,53 +437,17 @@ export async function deleteArtwork(id, token) {
     return response;
 }
 
-// DELETE /admin/{id}/artworkImage
-export async function deleteArtworkImage(id, token) {
-    const response = await axios.delete(`${API_BASE_URL}/admin/${id}/artworkImage`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return response;
+// TODO: Imágenes deshabilitadas - backend no implementa endpoints de imágenes
+export async function deleteArtworkImage() {
+    throw new Error('Delete de imágenes no disponible - endpoint no implementado en backend');
 }
 
-export const updateSculpture = async (id, data, token) => {
-    return await axios.put(`${API_BASE_URL}/artwork/sculpture/update/${id}`, data, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-    });
-};
-
-export const updatePainting = async (id, data, token) => {
-    return await axios.put(`${API_BASE_URL}/artwork/painting/update/${id}`, data, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-    });
-};
-
-export const updatePhotography = async (id, data, token) => {
-    return await axios.put(`${API_BASE_URL}/artwork/photography/update/${id}`, data, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-    });
-};
-
-/**
- * Actualiza los datos genéricos de una obra (Nombre, Precio, Estado).
- * Endpoint: PUT /artwork/update/{id}
- */
-export const updateGenericArtwork = async (id, data, token) => {
+export const updateArtwork = async (id, data, token) => {
     return await axios.put(`${API_BASE_URL}/artwork/update/${id}`, data, {
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
     });
 };
-
-export const updateCeramic = async (id, data, token) => {
-    return await axios.put(`${API_BASE_URL}/artwork/ceramic/update/${id}`, data, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-    });
-};
-
-export const updateGoldsmith = async (id, data, token) => {
-    return await axios.put(`${API_BASE_URL}/artwork/goldsmith/update/${id}`, data, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-    });
-};
+export const updateGenericArtwork = updateArtwork;
 
 /**
  * Busca obras de arte con filtros.

@@ -1,5 +1,5 @@
 import axios from 'axios';
-const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function fetchPurchases(page = 0, size = 10) {
     try {
@@ -11,7 +11,7 @@ export async function fetchPurchases(page = 0, size = 10) {
             size
         };
 
-        const response = await axios.get(`${url}/sale/MyPurchases`, { params, headers });
+        const response = await axios.get(`${API_BASE_URL}/core/sale/MyPurchases`, { params, headers });
         return response.data;
     } catch (error) {
         console.error("Error fetching purchases:", error);

@@ -1,9 +1,9 @@
 import axios from "axios";
-const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function getUserData(token) {
     try {
-        const response = await axios.get(`${url}/user/profile`, {
+        const response = await axios.get(`${API_BASE_URL}/core/user/profile`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -20,7 +20,7 @@ export async function updateUserData(updatedData) {
     try {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No hay token disponible');
-        const response = await axios.put(`${url}/user/update`, updatedData, {
+        const response = await axios.put(`${API_BASE_URL}/core/user/update`, updatedData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -37,7 +37,7 @@ export async function updateClientData(updatedData) {
     try {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No hay token disponible');
-        const response = await axios.put(`${url}/client/update`, updatedData, {
+        const response = await axios.put(`${API_BASE_URL}/core/client/update`, updatedData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

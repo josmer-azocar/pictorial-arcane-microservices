@@ -38,13 +38,13 @@ function UpdateArtist() {
     if (!file) return;
     setUploadingImage(true);
     try {
-      await axios.delete(`${API_BASE_URL}/admin/${artistId}/artistImage`, {
+await axios.delete(`${API_BASE_URL}/core/admin/${artistId}/artistImage`, {
         headers: { Authorization: `Bearer ${token}` }
       }).catch(err => console.warn("No se pudo borrar la imagen anterior (quizás no existía)", err));
 
       const formDataImg = new FormData();
       formDataImg.append('file', file);
-      await axios.post(`${API_BASE_URL}/admin/${artistId}/artistImage`, formDataImg, {
+      await axios.post(`${API_BASE_URL}/core/admin/${artistId}/artistImage`, formDataImg, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -65,7 +65,7 @@ function UpdateArtist() {
   const handleDeleteImage = async (artistId) => {
     if (!window.confirm('¿Seguro que quieres eliminar la imagen de este artista?')) return;
     try {
-      await axios.delete(`${API_BASE_URL}/admin/${artistId}/artistImage`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`${API_BASE_URL}/core/admin/${artistId}/artistImage`, { headers: { Authorization: `Bearer ${token}` } });
       toast.success('Imagen eliminada.');
       setArtists(prev => prev.map(a => a.idArtist === artistId ? { ...a, imageUrl: '' } : a));
       setSelectedArtist(prev => ({ ...prev, imageUrl: '' }));

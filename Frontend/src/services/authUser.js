@@ -1,6 +1,6 @@
 import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
+
 
 // we keep two base URLs: one for auth endpoints and one general server url
 //const authUrl = "http://localhost:8080/auth";
@@ -14,7 +14,7 @@ const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebs
 // register a new user - used during handleNext2 in Sign.jsx
 export async function registerUser(registerData) {
     // registerData should match the DTO expected by the backend
-    const response = await axios.post(`${API_BASE_URL}/auth/register`, registerData);
+    const response = await axios.post(`${API_BASE_URL}/core/auth/register`, registerData);
     return response.data; // caller will handle token, etc.
 }
 
@@ -30,7 +30,7 @@ export async function updateSecurityAnswer(questionId, answer, token) {
     }
 
     const response = await axios.put(
-    `${API_BASE_URL}/questions/updateQuestion?questionId=${parseInt(questionId)}`,
+    `${API_BASE_URL}/core/questions/updateQuestion?questionId=${parseInt(questionId)}`,
     {
         idQuestion: parseInt(questionId),
         Answer: answer  // ← objeto completo
@@ -47,7 +47,7 @@ export async function updateSecurityAnswer(questionId, answer, token) {
 // update client payment/membership information
 export async function updateClientInfo(creditCardNumber, postalCode, token) {
     const response = await axios.put(
-        `${API_BASE_URL}/client/update`,
+        `${API_BASE_URL}/core/client/update`,
         { creditCardNumber, postalCode },
         {
             headers: {
@@ -62,7 +62,7 @@ export async function updateClientInfo(creditCardNumber, postalCode, token) {
 // create a security code for the client after registration
 export async function createSecurityCode(token) {
     const response = await axios.post(
-        `${API_BASE_URL}/client/createSecurityCode`,
+        `${API_BASE_URL}/core/client/createSecurityCode`,
         null,
         {
             headers: {
@@ -75,7 +75,7 @@ export async function createSecurityCode(token) {
 
 // fetch authenticated user's profile (existing getUserPfp uses /dashboard but we keep same)
 export async function fetchUserProfile(token) {
-    const response = await axios.get(`${API_BASE_URL}/dashboard`, {
+    const response = await axios.get(`${API_BASE_URL}/core/user/profile`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -86,7 +86,7 @@ export async function fetchUserProfile(token) {
 
 export async function logUser(credentials) {
     try {
-        const response = await axios.post(`${url}/auth/login`, {
+        const response = await axios.post(`${API_BASE_URL}/core/auth/login`, {
             email: credentials.email,
             password: credentials.password
         });
@@ -117,7 +117,7 @@ export async function logUser(credentials) {
 // Obtener las preguntas de seguridad asignadas al usuario autenticado
 export const getAssignedSecurityQuestions = async (token) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/questions/getAssignedQuestions`, {
+    const response = await axios.get(`${API_BASE_URL}/core/questions/getAssignedQuestions`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -133,7 +133,7 @@ export const getAssignedSecurityQuestions = async (token) => {
 export const recoverSecurityCode = async (answersArray, token) => {
   try {
     const response = await axios.put(
-      `${API_BASE_URL}/questions/RecoverClientCode`,
+      `${API_BASE_URL}/core/questions/RecoverClientCode`,
       answersArray,
       {
         headers: {
@@ -153,7 +153,7 @@ export const recoverSecurityCode = async (answersArray, token) => {
 // Crear/renovar membresía del cliente
 export async function createMembership(token) {
     const response = await axios.post(
-        `${API_BASE_URL}/membership/renew`,
+        `${API_BASE_URL}/core/membership/renew`,
         null,
         {
             headers: {
@@ -165,7 +165,7 @@ export async function createMembership(token) {
 }
 
 export async function getAllQuestions(token) {
-    const response = await axios.get(`${API_BASE_URL}/questions/getAllQuestions`, {
+    const response = await axios.get(`${API_BASE_URL}/core/questions/getAllQuestions`, {
         headers: {
             Authorization: `Bearer ${token}`
         }

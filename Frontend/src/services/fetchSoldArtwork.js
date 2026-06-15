@@ -1,5 +1,5 @@
 import axios from "axios";
-const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
@@ -8,7 +8,7 @@ const getAuthHeaders = () => {
 
 export async function fetchSoldArtwork(startDate, endDate) { //billing
     try {
-        const billing = await axios.get(`${url}/admin/billingSummary`, {
+        const billing = await axios.get(`${API_BASE_URL}/core/admin/billingSummary`, {
         params: {
             startDate,
             endDate
@@ -26,7 +26,7 @@ export async function fetchSoldArtwork(startDate, endDate) { //billing
 
 export async function fetchPaidArtwork(startDate, endDate, page = 0, size = 10) { 
     try {
-        const paidArtwork = await axios.get(`${url}/admin/getSoldArtworksByDate`, {
+        const paidArtwork = await axios.get(`${API_BASE_URL}/core/admin/getSoldArtworksByDate`, {
         params: {
             startDate,
             endDate,
