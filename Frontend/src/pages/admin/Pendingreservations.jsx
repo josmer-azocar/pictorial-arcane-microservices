@@ -6,37 +6,7 @@ import InvoiceModal from './InvoiceModal.jsx';
 import './Admin.css';
 import { getPendingSales } from '../../services/fetchSales';
 
-//const BASE_URL = 'http://localhost:8080';
 const API_BASE_URL  = import.meta.env.VITE_API_URL;
-
-const mockReservations = [
-  {
-    idSale: 1,
-    artworkTitle: 'Mármol Eterno',
-    clientFullName: 'Carlos Pérez',
-    price: 2500, taxAmount: 400, totalPaid: 2900,
-    date: new Date(Date.now() - 30 * 60 * 60 * 1000).toISOString(),
-    saleStatus: 'PENDING',
-  },
-  {
-    idSale: 2,
-    artworkTitle: 'Luz Nocturna',
-    clientFullName: 'Ana Gómez',
-    price: 4800, taxAmount: 768, totalPaid: 5568,
-    date: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    saleStatus: 'PENDING',
-  },
-  {
-    idSale: 3,
-    artworkTitle: 'Fragmentos',
-    clientFullName: 'Pedro López',
-    price: 1200, taxAmount: 192, totalPaid: 1392,
-    date: new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString(),
-    saleStatus: 'PENDING',
-  },
-];
-
-
 
 // Calcula horas restantes hasta 24h
 const timeRemaining = (dateStr) => {
@@ -70,25 +40,6 @@ function PendingReservations() {
   const token = localStorage.getItem('token');
 
   // ── GET /admin/getAllPendingSales ──────────────────────────
-  /*const fetchPendingSales = async () => {
-
- /*  if (!token || token === 'test-token-fake') {
-    setReservations(mockReservations);
-    setLoading(false);
-    return;
-  }*/
-  /*  setLoading(true);
-    try {
-      const data = await getPendingSales(token);
-      setReservations(Array.isArray(data) ? data : data?.content || []);
-      // AQUÍ lo pones
- 
-    } catch (err) {
-      toast.error('Error al cargar las reservas pendientes.');
-    } finally {
-      setLoading(false);
-    }
-  };*/
   const fetchPendingSales = async () => {
   const token = localStorage.getItem('token');
   console.log("Token al hacer fetch:", token);

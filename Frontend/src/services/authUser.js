@@ -102,18 +102,6 @@ export async function logUser(credentials) {
     }
 }
 
-//funcion para hacer pruebas
-
-/*export async function registerUser(credentials) {
-    console.log("Registro de prueba:", credentials);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return {
-        success: true,
-        message: "Usuario creado (MOCK)",
-        user: credentials.nombre
-    };
-}*/
-
 // Obtener las preguntas de seguridad asignadas al usuario autenticado
 export const getAssignedSecurityQuestions = async (token) => {
   try {

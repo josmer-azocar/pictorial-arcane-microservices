@@ -16,22 +16,6 @@ const ArtistProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); 
 
-  /*useEffect(() => {
-    const fetchMockData = () => {
-      setLoading(true);
-      setTimeout(() => {
-        const foundArtist = mockArtists.find(a => a.id === artistId);
-        if (foundArtist) {
-          setArtist(foundArtist);
-          const artistWorks = mockArtworks[artistId] || {};
-          setArtworksByGenre(artistWorks);
-        }
-        setLoading(false);
-      }, 500);
-    };
-    fetchMockData();
-  }, [artistId, mockArtists, mockArtworks]);*/
-
 useEffect(() => {
   const fetchData = async () => {
     try {

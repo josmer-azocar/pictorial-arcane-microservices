@@ -47,64 +47,6 @@ function DeleteArtist() {
   }
 }, [selectedArtist]);
 
-/* useEffect(() => {
-    const fetchArtists = async () => {
-      try {
-        // DATOS FALSOS TEMPORALES — borrar cuando el backend esté listo
-         const mockArtists = [
-    {
-      idArtist: 1,
-      name: 'Leonardo',
-      lastName: 'Da Vinci',
-      nationality: 'Italiana',
-      birthdate: '1452-04-15',
-      biography: 'Pintor, escultor e inventor del Renacimiento italiano.',
-      commissionRate: 0.08,
-      imageUrl: '/imagen/v.jpg'
-    },
-    {
-      idArtist: 2,
-      name: 'Pablo',
-      lastName: 'Picasso',
-      nationality: 'Española',
-      birthdate: '1881-10-25',
-      biography: 'Cofundador del cubismo y una de las figuras más influyentes del arte moderno.',
-      commissionRate: 0.10,
-      imageUrl: ''
-    },
-    {
-      idArtist: 3,
-      name: 'Frida',
-      lastName: 'Kahlo',
-      nationality: 'Mexicana',
-      birthdate: '1907-07-06',
-      biography: 'Conocida por sus autorretratos y obras inspiradas en la naturaleza y artefactos de México.',
-      commissionRate: 0.07,
-      imageUrl: ''
-    },
-    {
-      idArtist: 4,
-      name: 'Vincent',
-      lastName: 'Van Gogh',
-      nationality: 'Neerlandesa',
-      birthdate: '1853-03-30',
-      biography: 'Postimpresionista cuya obra influyó enormemente en el arte occidental del siglo XX.',
-      commissionRate: 0.05,
-      imageUrl: ''
-    },
-  ];
-        setArtists(mockArtists);
-        // const res = await axios.get(`${BASE_URL}/artist/all`);
-        // setArtists(res.data);
-      } catch (err) {
-        toast.error('Error al cargar artistas.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchArtists();
-  }, []);*/
-
   // DELETE /artists/{id}
   const handleDelete = async (id, name) => {
   if (!window.confirm(`¿Eliminar a ${name}? Esta acción no se puede deshacer.`)) return;
