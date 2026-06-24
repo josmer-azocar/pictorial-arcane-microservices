@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, RotateCcw, AlertCircle, Database, Check, Terminal, ExternalLink, Sparkles, ArrowRight } from 'lucide-react';
+import { Play, RotateCcw, AlertCircle, Database, Check, Terminal, ExternalLink, Sparkles, ArrowRight, LayoutDashboard } from 'lucide-react';
 import { DBEngine, DemoStep } from '../types';
 
 interface LiveDemoProps {
@@ -14,6 +14,143 @@ export default function LiveDemo({ onStepChange }: LiveDemoProps) {
     '[SISTEMA] Servidor Spring Boot escuchando en puerto 3000.',
     '[SISTEMA] Conectores de bases de datos políglotas listos.'
   ]);
+
+  const [viewMode, setViewMode] = useState<'console' | 'frontend' | null>(null);
+
+  const renderFrontendView = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <div className="text-center text-gray-400 p-6 flex flex-col items-center gap-2 select-none">
+            <Database size={32} className="text-gray-300" />
+            <span className="font-display font-bold text-gray-500">Sin datos a&uacute;n</span>
+            <span className="text-[11px] text-gray-400">Ejecuta los pasos de la izquierda para visualizar los datos</span>
+          </div>
+        );
+      case 1:
+        return (
+          <div className="w-full animate-fade-in">
+            <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-200 p-4 shadow-sm">
+              <div className="flex items-center justify-between border-b border-purple-100 pb-3 mb-3">
+                <div>
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-purple-500">Factura de Venta</span>
+                  <h3 className="font-display font-bold text-sm text-gray-900">FAC-2026-9918</h3>
+                </div>
+                <span className="text-[10px] font-mono bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">COMPLETADO</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-[11px]">
+                <div><span className="text-gray-400 block">Transacci&oacute;n ID</span><span className="font-mono text-gray-800 font-medium">txn_c1a93feb_sbdii</span></div>
+                <div><span className="text-gray-400 block">Usuario DNI</span><span className="font-mono text-gray-800 font-medium">v-23456789</span></div>
+                <div><span className="text-gray-400 block">Obra ID</span><span className="font-mono text-gray-800 font-medium truncate">42f9e612-da13-...</span></div>
+                <div><span className="text-gray-400 block">M&eacute;todo de Pago</span><span className="font-mono text-gray-800 font-medium">Ventanilla / C&oacute;digo Bancario</span></div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-purple-100 flex items-center justify-between">
+                <span className="text-[10px] text-gray-400">Nivel de Aislamiento</span>
+                <span className="text-[10px] font-mono bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">SERIALIZABLE</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-xs text-gray-400">Total</span>
+                <span className="font-display font-bold text-lg text-gray-900">Bs. 450.000,00</span>
+              </div>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="w-full animate-fade-in">
+            <div className="bg-gradient-to-br from-amber-50 to-white rounded-xl border border-amber-200 p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold">CA</div>
+                  <div>
+                    <h3 className="font-display font-bold text-sm text-gray-900">C&iacute;rculos Arcanos en P&uacute;rpura</h3>
+                    <span className="text-[10px] text-gray-400">Pintura Digital</span>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono bg-red-100 text-red-700 px-2 py-0.5 rounded-full border border-red-200 font-bold animate-pulse">SOLD</span>
+              </div>
+              <div className="flex flex-wrap gap-1 mb-3">
+                <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">arcano</span>
+                <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">abstracto</span>
+                <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">p&uacute;rpura</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-amber-100">
+                <div><span className="text-gray-400 block">Due&ntilde;o</span><span className="font-mono text-gray-800">v-23456789</span></div>
+                <div><span className="text-gray-400 block">Precio</span><span className="font-mono text-gray-800 font-bold">Bs. 450.000,00</span></div>
+                <div className="col-span-2"><span className="text-gray-400 block">&Uacute;ltima sincronizaci&oacute;n</span><span className="font-mono text-gray-800">2026-06-11T00:15:33Z</span></div>
+              </div>
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="w-full animate-fade-in overflow-x-auto">
+            <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl border border-sky-200 p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-display font-bold text-sm text-gray-900">Registro de Auditor&iacute;a Inmutable</h3>
+                <span className="text-[10px] font-mono bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full">Cassandra CQL</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-[10px] font-mono">
+                  <thead>
+                    <tr className="border-b border-sky-200 text-sky-600">
+                      <th className="text-left py-1 pr-2">user_dni</th>
+                      <th className="text-left py-1 pr-2">event_timestamp</th>
+                      <th className="text-left py-1 pr-2">event_id</th>
+                      <th className="text-left py-1 pr-2">action</th>
+                      <th className="text-left py-1 pr-2">artwork_id</th>
+                      <th className="text-left py-1 pr-2">client_ip</th>
+                      <th className="text-left py-1">latency_ms</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-sky-100 text-gray-700 hover:bg-sky-50/50">
+                      <td className="py-1 pr-2 font-bold">v-23456789</td>
+                      <td className="py-1 pr-2">2026-06-11T00:15:32.4</td>
+                      <td className="py-1 pr-2 text-[9px]">ccb90a2a-...</td>
+                      <td className="py-1 pr-2"><span className="bg-amber-100 text-amber-700 px-1 py-0.5 rounded text-[9px] font-bold">PURCHASE</span></td>
+                      <td className="py-1 pr-2 text-[9px]">42f9e612-...</td>
+                      <td className="py-1 pr-2">190.140.22.180</td>
+                      <td className="py-1">14</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-2 pt-2 border-t border-sky-100">
+                <span className="text-[10px] text-gray-400">Write Consistency: <span className="font-bold text-gray-600">QUORUM (RF=3)</span></span>
+              </div>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="w-full animate-fade-in">
+            <span className="text-[10px] text-purple-500 font-mono block mb-2">Sugerencias calculadas via Cypher:</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { title: 'Simetr&iacute;as Ocultas', artist: 'Salazar In&eacute;s', genre: 'Abstracto P&uacute;rpura', score: '95%', affinity: 0.95, bg: 'from-emerald-500/10', border: 'border-emerald-500/20' },
+                { title: 'Ecos del P&uacute;rpura', artist: 'Avenda&ntilde;o Licett', genre: 'Abstracto / &Oacute;leo', score: '88%', affinity: 0.88, bg: 'from-purple-500/10', border: 'border-purple-500/20' },
+                { title: 'Laberinto del Tiempo', artist: 'Azocar Josue', genre: 'Geom&eacute;trico', score: '72%', affinity: 0.72, bg: 'from-sky-500/10', border: 'border-sky-500/20' }
+              ].map((item, id) => (
+                <div key={id} className={`p-3 rounded-xl bg-gradient-to-b ${item.bg} to-white border ${item.border} shadow-sm flex flex-col justify-between`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-mono font-bold text-gray-500">{item.score}</span>
+                    <div className="h-2 w-full max-w-[60px] bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-arcane-purple to-arcane-lavender rounded-full" style={{ width: `${item.affinity * 100}%` }} />
+                    </div>
+                  </div>
+                  <h5 className="font-display font-bold text-sm text-gray-900 mt-1">{item.title}</h5>
+                  <span className="text-[10px] text-gray-400 block">{item.genre}</span>
+                  <span className="text-[10px] text-gray-500 mt-1 italic">Por {item.artist}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   const steps: DemoStep[] = [
     {
@@ -304,16 +441,56 @@ v-23456789 | 2026-06-11T00:15:32.4 | ccb90a2a-... | PURCHASE | 42f9e612-... | 19
             )}
           </div>
 
-          {/* Right Column: Simulated Terminal & Outputs Console (7 cols) */}
+          {/* Right Column: Mode Selector / Viewer (7 cols) */}
           <div className="lg:col-span-7 flex flex-col rounded-2xl border border-arcane-purple/10 bg-[#050209] shadow-sm overflow-hidden">
             
+            {viewMode === null ? (
+              <div className="flex flex-col items-center justify-center flex-grow p-8 bg-gray-50 gap-6">
+                <div className="text-center">
+                  <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
+                    Panel de Visualizaci&oacute;n
+                  </span>
+                  <h3 className="font-display font-bold text-xl text-gray-900 mt-3 mb-1">
+                    Selecciona el modo de visualizaci&oacute;n
+                  </h3>
+                  <p className="text-sm text-gray-500 font-sans max-w-md">
+                    Elige c&oacute;mo quieres ver los datos de cada paso de la transacci&oacute;n pol&iacute;glota.
+                  </p>
+                </div>
+                <div className="flex gap-4 mt-2">
+                  <button
+                    onClick={() => setViewMode('console')}
+                    className="px-8 py-4 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 text-white border border-gray-700 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-2 min-w-[180px]"
+                  >
+                    <Terminal size={28} />
+                    <span className="font-display font-bold text-base">Consola</span>
+                    <span className="text-[10px] text-gray-400 font-sans">Terminal con logs y JSON</span>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('frontend')}
+                    className="px-8 py-4 rounded-xl bg-gradient-to-br from-arcane-purple to-arcane-lavender text-white border border-arcane-purple/30 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-2 min-w-[180px]"
+                  >
+                    <LayoutDashboard size={28} />
+                    <span className="font-display font-bold text-base">Frontend</span>
+                    <span className="text-[10px] text-purple-200 font-sans">Vista visual de datos</span>
+                  </button>
+                </div>
+              </div>
+            ) : viewMode === 'console' ? (
+              <>
+
             {/* Terminal bar */}
             <div className="bg-[#0b0616] px-4 py-3 border-b border-arcane-purple/10 flex items-center justify-between select-none">
               <div className="flex items-center gap-2">
                 <Terminal size={14} className="text-arcane-lavender" />
                 <span className="text-xs font-mono font-bold text-gray-300">Terminal SBDII (Outbox + Message Broker Logger)</span>
               </div>
-              <span className="text-[9px] font-mono text-gray-500 uppercase">Live Telemetry</span>
+              <button
+                onClick={() => setViewMode(null)}
+                className="text-[9px] font-mono text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition cursor-pointer"
+              >
+                Cambiar modo
+              </button>
             </div>
 
             {/* Terminal screen */}
@@ -434,6 +611,36 @@ v-23456789 | 2026-06-11T00:15:32.4 | ccb90a2a-... | PURCHASE | 42f9e612-... | 19
                 </div>
               )}
             </div>
+
+              </>
+            ) : (
+              <div className="p-4 bg-gray-50 flex-grow flex flex-col">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-gray-500">Vista Visual de Datos</span>
+                  <button
+                    onClick={() => setViewMode(null)}
+                    className="text-[9px] font-mono text-arcane-purple hover:text-white bg-arcane-purple/10 hover:bg-arcane-purple px-2 py-1 rounded transition cursor-pointer"
+                  >
+                    Cambiar modo
+                  </button>
+                </div>
+
+                <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm min-h-[280px] flex items-center justify-center">
+                  {renderFrontendView()}
+                </div>
+
+                {currentStep > 0 && (
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      onClick={resetDemo}
+                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded text-[10px] font-mono cursor-pointer transition flex items-center gap-1 border border-gray-200"
+                    >
+                      <RotateCcw size={10} /> Reiniciar Simulación
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
           </div>
 
