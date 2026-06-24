@@ -1,0 +1,6 @@
+{
+  "name": "Plataforma Políglota — Pictorial Arcane",
+  "description": "Interactive landing page showcasing a microservices polyglot architecture with PostgreSQL, MongoDB, Cassandra, and Neo4j for SBDII - UNEG.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

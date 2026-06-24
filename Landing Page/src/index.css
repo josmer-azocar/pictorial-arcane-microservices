@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Zen+Tokyo+Zoo&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-logo: "Zen Tokyo Zoo", cursive;
+  
+  --color-arcane-dark: #0a0a0a;
+  --color-arcane-deep: #140523;
+  --color-arcane-purple-dark: #3d0066;
+  --color-arcane-purple: #8b2fc9;
+  --color-arcane-lavender: #c084fc;
+  --color-arcane-pale: #f5f0ff;
+}
+
+@layer utilities {
+  /* Light theme scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a3a3a3;
+  }
+
+  /* Glassmorphism style presets */
+  .arcane-glass {
+    background: rgba(15, 6, 28, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(192, 132, 252, 0.1);
+  }
+
+  .arcane-glass-light {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(139, 47, 201, 0.1);
+  }
+
+  .arcane-glass-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .arcane-glass-hover:hover {
+    background: rgba(45, 10, 75, 0.25);
+    border-color: rgba(192, 132, 252, 0.3);
+    box-shadow: 0 0 25px rgba(139, 47, 201, 0.15);
+  }
+
+  /* Text glow preset */
+  .text-glow {
+    text-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+  }
+
+  /* Nav underline animation (pictorial-arcane style) */
+  .nav-underline {
+    position: relative;
+  }
+  .nav-underline::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: #c084fc;
+    transition: width 0.3s ease;
+    border-radius: 1px;
+  }
+  .nav-underline:hover::after {
+    width: 70%;
+  }
+  .nav-underline-active::after {
+    width: 70% !important;
+    box-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
+  }
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(1.08);
+  }
+}
+
+  .glow-backdrop {
+    animation: pulseGlow 12s infinite ease-in-out;
+  }
+
+/* Base global transitions */
+html {
+  scroll-behavior: smooth;
+  background-color: #ffffff;
+}
+
