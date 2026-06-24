@@ -79,7 +79,7 @@ public class MembershipService {
         MembershipEntity entity = membershipRepository.findById(id)
                 .orElseThrow(() -> new ActiveMembershipNotFoundException("Membership not found with ID: " + id));
 
-        entity.setStatus(MembershipStatus.CANCELLED.name());
+        entity.setStatus(MembershipStatus.CANCELED.name());
         return membershipRepository.save(entity);
     }
 
