@@ -33,6 +33,15 @@
         <module name="core-service" />
         <module name="artwork-service" />
       </profile>
+      <profile name="Annotation profile for recommendation-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+        </processorPath>
+        <module name="recommendation-service" />
+      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
@@ -43,6 +52,7 @@
       <module name="config-server" options="-parameters" />
       <module name="core-service" options="-parameters" />
       <module name="pictorialArcane" options="-parameters" />
+      <module name="recommendation-service" options="-parameters" />
       <module name="service-registry" options="-parameters" />
     </option>
   </component>
