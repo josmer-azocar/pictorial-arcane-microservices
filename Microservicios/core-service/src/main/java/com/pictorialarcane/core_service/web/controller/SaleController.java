@@ -74,4 +74,25 @@ public class SaleController {
         String clientEmail = authentication.getName();
         return ResponseEntity.ok(this.saleService.getClientPurchases(page, size, clientEmail));
     }
+
+    @PreAuthorize("hasRole('CLIENT')")
+    @PostMapping("/view/{artworkId}")
+    @Operation(
+            summary = "Register an art work view / Registrar la vista de una obra",
+            description = "Records that the authenticated client viewed an art work, feeding the recommendation graph (SAW relationship). / Registra que el cliente autenticado vio una obra, alimentando el grafo de recomendaciones (relación SAW).",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "View registered / Vista registrada"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized / No autorizado"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden / Prohibido"),
+                    @ApiResponse(responseCode = "404", description = "Client not found / Cliente no encontrado")
+            }
+    )
+    public ResponseEntity<Void> registerView(
+            @Parameter(description = "Art Work ID / ID de la obra de arte", example = "1")
+            @PathVariable Long artworkId,
+            Authentication authentication) {
+        String email = authentication.getName();
+        this.saleService.registerView(artworkId, email);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -2,7 +2,9 @@ package com.pictorialarcane.core_service.persistence.impl_repository;
 
 import com.pictorialarcane.core_service.client.ArtworkClient;
 import com.pictorialarcane.core_service.client.AuditClient;
+import com.pictorialarcane.core_service.client.RecommendationClient;
 import com.pictorialarcane.core_service.client.dto.BillingByMonthRequest;
+import com.pictorialarcane.core_service.client.dto.PurchaseSyncRequest;
 import com.pictorialarcane.core_service.domain.Enum.SaleStatus;
 import com.pictorialarcane.core_service.domain.Enum.ShippingStatus;
 import com.pictorialarcane.core_service.domain.dto.request.PaymentRequestDto;
@@ -37,9 +39,10 @@ public class SaleRepository {
     private final CrudPaymentRepository crudPaymentRepository;
     private final AuditClient auditClient;
     private final ArtworkClient artworkClient;
+    private final RecommendationClient recommendationClient;
 
 
-    public SaleRepository(CrudSaleRepositoy crudSaleRepository, CrudUserRepository crudUserRepository, SaleMapper saleMapper, PaymentMapper paymentMapper, CrudPaymentRepository crudPaymentRepository, AuditClient auditClient, ArtworkClient artworkClient) {
+    public SaleRepository(CrudSaleRepositoy crudSaleRepository, CrudUserRepository crudUserRepository, SaleMapper saleMapper, PaymentMapper paymentMapper, CrudPaymentRepository crudPaymentRepository, AuditClient auditClient, ArtworkClient artworkClient, RecommendationClient recommendationClient) {
         this.crudSaleRepository = crudSaleRepository;
         this.crudUserRepository = crudUserRepository;
         this.saleMapper = saleMapper;
@@ -47,6 +50,7 @@ public class SaleRepository {
         this.crudPaymentRepository = crudPaymentRepository;
         this.auditClient = auditClient;
         this.artworkClient = artworkClient;
+        this.recommendationClient = recommendationClient;
     }
 
     public SaleResponseDto getSaleById(Long saleId){
@@ -159,6 +163,13 @@ public class SaleRepository {
 
         // La obra queda vendida en artwork-service (RESERVED -> SOLD). Best-effort.
         artworkClient.markSold(saleEntity.getIdArtwork(), admin != null ? admin.getDniUser() : null);
+
+        // Sincronización eventual del grafo de recomendaciones: (Comprador)-[:BOUGHT]->(Artwork). Best-effort.
+        recommendationClient.syncPurchase(new PurchaseSyncRequest(
+                String.valueOf(saleEntity.getClient().getDniUser()),
+                saleEntity.getIdArtwork(),
+                saleEntity.getDate().atStartOfDay().toString()
+        ));
 
         return response;
     }
