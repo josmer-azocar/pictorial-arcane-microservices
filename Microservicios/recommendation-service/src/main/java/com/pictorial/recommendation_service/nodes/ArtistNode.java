@@ -24,7 +24,7 @@ public class ArtistNode {
     private String lastName;
     private String nationality;
     private String biography;
-    private Double commissionRate; // Mapea el 0.08
+    private Double commissionRate;
     private String imageUrl;
     private String birthdate; // Se puede usar String o LocalDate ('1944-09-04')
 

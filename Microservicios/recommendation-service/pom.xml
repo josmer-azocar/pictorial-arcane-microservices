@@ -11,8 +11,8 @@
 	<groupId>com.pictorial</groupId>
 	<artifactId>recommendation-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>recommendation-service</name>
+	<description>Motor de recomendaciones y tendencias basado en Neo4j para Pictorial Arcane</description>
 	<url/>
 	<licenses>
 		<license/>
