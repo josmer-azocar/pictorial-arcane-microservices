@@ -1,0 +1,260 @@
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    
+    background: rgba(255, 255, 255, 0.85); /* igual que el principal */
+    border-bottom: none;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+.admin-header-logo {
+    font-family: "Zen Tokyo Zoo", system-ui;
+    font-size: 2.8rem;
+    color: #1a1a1a;
+    margin: 0;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    cursor: pointer;
+
+}
+
+.admin-header-logo span {
+    color: #4a148c;           /* mismo púrpura del botón login */
+}
+
+/* Contenedor central (el badge / texto "Panel de Administración") */
+.admin-header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.admin-header-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: system-ui, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    padding: 0 0 6px 0;
+    transition: color 0.3s ease;
+}
+
+.admin-header-badge:hover {
+    color: #000;
+}
+
+/* Línea animada debajo del texto "Panel de Administración" */
+.admin-header-badge::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000;
+    transition: width 0.3s ease;
+}
+
+.admin-header-badge:hover::after {
+    width: 80%;
+}
+
+/* Punto verde (estado) */
+.admin-header-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #2e7d32;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.25);
+}
+
+/* Zona derecha: nombre + botón logout */
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.admin-header-name {
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.admin-header-name strong {
+    color: #1a1a1a;
+}
+
+/* Botón Cerrar sesión - estilo coherente con el botón Login */
+.admin-header-logout {
+    background-color: #4a148c;          /* mismo púrpura */
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.admin-header-logout:hover {
+    background-color: #ffffff;
+    color: #4a148c;
+    border: 1px solid #4a148c;
+    box-shadow: 0 2px 10px rgba(74, 20, 140, 0.2);
+}
+
+/* Quitamos la línea animada en el botón (igual que en .login-btn) */
+.admin-header-logout::after {
+    display: none;
+}/* ── CAMPANA ── */
+.bell-wrapper {
+    position: relative;
+}
+
+.bell-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    position: relative;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bell-btn:hover {
+    background: rgba(74, 20, 140, 0.08);
+}
+
+.bell-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #e53935;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bell-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 300px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    border: 1px solid rgba(74, 20, 140, 0.1);
+    z-index: 2000;
+    overflow: hidden;
+}
+
+.bell-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a148c;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid rgba(74, 20, 140, 0.1);
+    margin: 0;
+}
+
+.bell-empty {
+    padding: 20px 16px;
+    color: #999;
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 0;
+}
+
+.bell-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.bell-item:hover {
+    background: rgba(74, 20, 140, 0.04);
+}
+
+.bell-item:last-child {
+    border-bottom: none;
+}
+
+.bell-item-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.bell-item-client {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.bell-item-price {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4a148c;
+}/* Animación campana */
+@keyframes bellRing {
+    0%  { transform: rotate(0deg); }
+    10% { transform: rotate(20deg); }
+    20% { transform: rotate(-18deg); }
+    30% { transform: rotate(16deg); }
+    40% { transform: rotate(-14deg); }
+    50% { transform: rotate(10deg); }
+    60% { transform: rotate(-8deg); }
+    70% { transform: rotate(5deg); }
+    80% { transform: rotate(-3deg); }
+    100%{ transform: rotate(0deg); }
+}
+
+@keyframes bellGlow {
+    0%   { box-shadow: 0 0 0 0 rgba(74, 20, 140, 0); }
+    50%  { box-shadow: 0 0 16px 6px rgba(74, 20, 140, 0.35); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 20, 140, 0); }
+}
+
+.bell-btn.bell-ringing {
+    animation: bellRing 0.8s ease, bellGlow 1.5s ease;
+}
+
+.bell-btn.bell-ringing svg path {
+    stroke: #7b1fa2;
+}
