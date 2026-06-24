@@ -49,17 +49,9 @@ function AuthLayout() {
   );
 }
 
-const hideLinksStyles = `
-  li.list-item:has(a[href$="/about"]),
-  li.list-item:has(a[href$="/shipment"]) {
-    display: none !important;
-  }
-`;
-
 export default function FrontendHome() {
   return (
     <BrowserRouter basename="/frontend-home">
-      <style>{hideLinksStyles}</style>
       <AuthContext.Provider value={mockAuth}>
         <Routes>
           <Route path="/" element={<FrontendLayout />} />

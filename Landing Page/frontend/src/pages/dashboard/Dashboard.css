@@ -1,0 +1,313 @@
+.user-welcome{
+    display: flex;
+    flex-direction: row;
+    margin: 70px;
+    align-items: stretch;
+    gap: 40px;
+    background-color: rgb(43, 43, 43);
+    color: antiquewhite;
+
+}
+
+.user-welcome div{
+    flex-shrink: 2;
+}
+
+#pfp-moment{
+    background-color: rgb(54, 26, 80);
+    color: antiquewhite;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#pfp-moment a {
+    text-decoration: none;
+    color: antiquewhite;
+}
+
+#pfp-moment img {
+    border-radius: 50%;
+    max-height: 200px;
+    max-width: 200px;
+}
+
+#user-info ul {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#user-info li {
+    list-style-type: none;
+    
+}
+
+#user-info button{
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+#user-info button:hover {
+    background-color: rgba(0, 0, 0, 0.322);
+    cursor: pointer;
+}
+
+
+#message-user p {
+    font-size: 1.2rem;
+}
+
+.edit-form{
+    padding: 10px;
+}
+
+.form-cont {
+    display: flex;
+    gap: 20px;
+}
+
+.form-buttons button{
+    padding: 5px;
+    margin: 5px;
+    background-color: transparent;
+    color: antiquewhite;
+    border: none;
+    border-radius: 5px;
+}
+
+.form-buttons button:hover {
+    background-color: rgba(137, 43, 226, 0.377);
+    color: white;
+    cursor: pointer;
+}
+
+.form-cont {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.form-cont select {
+    background-color: transparent;
+    color: antiquewhite;
+    border-radius: 5px;
+    padding: 5px;
+    border-width: 1px;
+    border-color: rgba(255, 228, 196, 0.247);
+    max-width: 50%;
+}
+
+.form-cont select:hover {
+    cursor: pointer;
+}
+
+.form-cont input {
+    border-radius: 5px;
+    background-color: transparent;
+    color: antiquewhite;
+    padding: 5px;
+    max-width: 50%;
+    border-color: rgba(255, 228, 196, 0.247);
+}
+
+#message-user {
+    flex: 1;                
+    min-width: 0;           
+    overflow: auto;         
+    max-width: 100%; 
+    align-content: center;
+    justify-content: center;       
+}
+
+
+.info-display {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 2rem; 
+    align-items: center;
+    max-width: 90%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.info-display p {
+    margin: 0; 
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+.info-display button, .pagination-controls button, .membership-actions button {
+    grid-column: span 2; 
+    justify-self: center; 
+    margin-top: 1rem;
+    padding: 0.5rem 2rem;
+    background-color: rgba(112, 29, 112, 0.473);
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.info-display button:hover, .pagination-controls button:hover, .membership-actions button:hover {
+    background-color: rgba(137, 43, 226, 0.377);
+    color: white;
+    cursor: pointer;
+
+}
+
+.edit-form .form-cont {
+    flex-wrap: wrap;       
+}
+
+.edit-form input,
+.edit-form select {
+    width: 100%;             
+    box-sizing: border-box;  
+    min-width: 0;
+}
+
+.purchases-section {
+    margin: 20px;
+    padding: 20px 40px;
+    background-color: rgb(43, 43, 43);
+    color: antiquewhite;
+    border-radius: 8px;
+    max-width: 100%;
+    margin-right: 40px;
+}
+
+.purchases-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: scroll;
+}
+
+.purchases-table thead tr {
+    background-color: #4a2c6d;
+    color: #fff;
+    text-align: left;
+    font-weight: 600;
+}
+
+.purchases-table th,
+.purchases-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.purchases-table tbody tr {
+    background-color: #2d2d2d; 
+    color: #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+.purchases-table tbody tr:nth-child(even) {
+    background-color: #3a3a3a; 
+}
+
+.purchases-table tbody tr:hover {
+    background-color: #5a3a7a; 
+    cursor: default;
+}
+
+.purchases-table td {
+    color: #e0e0e0;
+}
+
+.purchases-table th {
+    background-color: #3a2560;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.purchases-table td:last-child {
+    font-weight: 600;
+    color: #ffd966; 
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.print-btn {
+  background-color: #4a4a4a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  margin: 10px 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.print-btn:hover {
+  background-color: #5a5a5a;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .report-view.printable,
+  .report-view.printable * {
+    visibility: visible;
+  }
+  .report-view.printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+    background: white;
+    color: black;
+  }
+  .report-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .report-table th,
+  .report-table td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: left;
+  }
+  .report-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  .print-btn,
+  .pagination-controls,
+  .date-picker-container,
+  .report-tabs,
+  .admin-eyebrow,
+  .admin-title {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+    .purchases-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
