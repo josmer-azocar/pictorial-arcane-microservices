@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import { getUserData } from './userServices';
 //import getProfile from "./getUserPfp.js"
 
-const AuthContext = createContext(null); //crea un objeto contexto
+export const AuthContext = createContext(null); //crea un objeto contexto
 
 export const AuthProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)

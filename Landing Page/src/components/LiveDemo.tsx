@@ -4,9 +4,10 @@ import { DBEngine, DemoStep } from '../types';
 
 interface LiveDemoProps {
   onStepChange: (stepNum: number) => void;
+  onNavigateFrontend?: () => void;
 }
 
-export default function LiveDemo({ onStepChange }: LiveDemoProps) {
+export default function LiveDemo({ onStepChange, onNavigateFrontend }: LiveDemoProps) {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [loadingStep, setLoadingStep] = useState<boolean>(false);
   const [logs, setLogs] = useState<string[]>([
@@ -467,12 +468,12 @@ v-23456789 | 2026-06-11T00:15:32.4 | ccb90a2a-... | PURCHASE | 42f9e612-... | 19
                     <span className="text-[10px] text-gray-400 font-sans">Terminal con logs y JSON</span>
                   </button>
                   <button
-                    onClick={() => setViewMode('frontend')}
+                    onClick={() => onNavigateFrontend?.()}
                     className="px-8 py-4 rounded-xl bg-gradient-to-br from-arcane-purple to-arcane-lavender text-white border border-arcane-purple/30 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-2 min-w-[180px]"
                   >
                     <LayoutDashboard size={28} />
                     <span className="font-display font-bold text-base">Frontend</span>
-                    <span className="text-[10px] text-purple-200 font-sans">Vista visual de datos</span>
+                    <span className="text-[10px] text-purple-200 font-sans">Ir al Home del Frontend</span>
                   </button>
                 </div>
               </div>

@@ -10,13 +10,30 @@ import ArchitectureDiagram from './components/ArchitectureDiagram';
 import CapTheorem from './components/CapTheorem';
 import PolyglotDictionary from './components/PolyglotDictionary';
 import LiveDemo from './components/LiveDemo';
+import FrontendHome from './components/FrontendHome';
 import ApiDocumentation from './components/ApiDocumentation';
 import FaultTolerance from './components/FaultTolerance';
 import Team from './components/Team';
 export default function App() {
+  const [page, setPage] = useState<string>(window.location.pathname);
   const [activeSection, setActiveSection] = useState<string>('hero');
   const [demoStep, setDemoStep] = useState<number>(0);
   const [highlightedEngine, setHighlightedEngine] = useState<string | null>(null);
+
+  // Listen for pathname changes (manual pushState routing)
+  useEffect(() => {
+    const handlePath = () => setPage(window.location.pathname);
+    window.addEventListener('popstate', handlePath);
+    return () => window.removeEventListener('popstate', handlePath);
+  }, []);
+
+  if (page === '/frontend-home') {
+    return (
+      <div className="bg-white text-gray-900 font-sans min-h-screen">
+        <FrontendHome />
+      </div>
+    );
+  }
 
   // Monitor client screen scroll positions to highlight active navigation link automatically
   useEffect(() => {
@@ -51,6 +68,10 @@ export default function App() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleNavigateFrontend = () => {
+    window.location.href = '/frontend-home';
+  };
 
   const handleStepChange = (step: number) => {
     setDemoStep(step);
@@ -88,7 +109,7 @@ export default function App() {
         <PolyglotDictionary onEngineSelect={handleEngineHighlight} />
 
         {/* Section 5: Real-time user buy transactional simulator stepper */}
-        <LiveDemo onStepChange={handleStepChange} />
+        <LiveDemo onStepChange={handleStepChange} onNavigateFrontend={handleNavigateFrontend} />
 
         {/* Section 6: Swagger Spec API Expanders */}
         <ApiDocumentation />
