@@ -11,6 +11,7 @@ import '../../frontend/src/pages/auth/MainAuth.css';
 import About from '../../frontend/src/pages/about/about.jsx';
 import Shipment from '../../frontend/src/pages/shipment/shipment.jsx';
 import WhoWeAre from '../../frontend/src/pages/whoweare/WhoWeAre.jsx';
+import FrontendArtwork from './FrontendArtwork';
 import '../../frontend/src/pages/about/about.css';
 import '../../frontend/src/pages/shipment/shipment.css';
 import '../../frontend/src/pages/whoweare/WhoWeAre.css';
@@ -67,6 +68,10 @@ function WhoWeAreLayout() {
   return <BaseLayout><WhoWeAre /></BaseLayout>;
 }
 
+function ArtworkLayout() {
+  return <BaseLayout><FrontendArtwork /></BaseLayout>;
+}
+
 export default function FrontendHome() {
   return (
     <BrowserRouter basename="/frontend-home">
@@ -76,7 +81,7 @@ export default function FrontendHome() {
           <Route path="/login" element={<AuthLayout />} />
           <Route path="/auth/*" element={<AuthLayout />} />
           <Route path="/about" element={<AboutLayout />} />
-          <Route path="/artwork" element={<AuthLayout />} />
+          <Route path="/artwork" element={<ArtworkLayout />} />
           <Route path="/shipment" element={<ShipmentLayout />} />
           <Route path="/WhoWeAre" element={<WhoWeAreLayout />} />
           <Route path="/dashboard" element={<RedirectHome />} />
