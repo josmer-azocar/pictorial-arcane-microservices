@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Loading from '../../frontend/src/components/Loading.jsx';
 import '../../frontend/src/pages/artwork/Artwork.css';
-import '../../frontend/src/components/Loading.css';
 
 const mockArtworks = [
   { idArtWork: 1, name: "Noche Estrellada", price: 1200, artist: "María Fernández", idArtist: 1, genre: "Pintura", imageUrl: "https://picsum.photos/seed/art1/400/300" },
@@ -36,18 +36,9 @@ const mockGenres = [
 
 const ITEMS_PER_PAGE = 8;
 
-function Loading() {
-  return (
-    <div className="loading-container">
-      <div className="spinner"></div>
-      <p>Cargando obras...</p>
-    </div>
-  );
-}
-
 export default function FrontendArtwork() {
   const [works, setWork] = useState({ content: [], totalPages: 0, number: 0 });
-  const [load, setLoad] = useState(false);
+  const [load, setLoad] = useState(true);
   const [sortConfig, setSortConfig] = useState({ idGenre: null, idArtist: null, sortBy: 'price', direction: 'ASC' });
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
