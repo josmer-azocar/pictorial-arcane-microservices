@@ -198,23 +198,20 @@
     color: rgba(255,255,255,0.5);
 }
 
-/* ── MASONRY GRID ── */
+/* ── UNIFORM GRID ── */
 #art-grid {
-    column-count: 4;
-    column-gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
     padding: 8px 20px 20px;
 }
 
 .art-piece {
-    break-inside: avoid;
-    margin-bottom: 20px;
     background-color: white;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    display: inline-block;
-    width: 100%;
 }
 
 .art-piece:hover {
@@ -224,8 +221,9 @@
 
 .art-piece img {
     width: 100%;
-    display: block;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
+    display: block;
 }
 
 .text-art-piece {
@@ -259,21 +257,10 @@
     margin-bottom: 4px !important;
 }
 
-@media (max-width: 1200px) {
-    #art-grid {
-        column-count: 3;
-    }
-}
-
-@media (max-width: 900px) {
-    #art-grid {
-        column-count: 2;
-    }
-}
-
 @media (max-width: 600px) {
     #art-grid {
-        column-count: 1;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
     }
     .filter-pills-row {
         padding: 8px 12px 12px;
