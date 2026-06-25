@@ -105,79 +105,85 @@ function Artwork() {
             <div id="titulo-galeria">
                 <p>GALERÍA</p>
             </div>
-            <div id="sort-galery">
-                <p>Filtrar por: </p>
-                <div id="botton-filtrado">
+            <div className="search-wrapper">
+                <div className="search-pill">
+                    <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input
+                        type="text"
+                        placeholder="Buscar por título..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
+                    />
+                </div>
+            </div>
+
+            <div className="filter-pills-row">
+                <div className="filter-pill">
                     <input
                         type="number"
-                        placeholder="Precio mín"
+                        placeholder="Mín."
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
                         className="price-input"
                         min="0"
                     />
-                        <input
+                </div>
+                <div className="filter-pill">
+                    <input
                         type="number"
-                        placeholder="Precio máx"
+                        placeholder="Máx."
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
                         className="price-input"
-                        min="0" 
+                        min="0"
                     />
-                    <button onClick={() => getArt(0, sortConfig.idGenre, sortConfig.idArtist, 'price', sortConfig.direction === 'ASC' ? 'DESC' : 'ASC')}>
-                        Precio {sortConfig.direction === 'ASC' ? '↑' : '↓'}
-                    </button>{/*menor a mayor*/}
-                    <select 
-                        value={sortConfig.idArtist || ""} 
-                        onChange={(e) => getArt(0, sortConfig.idGenre, e.target.value)}>
-                        <option value="">Todos los Artistas</option>
+                </div>
+                <button className="filter-pill" onClick={() => getArt(0, sortConfig.idGenre, sortConfig.idArtist, 'price', sortConfig.direction === 'ASC' ? 'DESC' : 'ASC')}>
+                    Precio {sortConfig.direction === 'ASC' ? '↑' : '↓'}
+                </button>
+                <div className="filter-pill">
+                    <select
+                        value={sortConfig.idArtist || ""}
+                        onChange={(e) => getArt(0, sortConfig.idGenre, e.target.value)}
+                    >
+                        <option value="">Artistas</option>
                         {availableArtists.map(artist => (
                             <option key={artist.idArtist} value={artist.idArtist}>
                                 {artist.name}
                             </option>
                         ))}
                     </select>
-
-                    <select 
-                        value={sortConfig.idGenre || ""} 
+                </div>
+                <div className="filter-pill">
+                    <select
+                        value={sortConfig.idGenre || ""}
                         onChange={(e) => {
                             const val = e.target.value;
                             getArt(0, val === "" ? null : Number(val), sortConfig.idArtist);
-                        }}>
-                        <option value="">Todos los Géneros</option>
+                        }}
+                    >
+                        <option value="">Géneros</option>
                         {genreList.map((genre) => (
                             <option key={genre.idGenre} value={genre.idGenre}>
                                 {genre.name}
                             </option>
                         ))}
                     </select>
-
-                    <div id="search-bar">
-                    <input
-                        type="text"
-                        placeholder="Buscar por título..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && getArt(0)} // Search on Enter key
-                        className="search-input"
-                    />
-                    <button onClick={() => getArt(0)} className="search-button">
-                        🔍
-                    </button>
                 </div>
-
-                    <button onClick={() => {
-                        setMinPrice('');
-                        setMaxPrice('');
-                        getArt(0, null, null, 'price', 'ASC', '');
-                        }}>Limpiar</button>
-                </div>
+                <button className="filter-pill" onClick={() => {
+                    setMinPrice('');
+                    setMaxPrice('');
+                    getArt(0, null, null, 'price', 'ASC', '');
+                }}>Limpiar</button>
             </div>
             <section id="art-grid">
                 {(works.content || []).map((artPiece) => (
                     <div className="art-piece" key={artPiece.idArtWork}>
   <Link to={`/artwork/${artPiece.idArtWork}`}>
-    <img src={artPiece.image} alt={artPiece.name} />
+    <img src={artPiece.image} alt={artPiece.name} onError={(e) => { e.target.style.background = '#eee'; e.target.style.minHeight = '200px'; }} />
   </Link>
   <div className="text-art-piece">
     <p className="precio-display">${artPiece.precio}</p>
