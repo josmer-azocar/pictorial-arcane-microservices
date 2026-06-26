@@ -6,28 +6,28 @@
 
 #report-lists button {
     background-color: transparent;
-    color: antiquewhite;
+    color: #4a148c;
     border: none;
     padding: 5px;
     border-radius: 5px;
 }
 
 #report-lists button:hover {
-    background-color: rgba(137, 43, 226, 0.349);
-    color: white;
+    background-color: rgba(124, 58, 237, 0.1);
+    color: #1a1a1a;
     cursor: pointer;
 }
 
 #reports-container {
     padding: 20px;
-    background-color: #2d2d2d;
-    color: #f0f0f0;
+    background: rgba(255, 255, 255, 0.6);
+    color: #000;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .admin-eyebrow {
-    color: #b0b0b0;
+    color: #7c3aed;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -35,7 +35,7 @@
 }
 
 .admin-title {
-    color: #fff;
+    color: #000;
     font-size: 2rem;
     margin-top: 0;
     margin-bottom: 24px;
@@ -48,14 +48,14 @@
     padding: 0;
     margin: 0 0 24px 0;
     list-style: none;
-    border-bottom: 2px solid #444;
+    border-bottom: 2px solid #d4b3ff;
     padding-bottom: 8px;
 }
 
 .report-tabs li button {
     background: transparent;
     border: none;
-    color: #b0b0b0;
+    color: #7c3aed;
     font-size: 1rem;
     font-weight: 500;
     padding: 8px 16px;
@@ -66,12 +66,12 @@
 
 .report-tabs li button:hover {
     color: #fff;
-    background-color: #3a3a3a;
+    background-color: #7c3aed;
 }
 
 .report-tabs li button.active {
     color: #fff;
-    background-color: #5a3a7a;
+    background-color: #7c3aed;
     font-weight: 600;
 }
 
@@ -81,15 +81,16 @@
     align-items: center;
     margin-bottom: 24px;
     padding: 16px;
-    background-color: #3a3a3a;
+    background: #fff;
     border-radius: 8px;
     flex-wrap: wrap;
+    border: 1px solid #d4b3ff;
 }
 
 .date-picker-container input[type="date"] {
-    background-color: #2d2d2d;
-    color: #f0f0f0;
-    border: 1px solid #555;
+    background: #f5f0ff;
+    color: #000;
+    border: 1px solid #d4b3ff;
     border-radius: 6px;
     padding: 8px 12px;
     font-family: inherit;
@@ -99,11 +100,11 @@
 
 .date-picker-container input[type="date"]:focus {
     outline: none;
-    border-color: #7a5a9a;
+    border-color: #7c3aed;
 }
 
 .generate-btn {
-    background-color: #5a3a7a;
+    background-color: #7c3aed;
     color: white;
     border: none;
     border-radius: 6px;
@@ -115,7 +116,7 @@
 }
 
 .generate-btn:hover:not(:disabled) {
-    background-color: #6a4a8a;
+    background-color: #6d28d9;
 }
 
 .generate-btn:active:not(:disabled) {
@@ -132,14 +133,14 @@
 }
 
 .select-prompt {
-    color: #b0b0b0;
+    color: #666;
     font-style: italic;
     text-align: center;
     padding: 40px;
 }
 
 .report-view h3 {
-    color: #fff;
+    color: #000;
     font-size: 1.5rem;
     margin-bottom: 16px;
     font-weight: 500;
@@ -148,16 +149,17 @@
 .report-table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #2d2d2d;
+    background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
+    border: 1px solid #d4b3ff;
 }
 
 .report-table thead tr {
-    background-color: #3a2560;
-    color: white;
+    background-color: #e8d5f5;
+    color: #000;
     text-align: left;
     font-weight: 600;
 }
@@ -165,24 +167,24 @@
 .report-table th,
 .report-table td {
     padding: 12px 16px;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid #d4b3ff;
 }
 
 .report-table tbody tr {
-    background-color: #2d2d2d;
+    background-color: #fff;
     transition: background-color 0.2s ease;
 }
 
 .report-table tbody tr:nth-child(even) {
-    background-color: #3a3a3a;
+    background-color: #faf5ff;
 }
 
 .report-table tbody tr:hover {
-    background-color: #4a3a5a;
+    background-color: #f0e6ff;
 }
 
 .report-table td {
-    color: #e0e0e0;
+    color: #1a1a1a;
 }
 
 .report-table td:last-child {
@@ -196,7 +198,7 @@
     text-align: right;
     font-family: 'Courier New', monospace;
     font-weight: 600;
-    color: #ffd966;
+    color: #7c3aed;
 }
 
 .report-summary-footer {
@@ -204,9 +206,10 @@
     justify-content: flex-end;
     gap: 32px;
     padding: 16px 24px;
-    background-color: #3a3a3a;
+    background: #f5f0ff;
     border-radius: 8px;
     margin-top: 16px;
+    border: 1px solid #d4b3ff;
 }
 
 .summary-item {
@@ -217,37 +220,72 @@
 
 .summary-item span {
     font-size: 0.85rem;
-    color: #b0b0b0;
+    color: #666;
 }
 
 .summary-item strong {
     font-size: 1.2rem;
-    color: #ffd966;
+    color: #7c3aed;
 }
 
-@media (max-width: 768px) {
-    .date-picker-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
+.report-view {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+}
 
-    .report-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+    padding: 12px;
+}
 
-    .report-summary-footer {
-        flex-direction: column;
-        gap: 16px;
-        align-items: center;
-    }
+.pagination-btn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #6d28d9;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.print-btn {
+    background: transparent;
+    color: #7c3aed;
+    border: 2px solid #7c3aed;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+}
+
+.print-btn:hover {
+    background: #7c3aed;
+    color: white;
 }
 
 .date-picker-container select {
-    background-color: #2d2d2d;
-    color: #f0f0f0;
-    border: 1px solid #555;
+    background: #f5f0ff;
+    color: #000;
+    border: 1px solid #d4b3ff;
     border-radius: 6px;
     padding: 8px 12px;
     font-family: inherit;
@@ -257,36 +295,58 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 16px;
-    padding-right: 40px; /* space for custom arrow */
+    padding-right: 40px;
 }
 
 .date-picker-container select:focus {
     outline: none;
-    border-color: #7a5a9a;
+    border-color: #7c3aed;
 }
 
 .date-picker-container select:hover {
-    border-color: #7a5a9a;
+    border-color: #7c3aed;
 }
 
 .date-picker-container select option {
-    background-color: #2d2d2d;
-    color: #f0f0f0;
+    background: #fff;
+    color: #000;
     padding: 8px;
 }
 
-/* For Firefox*/
 @-moz-document url-prefix() {
     .date-picker-container select option {
-        background-color: #2d2d2d;
-        color: #f0f0f0;
+        background: #fff;
+        color: #000;
     }
 }
 
 .date-picker-container {
     flex-wrap: wrap; 
+}
+
+@media print {
+    .admin-sidebar,
+    .admin-nav-btn,
+    .admin-create-btn,
+    .report-tabs,
+    .date-picker-container,
+    .pagination-controls,
+    .print-btn {
+        display: none !important;
+    }
+
+    #reports-container {
+        box-shadow: none;
+        background: white;
+        color: black;
+    }
+
+    .report-view {
+        background: white;
+        padding: 0;
+    }
 }

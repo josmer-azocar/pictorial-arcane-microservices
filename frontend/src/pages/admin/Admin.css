@@ -263,7 +263,7 @@
 .admin-form input[type="text"],
 .admin-form input[type="email"],
 .admin-form input[type="password"] {
-  background: #f5f0ff;
+  background: #fff;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 16px;
