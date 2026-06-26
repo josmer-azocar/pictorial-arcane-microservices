@@ -10,7 +10,6 @@ import ArchitectureDiagram from './components/ArchitectureDiagram';
 import CapTheorem from './components/CapTheorem';
 import PolyglotDictionary from './components/PolyglotDictionary';
 import LiveDemo from './components/LiveDemo';
-import FrontendHome from './components/FrontendHome';
 import ApiDocumentation from './components/ApiDocumentation';
 import FaultTolerance from './components/FaultTolerance';
 import Team from './components/Team';
@@ -26,14 +25,6 @@ export default function App() {
     window.addEventListener('popstate', handlePath);
     return () => window.removeEventListener('popstate', handlePath);
   }, []);
-
-  if (page === '/frontend-home') {
-    return (
-      <div className="bg-white text-gray-900 font-sans min-h-screen">
-        <FrontendHome />
-      </div>
-    );
-  }
 
   // Monitor client screen scroll positions to highlight active navigation link automatically
   useEffect(() => {
@@ -70,7 +61,7 @@ export default function App() {
   }, []);
 
   const handleNavigateFrontend = () => {
-    window.location.href = '/frontend-home';
+    window.location.href = 'http://localhost:5173';
   };
 
   const handleStepChange = (step: number) => {
