@@ -4,6 +4,7 @@ import { getSoldArtworks } from '../../services/salesServices';
 import { fetchSoldArtwork, fetchPaidArtwork } from '../../services/fetchSoldArtwork';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
+import TicketInvoice from './TicketInvoice';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -42,6 +43,7 @@ function Reports() {
     const [soldResponse, setSoldResponse] = useState(null);
     const [soldPage, setSoldPage] = useState(0);
     const [isPrinting, setIsPrinting] = useState(false);
+    const [selectedTicket, setSelectedTicket] = useState(null);
 
     const handlePrint = () => {
     setIsPrinting(true);
@@ -224,7 +226,7 @@ function Reports() {
                             </thead>
                             <tbody>
                                 {billingData.sales.map((sale) => (
-                                    <tr key={sale.invoiceCode}>
+                                    <tr key={sale.invoiceCode} className="clickable-row" onClick={() => setSelectedTicket(sale)}>
                                         <td>{sale.invoiceCode}</td>
                                         <td>{sale.date}</td>
                                         <td>{sale.artworkId || sale.idArtWork || '-'}</td>
@@ -307,6 +309,10 @@ function Reports() {
             <div id="report-display-area">
                 {renderReportContent()}
             </div>
+
+            {selectedTicket && (
+                <TicketInvoice sale={selectedTicket} onClose={() => setSelectedTicket(null)} />
+            )}
         </section>
     );
 }

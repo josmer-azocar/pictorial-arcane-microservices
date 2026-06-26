@@ -1,0 +1,178 @@
+.ticket-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.ticket-modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ticket-close-overlay {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  z-index: 1;
+}
+
+.ticket-paper {
+  background: #fff;
+  color: #000;
+  width: 380px;
+  max-width: 100%;
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  font-family: 'Roboto Flex', 'Courier New', monospace;
+  position: relative;
+}
+
+.ticket-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.ticket-brand {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #000;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ticket-sub {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0.25rem 0 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ticket-divider {
+  border-top: 2px solid #000;
+  margin: 0.75rem 0;
+}
+
+.ticket-divider-dashed {
+  border-top: 2px dashed #aaa;
+  margin: 0.75rem 0;
+}
+
+.ticket-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ticket-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.ticket-label {
+  color: #555;
+  font-weight: 500;
+}
+
+.ticket-value {
+  color: #000;
+  font-weight: 600;
+  text-align: right;
+}
+
+.ticket-prices {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.ticket-prices td {
+  padding: 0.2rem 0;
+}
+
+.ticket-prices td:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+
+.ticket-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05rem;
+}
+
+.ticket-total strong {
+  font-size: 1.25rem;
+  color: #7c3aed;
+}
+
+.ticket-footer-text {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #999;
+  margin: 0;
+  font-style: italic;
+}
+
+.ticket-print-btn {
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Roboto Flex', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ticket-print-btn:hover {
+  background: #6b2ccf;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #ticket-content,
+  #ticket-content * {
+    visibility: visible;
+  }
+  #ticket-content {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 380px;
+    padding: 1rem;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  .ticket-overlay {
+    background: none;
+  }
+  .ticket-close-overlay,
+  .ticket-print-btn {
+    display: none !important;
+  }
+}

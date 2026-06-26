@@ -211,6 +211,14 @@
     background: #faf5ff;
 }
 
+.report-table tbody tr.clickable-row {
+    cursor: pointer;
+}
+
+.report-table tbody tr.clickable-row:hover {
+    background: #dcc8f5;
+}
+
 .report-table tbody tr:hover {
     background: #f0e6ff;
 }
