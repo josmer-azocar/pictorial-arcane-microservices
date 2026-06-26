@@ -2,125 +2,151 @@
     display: flex;
     list-style-type: none;
     gap: 15px;
+    margin: 0;
+    padding: 0;
 }
 
 #report-lists button {
-    background-color: transparent;
-    color: #4a148c;
+    background: transparent;
+    color: var(--accent, #7c3aed);
     border: none;
     padding: 5px;
     border-radius: 5px;
 }
 
 #report-lists button:hover {
-    background-color: rgba(124, 58, 237, 0.1);
-    color: #1a1a1a;
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--text-main, #000);
     cursor: pointer;
 }
 
 #reports-container {
-    padding: 20px;
+    padding: 24px;
     background: rgba(255, 255, 255, 0.6);
-    color: #000;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.admin-eyebrow {
-    color: #7c3aed;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-}
-
-.admin-title {
-    color: #000;
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 24px;
-    font-weight: 600;
+    color: var(--text-main, #000);
+    border-radius: var(--radius-md, 12px);
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
 }
 
 .report-tabs {
     display: flex;
-    gap: 12px;
+    gap: 4px;
     padding: 0;
     margin: 0 0 24px 0;
     list-style: none;
-    border-bottom: 2px solid #d4b3ff;
-    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border, #d4b3ff);
+    padding-bottom: 0;
 }
 
 .report-tabs li button {
     background: transparent;
     border: none;
-    color: #7c3aed;
-    font-size: 1rem;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    color: var(--text-muted, #666);
+    font-size: 0.95rem;
     font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 20px 20px 0 0;
+    padding: 10px 20px;
     cursor: pointer;
     transition: all 0.2s ease;
+    border-radius: 0;
 }
 
 .report-tabs li button:hover {
-    color: #fff;
-    background-color: #7c3aed;
+    color: var(--accent, #7c3aed);
+    background: transparent;
+    border-bottom-color: var(--border, #d4b3ff);
 }
 
 .report-tabs li button.active {
-    color: #fff;
-    background-color: #7c3aed;
+    color: var(--accent, #7c3aed);
+    background: transparent;
+    border-bottom-color: var(--accent, #7c3aed);
     font-weight: 600;
 }
 
 .date-picker-container {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     align-items: center;
     margin-bottom: 24px;
-    padding: 16px;
+    padding: 16px 20px;
     background: #fff;
-    border-radius: 8px;
+    border-radius: var(--radius-sm, 8px);
     flex-wrap: wrap;
-    border: 1px solid #d4b3ff;
+    border: 1px solid var(--border, #d4b3ff);
 }
 
 .date-picker-container input[type="date"] {
     background: #f5f0ff;
-    color: #000;
-    border: 1px solid #d4b3ff;
+    color: var(--text-main, #000);
+    border: 1px solid var(--border, #d4b3ff);
     border-radius: 6px;
-    padding: 8px 12px;
+    padding: 10px 14px;
     font-family: inherit;
-    font-size: 0.95rem;
-    transition: border-color 0.2s;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    outline: none;
 }
 
 .date-picker-container input[type="date"]:focus {
+    border-color: var(--accent, #7c3aed);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+.date-picker-container select {
+    background: #f5f0ff;
+    color: var(--text-main, #000);
+    border: 1px solid var(--border, #d4b3ff);
+    border-radius: 6px;
+    padding: 10px 36px 10px 14px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
     outline: none;
-    border-color: #7c3aed;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+}
+
+.date-picker-container select:focus {
+    border-color: var(--accent, #7c3aed);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+.date-picker-container select:hover {
+    border-color: var(--accent, #7c3aed);
+}
+
+.date-picker-container select option {
+    background: #fff;
+    color: var(--text-main, #000);
 }
 
 .generate-btn {
-    background-color: #7c3aed;
-    color: white;
+    background: var(--accent, #7c3aed);
+    color: #fff;
     border: none;
     border-radius: 6px;
-    padding: 8px 24px;
-    font-size: 1rem;
-    font-weight: 500;
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: all 0.2s ease;
 }
 
 .generate-btn:hover:not(:disabled) {
-    background-color: #6d28d9;
+    background: var(--accent-hover, #6d28d9);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
 .generate-btn:active:not(:disabled) {
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 .generate-btn:disabled {
@@ -133,16 +159,22 @@
 }
 
 .select-prompt {
-    color: #666;
+    color: var(--text-muted, #555);
     font-style: italic;
     text-align: center;
-    padding: 40px;
+    padding: 40px 20px;
+}
+
+.report-view {
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-md, 12px);
 }
 
 .report-view h3 {
-    color: #000;
-    font-size: 1.5rem;
-    margin-bottom: 16px;
+    color: var(--text-main, #000);
+    font-size: 1.4rem;
+    margin-bottom: 20px;
     font-weight: 500;
 }
 
@@ -150,16 +182,16 @@
     width: 100%;
     border-collapse: collapse;
     background: #fff;
-    border-radius: 10px;
+    border-radius: var(--radius-sm, 8px);
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
     margin-bottom: 20px;
-    border: 1px solid #d4b3ff;
+    border: 1px solid var(--border, #d4b3ff);
 }
 
 .report-table thead tr {
-    background-color: #e8d5f5;
-    color: #000;
+    background: #e8d5f5;
+    color: var(--text-main, #000);
     text-align: left;
     font-weight: 600;
 }
@@ -167,24 +199,24 @@
 .report-table th,
 .report-table td {
     padding: 12px 16px;
-    border-bottom: 1px solid #d4b3ff;
+    border-bottom: 1px solid var(--border, #d4b3ff);
 }
 
 .report-table tbody tr {
-    background-color: #fff;
+    background: #fff;
     transition: background-color 0.2s ease;
 }
 
 .report-table tbody tr:nth-child(even) {
-    background-color: #faf5ff;
+    background: #faf5ff;
 }
 
 .report-table tbody tr:hover {
-    background-color: #f0e6ff;
+    background: #f0e6ff;
 }
 
 .report-table td {
-    color: #1a1a1a;
+    color: var(--text-main, #000);
 }
 
 .report-table td:last-child {
@@ -198,7 +230,7 @@
     text-align: right;
     font-family: 'Courier New', monospace;
     font-weight: 600;
-    color: #7c3aed;
+    color: var(--accent, #7c3aed);
 }
 
 .report-summary-footer {
@@ -207,9 +239,9 @@
     gap: 32px;
     padding: 16px 24px;
     background: #f5f0ff;
-    border-radius: 8px;
+    border-radius: var(--radius-sm, 8px);
     margin-top: 16px;
-    border: 1px solid #d4b3ff;
+    border: 1px solid var(--border, #d4b3ff);
 }
 
 .summary-item {
@@ -220,18 +252,12 @@
 
 .summary-item span {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-muted, #555);
 }
 
 .summary-item strong {
     font-size: 1.2rem;
-    color: #7c3aed;
-}
-
-.report-view {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 12px;
+    color: var(--accent, #7c3aed);
 }
 
 .pagination-controls {
@@ -244,19 +270,19 @@
 }
 
 .pagination-btn {
-    background: #7c3aed;
-    color: white;
+    background: var(--accent, #7c3aed);
+    color: #fff;
     border: none;
     border-radius: 6px;
     padding: 8px 20px;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
-    background: #6d28d9;
+    background: var(--accent-hover, #6d28d9);
 }
 
 .pagination-btn:disabled {
@@ -266,66 +292,20 @@
 
 .print-btn {
     background: transparent;
-    color: #7c3aed;
-    border: 2px solid #7c3aed;
+    color: var(--accent, #7c3aed);
+    border: 2px solid var(--accent, #7c3aed);
     border-radius: 6px;
     padding: 10px 20px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     margin-top: 16px;
 }
 
 .print-btn:hover {
-    background: #7c3aed;
-    color: white;
-}
-
-.date-picker-container select {
-    background: #f5f0ff;
-    color: #000;
-    border: 1px solid #d4b3ff;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-family: inherit;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px;
-    padding-right: 40px;
-}
-
-.date-picker-container select:focus {
-    outline: none;
-    border-color: #7c3aed;
-}
-
-.date-picker-container select:hover {
-    border-color: #7c3aed;
-}
-
-.date-picker-container select option {
-    background: #fff;
-    color: #000;
-    padding: 8px;
-}
-
-@-moz-document url-prefix() {
-    .date-picker-container select option {
-        background: #fff;
-        color: #000;
-    }
-}
-
-.date-picker-container {
-    flex-wrap: wrap; 
+    background: var(--accent, #7c3aed);
+    color: #fff;
 }
 
 @media print {
