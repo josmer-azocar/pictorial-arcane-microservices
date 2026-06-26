@@ -109,6 +109,16 @@ const Home = () => {
           />
         </div>
       </section>
+
+      {/* 🚀 ACCESO DIRECTO AL ADMIN — SOLO EN DESARROLLO */}
+      {import.meta.env.DEV && (
+        <section className="dev-access-section">
+          <p className="dev-access-label">🧪 Desarrollo</p>
+          <Link to="/admin" className="dev-access-btn">
+            Acceder al Panel Admin
+          </Link>
+        </section>
+      )}
     </div>
   );
 };

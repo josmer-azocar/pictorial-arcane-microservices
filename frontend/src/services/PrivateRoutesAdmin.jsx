@@ -8,8 +8,9 @@ const PrivateRoutes = () => {
     
     if (loading) return <Loading />;
     
-    if (!isLoggedIn) return <Navigate to="/login" />;
-    if (user?.role !== 'ADMIN') return <Navigate to="/" />; 
+    // COMENTADO PARA DESARROLLO — descomentar en producción
+    // if (!isLoggedIn) return <Navigate to="/login" />;
+    // if (user?.role !== 'ADMIN') return <Navigate to="/" />; 
     
     return <Outlet />;
 }

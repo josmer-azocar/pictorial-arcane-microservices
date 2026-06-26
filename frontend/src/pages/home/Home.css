@@ -230,3 +230,46 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* 🚧 ACCESO ADMIN — SOLO VISIBLE EN DESARROLLO */
+.dev-access-section {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.dev-access-label {
+  background: #6b21c8;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  border-radius: 4px;
+  margin: 0;
+}
+
+.dev-access-btn {
+  background: #1a1a2e;
+  color: #c084fc;
+  border: 2px dashed #6b21c8;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dev-access-btn:hover {
+  background: #6b21c8;
+  color: #fff;
+  border-style: solid;
+}
