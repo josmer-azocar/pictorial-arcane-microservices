@@ -131,14 +131,23 @@ function Admin() {
           <UpdateArtwork onEditSelect={setArtworkToEdit} />;
       default:
         return (
-          <>
-            <p className="admin-eyebrow">Bienvenido de vuelta</p>
-            <h1 className="admin-title">Hola,<br/><em>Administrador</em></h1>
-            <div className="admin-line"></div>
-            <p className="admin-subtitle">
-              Gestiona obras, artistas, reservas y reportes desde este panel.
-            </p>
-          </>
+          <div className="admin-home">
+            <div className="admin-home-bg">
+              <img src="/imagen/ad.png" alt="" />
+              <div className="admin-home-blur"></div>
+            </div>
+            <div className="admin-home-content">
+              <p className="admin-eyebrow">Bienvenido de vuelta</p>
+              <h1 className="admin-title">Hola,<br/><em>Administrador</em></h1>
+              <div className="admin-line"></div>
+              <p className="admin-subtitle">
+                Gestiona obras, artistas, reservas y reportes desde este panel.
+              </p>
+              <div className="capibara-container">
+                <img src="/imagen/cap03.png" alt="capibara guia" className="capibara-img" />
+              </div>
+            </div>
+          </div>
         );
     }
   };
