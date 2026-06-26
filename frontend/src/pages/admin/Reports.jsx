@@ -74,8 +74,8 @@ function Reports() {
         }
     };
 
-    const handleGenerate = async () => {
-        // Solo cargamos la primera página de obras vendidas y la facturación
+    const handleGenerate = (e) => {
+        if (e) e.preventDefault();
         
         // MOCK DATA PARA DESARROLLO — comentar en producción
         if (import.meta.env.DEV) {
@@ -84,9 +84,9 @@ function Reports() {
                 totalCollected: 45200,
                 totalMuseumProfit: 11300,
                 sales: [
-                    { invoiceCode: "FAC-001", date: "2025-01-15", artWork: { name: "Noche Estrellada" }, artworkPrice: 15000, museumProfitAmount: 3750, museumProfitPercentage: 25, totalPaid: 15000 },
-                    { invoiceCode: "FAC-002", date: "2025-02-20", artWork: { name: "El Grito" }, artworkPrice: 12200, museumProfitAmount: 3050, museumProfitPercentage: 25, totalPaid: 12200 },
-                    { invoiceCode: "FAC-003", date: "2025-03-10", artWork: { name: "La Persistencia de la Memoria" }, artworkPrice: 18000, museumProfitAmount: 4500, museumProfitPercentage: 25, totalPaid: 18000 },
+                    { invoiceCode: "FAC-001", date: "2025-01-15", artworkId: 1, artWork: { name: "Noche Estrellada" }, artworkPrice: 15000, museumProfitAmount: 3750, museumProfitPercentage: 25, totalPaid: 15000 },
+                    { invoiceCode: "FAC-002", date: "2025-02-20", artworkId: 2, artWork: { name: "El Grito" }, artworkPrice: 12200, museumProfitAmount: 3050, museumProfitPercentage: 25, totalPaid: 12200 },
+                    { invoiceCode: "FAC-003", date: "2025-03-10", artworkId: 3, artWork: { name: "La Persistencia de la Memoria" }, artworkPrice: 18000, museumProfitAmount: 4500, museumProfitPercentage: 25, totalPaid: 18000 },
                 ]
             });
             setSoldResponse({
@@ -102,7 +102,7 @@ function Reports() {
         }
         
         // CÓDIGO REAL — descomentar en producción
-        // await fetchSoldPage(0);
+        // fetchSoldPage(0);
 
         // const effectiveStart = startDate || '1900-01-01';
         // const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
@@ -214,6 +214,7 @@ function Reports() {
                                 <tr>
                                     <th>Código de Factura</th>
                                     <th>Fecha</th>
+                                    <th>ID Obra</th>
                                     <th>Obra</th>
                                     <th>Precio ($)</th>
                                     <th>Ganancia del Museo ($)</th>
@@ -226,11 +227,12 @@ function Reports() {
                                     <tr key={sale.invoiceCode}>
                                         <td>{sale.invoiceCode}</td>
                                         <td>{sale.date}</td>
-                                        <td>{sale.artWork?.name}</td>
-                                        <td>{sale.artworkPrice}</td>
-                                        <td>{sale.museumProfitAmount}</td>
-                                        <td>{sale.museumProfitPercentage}</td>
-                                        <td>{sale.totalPaid}</td>
+                                        <td>{sale.artworkId || sale.idArtWork || '-'}</td>
+                                        <td>{sale.artworkName || sale.artWork?.name || 'N/A'}</td>
+                                        <td>${Number(sale.artworkPrice).toFixed(2)}</td>
+                                        <td>${Number(sale.museumProfitAmount).toFixed(2)}</td>
+                                        <td>{Number(sale.museumProfitPercentage).toFixed(2)}%</td>
+                                        <td>${Number(sale.totalPaid).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>

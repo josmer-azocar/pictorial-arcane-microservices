@@ -18,7 +18,6 @@ import UpdateGenre from './UpdateGenre.jsx';
 
 import UpdateArtist from './UpdateArtist.jsx';
 import Reports from './Reports.jsx';
-import Facturacion from './facturacion/Facturacion.jsx';
 
 
 function Admin() {
@@ -118,8 +117,6 @@ function Admin() {
         return <UpdateArtist />;
       case 'reports':
         return <Reports/>;
-      case 'facturacion':
-        return <Facturacion/>;
       // case 'viewArtwork':
       //   return <p>Aquí irá la vista de todas las obras</p>;
       case 'deleteArtwork':
@@ -235,11 +232,6 @@ function Admin() {
           onClick={() => handleSectionChange('reservations')}
         >
           Reservas
-        </button>
-        <button className={`admin-nav-btn ${activeSection === 'facturacion' ? 'active' : ''}`}
-          onClick={() => handleSectionChange('facturacion')}
-        >
-          Facturación
         </button>
         <button className={`admin-nav-btn ${activeSection === 'reports' ? 'active' : ''}`}
           onClick={() => handleSectionChange('reports')}
