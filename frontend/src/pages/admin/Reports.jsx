@@ -76,18 +76,44 @@ function Reports() {
 
     const handleGenerate = async () => {
         // Solo cargamos la primera página de obras vendidas y la facturación
-        await fetchSoldPage(0);
-
-        const effectiveStart = startDate || '1900-01-01';
-        const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
-
-        try {
-            const billing = await fetchSoldArtwork(effectiveStart, effectiveEnd);
-            console.log("Datos de ventas:", billing);
-            setBillingData(billing);
-        } catch (error) {
-            console.error("Error al obtener el reporte:", error);
+        
+        // MOCK DATA PARA DESARROLLO — comentar en producción
+        if (import.meta.env.DEV) {
+            console.log("Usando mock data (modo desarrollo)");
+            setBillingData({
+                totalCollected: 45200,
+                totalMuseumProfit: 11300,
+                sales: [
+                    { invoiceCode: "FAC-001", date: "2025-01-15", artWork: { name: "Noche Estrellada" }, artworkPrice: 15000, museumProfitAmount: 3750, museumProfitPercentage: 25, totalPaid: 15000 },
+                    { invoiceCode: "FAC-002", date: "2025-02-20", artWork: { name: "El Grito" }, artworkPrice: 12200, museumProfitAmount: 3050, museumProfitPercentage: 25, totalPaid: 12200 },
+                    { invoiceCode: "FAC-003", date: "2025-03-10", artWork: { name: "La Persistencia de la Memoria" }, artworkPrice: 18000, museumProfitAmount: 4500, museumProfitPercentage: 25, totalPaid: 18000 },
+                ]
+            });
+            setSoldResponse({
+                content: [
+                    { idArtWork: 1, name: "Noche Estrellada", status: "VENDIDO" },
+                    { idArtWork: 2, name: "El Grito", status: "VENDIDO" },
+                    { idArtWork: 3, name: "La Persistencia de la Memoria", status: "VENDIDO" },
+                ],
+                totalPages: 1,
+                number: 0
+            });
+            return;
         }
+        
+        // CÓDIGO REAL — descomentar en producción
+        // await fetchSoldPage(0);
+
+        // const effectiveStart = startDate || '1900-01-01';
+        // const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
+
+        // try {
+        //     const billing = await fetchSoldArtwork(effectiveStart, effectiveEnd);
+        //     console.log("Datos de ventas:", billing);
+        //     setBillingData(billing);
+        // } catch (error) {
+        //     console.error("Error al obtener el reporte:", error);
+        // }
     };
 
     const renderReportContent = () => {
