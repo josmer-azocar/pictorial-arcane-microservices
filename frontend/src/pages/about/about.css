@@ -1,15 +1,13 @@
 /* Fondo general con vibe arcane (usa gradiente + textura sutil o imagen) */
 .about-container {
-  background: linear-gradient(135deg, #0a0015 0%, #1a0033 40%, #2a004d 80%, #0a0015 100%);
-  /* Opcional: agrega una imagen nebulosa de fondo (muy recomendado para cohesión) */
-  /* background-image: url('https://thumbs.dreamstime.com/b/dramatic-purple-nebula-cosmic-dust-twinkling-stars-creates-mesmerizing-space-background-perfect-fantasy-sci-fi-382243610.jpg'); */
+  background: #fff;
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* parallax sutil si hay scroll */
-  color: #e0d4ff; /* texto base violeta claro */
+  background-attachment: fixed;
+  color: #000;
   min-height: 100vh;
   padding: 0 0 60px 0;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Roboto Flex', sans-serif;
 }
 
 /* Header con overlay místico (similar al hero de home) */
@@ -24,7 +22,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(107, 33, 200, 0.25), rgba(10, 0, 30, 0.6));
+  background: linear-gradient(to bottom, rgba(239, 230, 247, 0.8), rgba(255, 255, 255, 0.9));
   z-index: 1;
 }
 
@@ -33,10 +31,10 @@
   z-index: 2;
   font-size: 3.5rem;
   font-weight: 900;
-  color: #d4b3ff; /* violeta luminoso */
+  color: #000;
   text-transform: uppercase;
   letter-spacing: 4px;
-  text-shadow: 0 4px 20px rgba(107, 33, 200, 0.7);
+  text-shadow: none;
   margin-bottom: 16px;
 }
 
@@ -44,10 +42,10 @@
   position: relative;
   z-index: 2;
   font-size: 1.4rem;
-  color: #c084fc;
+  color: #333;
   max-width: 800px;
   margin: 0 auto;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  text-shadow: none;
 }
 
 /* Sección de contenido (dos columnas) */
@@ -71,8 +69,8 @@
   width: 100%;
   height: auto;
   border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(107, 33, 200, 0.4);
-  border: 1px solid rgba(176, 91, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.15);
+  border: 1px solid #d4b3ff;
   transition: transform 0.4s ease;
 }
 
@@ -86,21 +84,21 @@
 
 .about-text-wrapper h2 {
   font-size: 2.5rem;
-  color: #d4b3ff;
+  color: #000;
   margin-bottom: 24px;
-  text-shadow: 0 2px 12px rgba(107, 33, 200, 0.3);
+  text-shadow: none;
 }
 
 .about-text-wrapper p {
   font-size: 1.15rem;
   line-height: 1.7;
-  color: #d0c0ff;
+  color: #333;
   margin-bottom: 20px;
 }
 
 .about-text-wrapper h3 {
   font-size: 1.8rem;
-  color: #c084fc;
+  color: #000;
   margin: 40px 0 20px;
   letter-spacing: 1px;
 }
@@ -115,7 +113,7 @@
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 16px;
-  color: #d0c0ff;
+  color: #333;
   padding-left: 32px;
   position: relative;
 }
