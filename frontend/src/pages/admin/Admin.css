@@ -236,18 +236,29 @@
   z-index: 1;
 }
 
-.capibara-container {
+.admin-home .capibara-container {
   position: absolute;
-  top: -20px;
-  right: -20px;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.capibara-img {
-  width: 140px;
+.admin-home .capibara-container::after {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 16px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.15) 0%, transparent 70%);
+  margin-top: -8px;
+}
+
+.admin-home .capibara-img {
+  width: 160px;
+  display: block;
 }
 
 /* ── RESPONSIVE ── */

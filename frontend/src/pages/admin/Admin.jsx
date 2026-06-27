@@ -143,9 +143,9 @@ function Admin() {
               <p className="admin-subtitle">
                 Gestiona obras, artistas, reservas y reportes desde este panel.
               </p>
-              <div className="capibara-container">
-                <img src="/imagen/cap03.png" alt="capibara guia" className="capibara-img" />
-              </div>
+            </div>
+            <div className="capibara-container">
+              <img src="/imagen/cap03.png" alt="capibara guia" className="capibara-img" />
             </div>
           </div>
         );
