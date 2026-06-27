@@ -247,7 +247,6 @@ function Admin() {
         >
           Reportes
         </button>
-        <hr className="admin-sidebar-divider" />
         <button
           className={`admin-create-btn ${activeSection === 'createAdmin' ? 'active' : ''}`}
           onClick={() => handleSectionChange('createAdmin')}
