@@ -74,20 +74,64 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   // Carga la obra por ID cuando el componente monta
 useEffect(() => {
   if (id) {
-    getSpecificArtworkById(id)
-      .then(data => {
-        console.log('ESTRUCTURA RECIBIDA:', JSON.stringify(data));
-        setArtwork(data);
-      })
-      .catch((err) => {
-        const status = err.response?.status;
-        if (status === 404) {
-          setArtworkError("Esta obra no existe o fue eliminada.");
-        } else {
-          setArtworkError("Error cargando los detalles de la obra.");
-        }
+    // MOCK — descomentar en produccion
+    // getSpecificArtworkById(id)
+    //   .then(data => {
+    //     console.log('ESTRUCTURA RECIBIDA:', JSON.stringify(data));
+    //     setArtwork(data);
+    //   })
+    //   .catch((err) => {
+    //     const status = err.response?.status;
+    //     if (status === 404) {
+    //       setArtworkError("Esta obra no existe o fue eliminada.");
+    //     } else {
+    //       setArtworkError("Error cargando los detalles de la obra.");
+    //     }
+    //     toast.error("Error cargando los detalles de la obra");
+    //   });
+
+    const mockDetail = {
+      artWorkResponse: {
+        idArtWork: Number(id),
+        name: 'Susurros del Viento',
+        imageUrl: 'https://picsum.photos/seed/art1/800/900',
+        price: 1200.00,
+        creation_date: '2024-03-15',
+        status: 'AVAILABLE',
+        idArtist: 1,
+      },
+      paintingResponse: {
+        technique: 'Óleo sobre lienzo',
+        holder: 'Lienzo',
+        style: 'Contemporáneo',
+        framed: true,
+        height: 80,
+        width: 60,
+      },
+    };
+    const mockDetails = [
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 1, name: 'Susurros del Viento', price: 1200.00, imageUrl: 'https://picsum.photos/seed/art1/800/900' } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 2, name: 'Raíces Olvidadas', price: 850.00, imageUrl: 'https://picsum.photos/seed/art2/800/900' }, paintingResponse: undefined, sculptureResponse: { material: 'Bronce', weight: 12.5, length: 40, width: 30, depth: 30 } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 3, name: 'Luz de Medianoche', price: 2100.00, imageUrl: 'https://picsum.photos/seed/art3/800/900' }, paintingResponse: undefined, photographyResponse: { print_type: 'Giclée', resolution: '300dpi', color: 'color', edition_number: '3/10', camera: 'Leica M6' } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 4, name: 'El Último Café', price: 620.00, imageUrl: 'https://picsum.photos/seed/art4/800/900' }, paintingResponse: { technique: 'Acrílico', holder: 'Cartón', style: 'Impresionista', framed: false, height: 50, width: 40 } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 5, name: 'Resplandor Terrenal', price: 1500.00, imageUrl: 'https://picsum.photos/seed/art5/800/900' }, paintingResponse: undefined, ceramicResponse: { material_type: 'Gres', technique: 'Torno', finish: 'Mate', firing_temperature: 1200, weight: 3.2, height: 25, width: 20 } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 6, name: 'Ecos del Ayer', price: 980.00, imageUrl: 'https://picsum.photos/seed/art6/800/900' } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 7, name: 'Fragmentos de Luna', price: 1750.00, imageUrl: 'https://picsum.photos/seed/art7/800/900' }, paintingResponse: undefined, sculptureResponse: { material: 'Mármol', weight: 45, length: 60, width: 25, depth: 25 } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 8, name: 'Silencio Profundo', price: 440.00, imageUrl: 'https://picsum.photos/seed/art8/800/900' }, paintingResponse: undefined, photographyResponse: { print_type: 'Digital', resolution: '600dpi', color: 'bn', edition_number: '1/5', camera: 'Nikon D850' } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 9, name: 'Amanecer en Bronce', price: 3200.00, imageUrl: 'https://picsum.photos/seed/art9/800/900' }, paintingResponse: undefined, sculptureResponse: { material: 'Bronce', weight: 85, length: 90, width: 40, depth: 35 } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 10, name: 'Mareas del Tiempo', price: 1100.00, imageUrl: 'https://picsum.photos/seed/art10/800/900' } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 11, name: 'Reflejos Dorados', price: 2050.00, imageUrl: 'https://picsum.photos/seed/art11/800/900' }, paintingResponse: undefined, goldsmithResponse: { main_material: 'Oro 18k', gemstones: 'Diamantes', weight: 0.15 } },
+      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 12, name: 'Tierra y Fuego', price: 780.00, imageUrl: 'https://picsum.photos/seed/art12/800/900' }, paintingResponse: undefined, ceramicResponse: { material_type: 'Porcelana', technique: 'Modelado', finish: 'Brillante', firing_temperature: 1300, weight: 1.8, height: 30, width: 15 } },
+    ];
+    const found = mockDetails.find(d => d.artWorkResponse.idArtWork === Number(id));
+    setTimeout(() => {
+      if (found) {
+        setArtwork(found);
+      } else {
+        setArtworkError("Esta obra no existe o fue eliminada.");
         toast.error("Error cargando los detalles de la obra");
-      });
+      }
+    }, 300);
   }
 }, [id]);
   // ── EFECTO: GET artista por idArtist ────────────────────
