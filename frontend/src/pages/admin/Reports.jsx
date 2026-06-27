@@ -209,8 +209,21 @@ function Reports() {
                     <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
                     
                     <div className="report-view">
+                        <div className="print-header">
+                            <div className="print-header-left">
+                                <h1 className="print-report-title">REPORTE</h1>
+                                <p className="report-period">
+                                    Período: {startDate || 'Sin fecha inicio'} — {endDate || 'Sin fecha fin'}
+                                </p>
+                            </div>
+                            <div className="print-header-right">
+                                <img src="/logo.svg" alt="Pictorial Arcane" className="print-logo" />
+                            </div>
+                        </div>
                         <h3>Resumen de Facturación</h3>
-                        <p>Total Recaudado | Ganancia Museo </p>
+                        <p className="report-period-screen">
+                            Período: {startDate || 'Sin fecha inicio'} — {endDate || 'Sin fecha fin'}
+                        </p>
                         <table className="report-table">
                             <thead>
                                 <tr>

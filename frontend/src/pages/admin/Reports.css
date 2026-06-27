@@ -178,6 +178,21 @@
     font-weight: 500;
 }
 
+.print-header {
+    display: none;
+}
+
+.print-logo {
+    width: 160px;
+    display: block;
+}
+
+.report-period-screen {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
 .report-table {
     width: 100%;
     border-collapse: collapse;
@@ -316,25 +331,167 @@
     color: #fff;
 }
 
+/* ============================================
+   ESTILOS DE IMPRESIÓN
+   ============================================ */
 @media print {
+    @page {
+        margin: 0.4in;
+        size: landscape;
+    }
+
     .admin-sidebar,
     .admin-nav-btn,
     .admin-create-btn,
     .report-tabs,
     .date-picker-container,
+    .print-btn,
     .pagination-controls,
-    .print-btn {
+    .admin-eyebrow,
+    .admin-title,
+    canvas {
         display: none !important;
     }
 
     #reports-container {
-        box-shadow: none;
-        background: white;
-        color: black;
+        background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e8d5f5 100%) !important;
+        box-shadow: none !important;
+        padding: 32px !important;
+        border-radius: 0 !important;
+        color: #000 !important;
+        position: relative !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 3px solid #7c3aed;
+    }
+
+    .print-report-title {
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .report-period {
+        font-size: 0.85rem;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .print-logo {
+        width: 160px;
+        background: transparent !important;
+    }
+
+    .report-period-screen {
+        display: none !important;
     }
 
     .report-view {
-        background: white;
-        padding: 0;
+        background: transparent !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    .report-view h3 {
+        font-size: 1.1rem !important;
+        color: #333 !important;
+        margin-bottom: 12px !important;
+    }
+
+    .report-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        margin-bottom: 16px !important;
+        border: 1px solid #d4b3ff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .report-table thead tr {
+        background-color: #7c3aed !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .report-table thead th {
+        background-color: transparent !important;
+        color: #1a1a2e !important;
+        border-bottom: 2px solid #7c3aed !important;
+        font-weight: 700 !important;
+        font-size: 0.72rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        padding: 10px 12px !important;
+    }
+
+    .report-table tbody td {
+        font-size: 0.8rem !important;
+        padding: 9px 12px !important;
+        color: #333 !important;
+        border-bottom: 1px solid #ede4f5 !important;
+    }
+
+    .report-table tbody tr:nth-child(even) {
+        background: #faf5ff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .report-table td:nth-child(4),
+    .report-table td:nth-child(5),
+    .report-table td:nth-child(6),
+    .report-table td:nth-child(7) {
+        color: #7c3aed !important;
+        font-weight: 600 !important;
+    }
+
+    .report-summary-footer {
+        background: #7c3aed !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 14px 24px !important;
+        margin-top: 16px !important;
+        justify-content: flex-start !important;
+        gap: 48px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .summary-item {
+        align-items: flex-start !important;
+    }
+
+    .summary-item span {
+        color: rgba(255, 255, 255, 0.8) !important;
+        font-size: 0.8rem !important;
+    }
+
+    .summary-item strong {
+        color: #fff !important;
+        font-size: 1.3rem !important;
+        font-weight: 800 !important;
+    }
+
+    #reports-container > .report-view::after {
+        content: 'pictorialarcane.com';
+        display: block !important;
+        text-align: center !important;
+        font-size: 0.75rem !important;
+        color: #999 !important;
+        margin-top: 24px !important;
+        padding-top: 12px !important;
+        border-top: 1px solid #d4b3ff !important;
     }
 }
