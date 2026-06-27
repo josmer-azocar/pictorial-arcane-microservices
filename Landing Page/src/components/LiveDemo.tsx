@@ -168,14 +168,14 @@ LIMIT 3`
   return (
     <section 
       id="live-demo" 
-      className="py-20 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white relative"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white relative"
     >
       <div className="absolute top-0 bottom-0 left-0 right-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,47,201,0.03),transparent_50%)] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-4">
           <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
             Laboratorio Interactivo
           </span>

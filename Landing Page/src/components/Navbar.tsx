@@ -1,21 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Shield, Users, Layers, Cpu, Database, BookOpen, Terminal, Network, Info } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, X, Users, Layers, Cpu, Database, BookOpen, Terminal, Network, Info } from 'lucide-react';
 
 interface NavbarProps {
   activeSection: string;
+  onNavigate: (index: number) => void;
 }
 
-export default function Navbar({ activeSection }: NavbarProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
+export default function Navbar({ activeSection, onNavigate }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const navItems = [
     { id: 'hero', label: 'Inicio', icon: Cpu },
@@ -29,39 +21,22 @@ export default function Navbar({ activeSection }: NavbarProps) {
     { id: 'live-demo', label: 'Demo', icon: Terminal },
   ];
 
-  const handleScrollTo = (id: string) => {
+  const handleNavigate = (id: string) => {
     setMobileMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementPosition - offset,
-        behavior: 'smooth'
-      });
-    }
+    const index = navItems.findIndex(item => item.id === id);
+    if (index !== -1) onNavigate(index);
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-white/85 border-b border-arcane-purple/10 shadow-sm backdrop-blur-md py-2' 
-        : 'bg-transparent py-4'
-    }`}>
-      {/* White overlay at top for readability when transparent */}
-      {!isScrolled && <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent h-24 pointer-events-none" />}
+    <nav className="fixed top-0 left-0 right-0 z-40 bg-white/85 border-b border-arcane-purple/10 shadow-sm backdrop-blur-md py-2 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo in Zen Tokyo Zoo font (pictorial-arcane style) */}
+          {/* Logo */}
           <div 
-            onClick={() => handleScrollTo('hero')} 
+            onClick={() => handleNavigate('hero')} 
             className="flex items-center cursor-pointer select-none group relative"
           >
-            {/* White glow behind logo */}
-            <div className="absolute inset-0 bg-white/20 blur-xl rounded-full scale-[1.8]"></div>
-            <span className={`relative font-logo text-2xl md:text-3xl tracking-wide transition-all duration-300 group-hover:text-arcane-purple ${
-              isScrolled ? 'text-gray-900' : 'text-white'
-            }`}>
+            <span className="relative font-logo text-2xl md:text-3xl tracking-wide transition-all duration-300 group-hover:text-arcane-purple text-gray-900">
               PICTORIAL{' '}
               <span className="text-arcane-purple">
                 ARCANE
@@ -69,7 +44,7 @@ export default function Navbar({ activeSection }: NavbarProps) {
             </span>
           </div>
 
-          {/* Desktop Navigation with underline animation */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -77,16 +52,14 @@ export default function Navbar({ activeSection }: NavbarProps) {
               return (
                 <button
                   key={item.id}
-                  onClick={() => handleScrollTo(item.id)}
+                  onClick={() => handleNavigate(item.id)}
                   className={`nav-underline px-3 py-2 text-[11px] font-semibold tracking-wide uppercase transition-colors duration-300 flex items-center gap-1.5 cursor-pointer ${
                     isActive 
                       ? 'text-arcane-purple nav-underline-active'
-                      : isScrolled
-                        ? 'text-gray-500 hover:text-gray-800'
-                        : 'text-white/80 hover:text-white'
+                      : 'text-gray-500 hover:text-gray-800'
                   }`}
                 >
-                  <Icon size={12} className={isActive ? 'text-arcane-purple' : isScrolled ? 'text-gray-400' : 'text-white/60'} />
+                  <Icon size={12} className={isActive ? 'text-arcane-purple' : 'text-gray-400'} />
                   {item.label}
                 </button>
               );
@@ -97,11 +70,7 @@ export default function Navbar({ activeSection }: NavbarProps) {
           <div className="flex lg:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`inline-flex items-center justify-center p-2 rounded-md focus:outline-none cursor-pointer transition-colors duration-300 ${
-                isScrolled
-                  ? 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
-              }`}
+              className="inline-flex items-center justify-center p-2 rounded-md focus:outline-none cursor-pointer text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors duration-300"
               title="Alternar menú"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -120,7 +89,7 @@ export default function Navbar({ activeSection }: NavbarProps) {
               return (
                 <button
                   key={item.id}
-                  onClick={() => handleScrollTo(item.id)}
+                  onClick={() => handleNavigate(item.id)}
                   className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold tracking-wide uppercase transition-all flex items-center gap-3 cursor-pointer ${
                     isActive 
                       ? 'bg-arcane-purple/10 text-arcane-purple border-l-4 border-arcane-purple'

@@ -60,12 +60,12 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
   return (
     <section 
       id="cap" 
-      className="py-20 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
     >
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-4">
           <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
             Marco Teórico Distribuido
           </span>
@@ -79,14 +79,14 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
         </div>
 
         {/* Part 1: Interactive Triangle & CAP Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center mb-6">
           
           {/* Triangular CAP Graph SVG (Left 5 cols) */}
-          <div className="lg:col-span-6 bg-white p-6 rounded-2xl border border-arcane-purple/10 shadow-sm flex flex-col items-center justify-center arcane-glass-light relative overflow-hidden min-h-[380px]">
+          <div className="lg:col-span-6 bg-white p-4 rounded-2xl border border-arcane-purple/10 shadow-sm flex flex-col items-center justify-center arcane-glass-light relative overflow-hidden min-h-[320px]">
             <div className="absolute top-2 left-4 text-[10px] font-mono text-gray-400 uppercase tracking-widest">Triángulo CAP SBDII</div>
             
             {/* SVG CAP Triangle */}
-            <svg viewBox="0 0 400 350" className="w-full max-w-[340px] aspect-[4/3.5] relative z-10 select-none">
+            <svg viewBox="0 0 400 300" className="w-full max-w-[280px] aspect-[4/3] relative z-10 select-none">
               <defs>
                 {/* Triangular shadow filter */}
                 <filter id="tri-glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -223,7 +223,7 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
             </div>
 
             {/* Active Glassmorphism Detail Card */}
-            <div className="p-6 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm arcane-glass-light animate-fade-in">
+            <div className="p-4 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm arcane-glass-light animate-fade-in">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[10px] uppercase font-mono tracking-widest px-2.5 py-1 rounded bg-arcane-purple/10 border border-arcane-purple/20 text-arcane-purple">
                   {currentDetails.badge}
@@ -253,16 +253,16 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
         </div>
 
         {/* Part 2: Section of Eventual Consistency Flow */}
-        <div className="bg-gray-50 p-6 sm:p-8 rounded-2xl border border-arcane-purple/10 relative overflow-hidden shadow-sm">
+        <div className="bg-gray-50 p-4 sm:p-5 rounded-2xl border border-arcane-purple/10 relative overflow-hidden shadow-sm">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-arcane-purple/[0.03] blur-[100px]" />
           
-          <div className="border-b border-gray-200 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div className="border-b border-gray-200 pb-2 mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <h3 className="font-display font-extrabold text-lg sm:text-xl text-gray-900 flex items-center gap-2">
-                <RefreshCcw size={18} className="text-arcane-purple animate-spin" />
+              <h3 className="font-display font-bold text-sm sm:text-base text-gray-900 flex items-center gap-2">
+                <RefreshCcw size={14} className="text-arcane-purple animate-spin" />
                 Mecanismo de Consistencia Eventual SBDII
               </h3>
-              <p className="text-xs text-gray-500 font-sans mt-0.5">Cómo garantizamos sincronismo tolerante a demoras sin comprometer la base de datos principal.</p>
+              <p className="text-[10px] text-gray-500 font-sans">Sincronismo tolerante a demoras sin comprometer la base principal.</p>
             </div>
             <span className="self-start sm:self-center px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 text-[10px] font-mono uppercase tracking-widest border border-emerald-200">
               Desafío Académico Resuelto
@@ -270,46 +270,46 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
           </div>
 
           {/* Eventual Consistency Stepper Diagram (4 blocks in row) */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
             
             {/* Step 1: Core transactional outbox representation */}
-            <div className="p-4 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-6 w-6 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-xs text-white font-bold shadow-[0_0_8px_rgba(139,47,201,1)]">1</div>
-              <h4 className="font-display font-bold text-sm text-gray-900 mt-1 mb-1">Outbox Transaccional</h4>
-              <p className="text-[11px] text-gray-500 leading-relaxed flex-grow">
+            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
+              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold shadow-[0_0_8px_rgba(139,47,201,1)]">1</div>
+              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">Outbox Transaccional</h4>
+              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
                 Al registrar la venta se realiza una única transacción local en **PostgreSQL**. Se escribe la factura y una fila de evento en la tabla OUTBOX de forma atómica.
               </p>
-              <div className="text-[10px] font-mono text-emerald-600 mt-2 bg-emerald-50 p-1 rounded font-bold border border-emerald-200">ACID Transaccional ✓</div>
+              <div className="text-[9px] font-mono text-emerald-600 mt-2 bg-emerald-50 p-1 rounded font-bold border border-emerald-200">ACID Transaccional ✓</div>
             </div>
 
             {/* Step 2: Message/Event Dispatcher representation */}
-            <div className="p-4 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-6 w-6 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-xs text-white font-bold">2</div>
-              <h4 className="font-display font-bold text-sm text-gray-900 mt-1 mb-1">Dispatcher de Eventos</h4>
-              <p className="text-[11px] text-gray-500 leading-relaxed flex-grow">
+            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
+              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold">2</div>
+              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">Dispatcher de Eventos</h4>
+              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
                 Un componente Scheduler o Broker (RabbitMQ) lee secuencialmente la tabla OUTBOX y emite mensajes serializados en formato JSON hacia la cola del sistema.
               </p>
-              <div className="text-[10px] font-mono text-purple-600 mt-2 bg-purple-50 p-1 rounded font-bold border border-purple-200">Async Event Stream ↯</div>
+              <div className="text-[9px] font-mono text-purple-600 mt-2 bg-purple-50 p-1 rounded font-bold border border-purple-200">Async Event Stream ↯</div>
             </div>
 
             {/* Step 3: Consumers Workers representation */}
-            <div className="p-4 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-6 w-6 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-xs text-white font-bold">3</div>
-              <h4 className="font-display font-bold text-sm text-gray-900 mt-1 mb-1">Microservices Consumers</h4>
-              <p className="text-[11px] text-gray-500 leading-relaxed flex-grow">
+            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
+              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold">3</div>
+              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">Microservices Consumers</h4>
+              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
                 Los endpoints NoSQL escuchan las colas de forma independiente. Si el servicio de catálogo anda lento, el mensaje espera en cola sin bloquear al comprador.
               </p>
-              <div className="text-[10px] font-mono text-cyan-600 mt-2 bg-cyan-50 p-1 rounded font-bold border border-cyan-200">Worker Isolation ⚡</div>
+              <div className="text-[9px] font-mono text-cyan-600 mt-2 bg-cyan-50 p-1 rounded font-bold border border-cyan-200">Worker Isolation ⚡</div>
             </div>
 
             {/* Step 4: Sincronismo Relacional Graph database */}
-            <div className="p-4 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-6 w-6 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-xs text-white font-bold">4</div>
-              <h4 className="font-display font-bold text-sm text-gray-900 mt-1 mb-1">State Consolidation</h4>
-              <p className="text-[11px] text-gray-500 leading-relaxed flex-grow">
+            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
+              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold">4</div>
+              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">State Consolidation</h4>
+              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
                 **MongoDB** actualiza el catálogo a 'SOLD', **Cassandra** añade el histórico y **Neo4j** enlaza la compra para refinar algoritmos de IA en milisegundos.
               </p>
-              <div className="text-[10px] font-mono text-emerald-600 mt-2 bg-emerald-50 p-1 rounded font-bold border border-emerald-200">Consistent State ✓</div>
+              <div className="text-[9px] font-mono text-emerald-600 mt-2 bg-emerald-50 p-1 rounded font-bold border border-emerald-200">Consistent State ✓</div>
             </div>
 
           </div>

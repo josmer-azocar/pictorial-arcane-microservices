@@ -1,18 +1,20 @@
 import React from 'react';
 import { ArrowDown, Compass } from 'lucide-react';
 
-export default function Hero() {
+interface HeroProps {
+  onNavigate?: (index: number) => void;
+}
 
-  const handleScrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementPosition - offset,
-        behavior: 'smooth'
-      });
-    }
+const SLIDE_INDEX: Record<string, number> = {
+  architecture: 2,
+  'live-demo': 8
+};
+
+export default function Hero({ onNavigate }: HeroProps) {
+
+  const handleNavigate = (id: string) => {
+    const index = SLIDE_INDEX[id];
+    if (index !== undefined && onNavigate) onNavigate(index);
   };
 
   return (
@@ -76,7 +78,7 @@ export default function Hero() {
         <div className="flex justify-start gap-4 w-full">
           <button
             id="cta-btn-architecture"
-            onClick={() => handleScrollTo('architecture')}
+            onClick={() => handleNavigate('architecture')}
             className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold tracking-wide uppercase transition-all duration-300 bg-gradient-to-r from-arcane-purple-dark via-arcane-purple to-arcane-purple-dark text-white shadow-[0_4px_25px_rgba(139,47,201,0.4)] hover:shadow-[0_4px_35px_rgba(139,47,201,0.6)] hover:scale-105 active:scale-95 cursor-pointer border border-arcane-lavender/30 flex items-center justify-center gap-2 group-hover:bg-opacity-90"
           >
             Regístrate
@@ -85,7 +87,7 @@ export default function Hero() {
 
           <button
             id="cta-btn-livedemo"
-            onClick={() => handleScrollTo('live-demo')}
+            onClick={() => handleNavigate('live-demo')}
             className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold tracking-wide uppercase transition-all duration-300 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 hover:border-arcane-purple/50 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
           >
             Live Demo
@@ -94,7 +96,7 @@ export default function Hero() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-40 hover:opacity-70 transition cursor-pointer" onClick={() => handleScrollTo('architecture')}>
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-40 hover:opacity-70 transition cursor-pointer" onClick={() => handleNavigate('architecture')}>
           <span className="text-[10px] uppercase tracking-widest font-mono text-gray-400">Ver proyecto</span>
           <div className="h-6 w-4 border border-gray-400 rounded-full flex justify-center p-0.5">
             <span className="h-1.5 w-1 bg-arcane-purple rounded-full animate-scroll-dot"></span>

@@ -416,12 +416,12 @@ export default function Neo4jGraphs() {
   return (
     <section 
       id="neo4j-graphs" 
-      className="py-20 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
     >
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-4">
           <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20 flex items-center gap-1.5 w-fit mx-auto">
             <Network size={12} className="text-arcane-purple" />
             Persistencia de Grafos con Neo4j
@@ -436,7 +436,7 @@ export default function Neo4jGraphs() {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8 select-none">
+        <div className="flex flex-wrap justify-center gap-2 mb-4 select-none">
           <button 
             onClick={() => setActiveTab('schema')} 
             className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'schema' ? 'bg-arcane-purple text-white border-arcane-lavender' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800 hover:border-gray-300'}`}

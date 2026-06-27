@@ -13,7 +13,6 @@ interface SelectedNodeInfo {
   useCase: string;
   technologies: string[];
   connection: string;
-  details: string;
   color: string;
   glowClass: string;
   accentColor: string;
@@ -31,7 +30,6 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
       useCase: 'Galería de Arte, Carrito de Compras e Interacciones',
       technologies: ['React 19', 'Tailwind CSS v4', 'Vite', 'Lucide Icons'],
       connection: 'API Gateway / REST HTTP',
-      details: 'Interfaz premium del museo que consume endpoints unificados. Ejecuta consultas dinámicas al catálogo en MongoDB, gestiona compras a través del Core SQL, visualiza bitácoras históricas y muestra sliders de recomendación personalizada de forma reactiva e intuitiva.',
       color: 'border-cyan-500/20 text-cyan-400 bg-cyan-950/5',
       glowClass: 'shadow-[0_0_40px_rgba(6,182,212,0.12)]',
       accentColor: '#06b6d4'
@@ -44,7 +42,6 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
       useCase: 'Gestión Maestro-Transaccional de Ventas, Clientes e Inventario Oficial',
       technologies: ['PostgreSQL 16', 'Spring Boot 3.x', 'Spring Data JPA', 'JDBC'],
       connection: 'Punto central de despacho (HTTP, Eventos, JDBC)',
-      details: 'El núcleo del sistema. Procesa compras de obras bajo rigurosas transacciones ACID en PostgreSQL para evitar doble venta física. Tras confirmar el pago, de forma transaccional notifica asincrónicamente mediante una cola de eventos a MongoDB y Cassandra y actualiza las vinculaciones en Neo4j, asegurando la consistencia eventual final.',
       color: 'border-indigo-500/20 text-indigo-400 bg-indigo-950/5',
       glowClass: 'shadow-[0_0_40px_rgba(99,102,241,0.12)]',
       accentColor: '#6366f1'
@@ -57,7 +54,6 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
       useCase: 'Catálogo de Obras de Arte con Atributos Polimórficos',
       technologies: ['MongoDB 7.0', 'BSON Engine', 'Spring Data MongoDB'],
       connection: 'Manejador de Eventos Asíncronos / REST API',
-      details: 'Administra el vasto catálogo de obras de arte contemporáneo polimórficas (una escultura física posee volumen; una pintura tiene óleo, ancho y alto; un NFT hereda metadata y token_id). MongoDB almacena todo holgadamente en fichas JSON jerárquicas sin pesadas migraciones estructurales.',
       color: 'border-emerald-500/20 text-emerald-400 bg-emerald-950/5',
       glowClass: 'shadow-[0_0_40px_rgba(16,185,129,0.12)]',
       accentColor: '#10b981'
@@ -70,7 +66,6 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
       useCase: 'Bitácora Inmutable de Auditoría Transaccional y Eventos',
       technologies: ['Apache Cassandra 4.1', 'CQL Engine', 'Spring Data Cassandra'],
       connection: 'Mensajería Asíncrona (RabbitMQ/Kafka events)',
-      details: 'Registra de manera masiva la bitácora técnica de seguridad y compras del museo. Almacena marcas de tiempo, direcciones IP y payloads en una estructura Wide-Column linealmente escalable. Su consistencia eventual controlada por Quórums permite escrituras sin cuellos de botella.',
       color: 'border-sky-500/20 text-sky-400 bg-sky-950/5',
       glowClass: 'shadow-[0_0_40px_rgba(14,165,233,0.12)]',
       accentColor: '#0ea5e9'
@@ -83,7 +78,6 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
       useCase: 'Grafo de Relaciones del Museo y Motor de Recomendación en RAM',
       technologies: ['Neo4j Enterprise', 'Lenguaje Cypher', 'Spring Data Neo4j'],
       connection: 'DNL / Sincronizador JDBC del Core',
-      details: 'Mapea las interacciones de los clientes del museo. Modela nodos como :User, :Artwork y :Genre, recorriendo relaciones complejas de forma local en memoria RAM mediante punteros en milisegundos, recomendando obras basándose en compras e intereses conexos.',
       color: 'border-green-500/20 text-green-400 bg-green-950/5',
       glowClass: 'shadow-[0_0_40px_rgba(34,197,94,0.12)]',
       accentColor: '#22c55e'
@@ -100,7 +94,7 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
   return (
     <section 
       id="architecture" 
-      className="h-screen max-h-screen py-4 px-6 lg:px-12 border-b border-purple-500/10 bg-[#f5f0fa] relative flex flex-col justify-center overflow-hidden font-sans select-none"
+      className="pt-14 pb-4 px-6 lg:px-12 border-b border-purple-500/10 bg-[#f5f0fa] relative flex flex-col justify-center overflow-hidden font-sans select-none min-h-screen"
     >
       <div className="max-w-7xl mx-auto flex flex-col justify-center w-full h-full z-10">
         
@@ -298,27 +292,13 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
                 <span className="text-[8px] uppercase font-mono tracking-widest text-gray-600 block font-bold mb-1.5">
                   Ecosistema de Componentes:
                 </span>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {selectedNode.technologies.map((tech, idx) => (
-                    <span key={idx} className="text-[9px] px-2.5 py-0.5 bg-purple-950/90 border border-purple-900 text-white font-mono font-medium rounded-md tracking-tight shadow-sm hover:scale-105 transition-transform duration-200">
+                    <span key={idx} className="text-[11px] px-3 py-1 bg-purple-950/90 border border-purple-900 text-white font-mono font-medium rounded-lg tracking-tight shadow-sm hover:scale-105 transition-transform duration-200">
                       {tech}
                     </span>
                   ))}
                 </div>
-              </div>
-
-              {/* Descripción Técnica con Fade de Scroll */}
-              <div className="flex flex-col flex-1 min-h-[70px] max-h-[90px] mt-2 relative overflow-hidden">
-                <span className="text-[8px] uppercase font-mono tracking-widest text-gray-600 block font-bold mb-1">
-                  Mapeo de Flujo Interno:
-                </span>
-                <div className="overflow-y-auto pr-1 flex-1 scrollbar-hidden pb-4">
-                  <p className="text-[11px] text-gray-700 font-medium leading-relaxed text-justify">
-                    {selectedNode.details}
-                  </p>
-                </div>
-                {/* Degradado fino inferior para indicar scroll */}
-                <div className="absolute bottom-0 inset-x-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
               </div>
 
               {/* Footer de Enlace / Canal Técnico */}
@@ -377,14 +357,7 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
           animation: flowLinearReverse 1.4s infinite linear;
         }
 
-        /* Ocultar scrollbars sin romper el flujo UX nativo */
-        .scrollbar-hidden::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hidden {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
+
       `}</style>
     </section>
   );
