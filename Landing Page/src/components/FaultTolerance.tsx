@@ -35,8 +35,8 @@ export default function FaultTolerance() {
       descriptionBg: 'border-rose-500/20 bg-rose-500/5',
       accentColor: 'text-rose-400',
       icon: WifiOff,
-      rootCause: 'En construcción.',
-      mitigation: 'En construcción.'
+      rootCause: 'Caída del nodo líder (core server) del clúster Neo4j Causal Clustering o pérdida de conectividad con el microservicio de recomendaciones. El motor de grafos queda inaccesible, imposibilitando las consultas Cypher de navegación semántica (travellers por aristas :SAW, :COMPRÓ, :HAS_GENRE).',
+      mitigation: 'Neo4j Core Cluster usa un conjunto de servidores principales que eligen un líder mediante consenso Raft. Si el líder falla, los core servers restantes celebran una nueva elección (~7 seg) y promueven un nuevo líder. Mientras tanto, el frontend degrada la sección "Recomendados para ti" a un fallback determinista: obras del mismo género servidas desde el catálogo MongoDB (consulta plana sin traversal). Las aristas :SAW y :COMPRÓ se encolan en un buffer Redis y se re-sincronizan con Neo4j vía un job programado una vez el clúster se recupere.'
     }
   ];
 

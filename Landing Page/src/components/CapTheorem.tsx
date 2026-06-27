@@ -27,12 +27,12 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
       strength: 'Rendimiento lineal, escalado infinito sin un coordinador maestro o punto único de fallo.'
     },
     [DBEngine.Neo4j]: {
-      title: 'Neo4j: En Reparación',
-      badge: 'Fuera de Servicio',
-      subtitle: 'Nodo detenido por mantenimiento programado',
-      focus: 'No disponible temporalmente',
-      argument: 'En construcción.',
-      strength: 'En construcción.'
+      title: 'Neo4j: Enfoque CP (Consistencia + Partición)',
+      badge: 'Consistencia en Grafos',
+      subtitle: 'Adyacencia sin índices para recomendaciones en tiempo real',
+      focus: 'Consistencia en Traversals (CP)',
+      argument: 'Neo4j opera con arquitectura líder único (single master) y réplicas de solo lectura. En caso de partición de red, el sistema prioriza la consistencia sobre la disponibilidad: las réplicas pueden quedar fuera de servicio si pierden conexión con el líder, pero nunca servirán datos divergentes del grafo maestro. Esto es crítico para el motor de recomendaciones, pues las aristas semánticas (COMPRÓ, VIO, PERTENECE_A) deben reflejar el estado transaccional más reciente para evitar recomendar obras ya vendidas o mal asociadas a un género.',
+      strength: 'Index‑free adjacency: navegación de aristas en O(1) sin JOINs. Las consultas de recomendación multicapa (compra → género → obras similares) se ejecutan en microsegundos al recorrer punteros físicos en memoria.'
     },
     'PostgreSQL': {
       title: 'PostgreSQL: Enfoque CA (Consistencia + Disponibilidad)',

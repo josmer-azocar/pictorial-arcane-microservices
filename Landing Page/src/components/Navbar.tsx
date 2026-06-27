@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Shield, Users, Layers, Cpu, Database, BookOpen, Terminal } from 'lucide-react';
+import { Menu, X, Shield, Users, Layers, Cpu, Database, BookOpen, Terminal, Network } from 'lucide-react';
 
 interface NavbarProps {
   activeSection: string;
@@ -25,6 +25,7 @@ export default function Navbar({ activeSection }: NavbarProps) {
     { id: 'live-demo', label: 'Demo', icon: Terminal },
     { id: 'api-documentation', label: 'APIs', icon: BookOpen },
     { id: 'fault-tolerance', label: 'Tolerancia', icon: Shield },
+    { id: 'neo4j-graphs', label: 'Grafos', icon: Network },
     { id: 'team', label: 'Equipo', icon: Users },
   ];
 

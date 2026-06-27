@@ -12,6 +12,7 @@ import PolyglotDictionary from './components/PolyglotDictionary';
 import LiveDemo from './components/LiveDemo';
 import ApiDocumentation from './components/ApiDocumentation';
 import FaultTolerance from './components/FaultTolerance';
+import Neo4jGraphs from './components/Neo4jGraphs';
 import Team from './components/Team';
 export default function App() {
   const [activeSection, setActiveSection] = useState<string>('hero');
@@ -28,6 +29,7 @@ export default function App() {
       'live-demo',
       'api-documentation',
       'fault-tolerance',
+      'neo4j-graphs',
       'team'
     ];
 
@@ -96,7 +98,10 @@ export default function App() {
         {/* Section 7: Failing Mitigation and PBFT Quorum panels */}
         <FaultTolerance />
 
-        {/* Section 8: Authors credits and institution official footer */}
+        {/* Section 8: Neo4j Graph Visualization */}
+        <Neo4jGraphs />
+
+        {/* Section 9: Authors credits and institution official footer */}
         <Team />
 
       </main>
