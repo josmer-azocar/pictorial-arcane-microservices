@@ -16,7 +16,8 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
       subtitle: 'Flexibilidad de esquemas y catálogo polimórfico',
       focus: 'Consistencia Estricta (CP)',
       argument: 'Almacena la galería viva del museo. Prioriza la consistencia para que todos los usuarios tengan la misma información actual de la obra (evitando por ejemplo que se sigan ofreciendo obras vendidas). Al configurar "Write Concern" a "majority", asegura que una modificación del catálogo solo se confirme al confirmarse en la mayoría de réplicas antes de retornar.',
-      strength: 'Esquema libre de estructuras complejas y catalogación flexible de metadatos variables.'
+      strength: 'Esquema libre de estructuras complejas y catalogación flexible de metadatos variables.',
+      weakness: 'En partición de red con pérdida de quórum, rechaza escrituras hasta restaurar la mayoría.'
     },
     [DBEngine.Cassandra]: {
       title: 'Cassandra: Enfoque AP (Disponibilidad + Partición)',
@@ -24,7 +25,8 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
       subtitle: 'Escritura masiva, particionamiento y auditoría inmutable',
       focus: 'Disponibilidad y Tolerancia a Fallas (AP)',
       argument: 'Ideal para la bitácora de auditoría masiva. En caso de una partición de red, Cassandra acepta escrituras locales de logs en cualquier nodo disponible (cero rechazos de servicios). Los nodos aislados acumulan mutaciones mediante "Hinted Handoffs", propagándolas automáticamente por consistencia eventual cuando la red se resincroniza.',
-      strength: 'Rendimiento lineal, escalado infinito sin un coordinador maestro o punto único de fallo.'
+      strength: 'Rendimiento lineal, escalado infinito sin un coordinador maestro o punto único de fallo.',
+      weakness: 'Consistencia eventual: las lecturas pueden devolver datos obsoletos hasta que el anillo se sincroniza.'
     },
     [DBEngine.Neo4j]: {
       title: 'Neo4j: Enfoque CP (Consistencia + Partición)',
@@ -32,7 +34,8 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
       subtitle: 'Adyacencia sin índices para recomendaciones en tiempo real',
       focus: 'Consistencia en Traversals (CP)',
       argument: 'Neo4j opera con arquitectura líder único (single master) y réplicas de solo lectura. En caso de partición de red, el sistema prioriza la consistencia sobre la disponibilidad: las réplicas pueden quedar fuera de servicio si pierden conexión con el líder, pero nunca servirán datos divergentes del grafo maestro. Esto es crítico para el motor de recomendaciones, pues las aristas semánticas (COMPRÓ, VIO, PERTENECE_A) deben reflejar el estado transaccional más reciente para evitar recomendar obras ya vendidas o mal asociadas a un género.',
-      strength: 'Index‑free adjacency: navegación de aristas en O(1) sin JOINs. Las consultas de recomendación multicapa (compra → género → obras similares) se ejecutan en microsegundos al recorrer punteros físicos en memoria.'
+      strength: 'Index‑free adjacency: navegación de aristas en O(1) sin JOINs. Las consultas de recomendación multicapa (compra → género → obras similares) se ejecutan en microsegundos al recorrer punteros físicos en memoria.',
+      weakness: 'Arquitectura líder único: si el core server principal cae, escrituras se bloquean hasta la nueva elección Raft.'
     },
     'PostgreSQL': {
       title: 'PostgreSQL: Enfoque CA (Consistencia + Disponibilidad)',
@@ -40,7 +43,8 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
       subtitle: 'Núcleo relacional maestro con transacciones sólidas',
       focus: 'Consistencia Inmediata ACID (Mononodo CA)',
       argument: 'Como base relacional que controla el saldo y el inventario oficial de la empresa. En su operación de un solo servidor, garantiza Consistencia y Disponibilidad completa por diseño. No requiere lidiar con particiones de red distribuidas para procesar facturación del Core relacional primario.',
-      strength: 'Soporte completo de claves foráneas, disparadores y validaciones estrictas del esquema relacional.'
+      strength: 'Soporte completo de claves foráneas, disparadores y validaciones estrictas del esquema relacional.',
+      weakness: 'No escala horizontalmente por diseño: no tolera particiones de red distribuidas (no es nativamente distribuido).'
     }
   };
 
@@ -234,14 +238,14 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
 
               {/* Justification Text */}
               <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                  <span className="text-[10px] uppercase font-mono text-gray-500 block mb-1">Fundamento Arquitectónico:</span>
-                  <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-sans">{currentDetails.argument}</p>
-                </div>
-
                 <div className="border-l-4 border-arcane-purple pl-4 py-1">
                   <span className="text-[10px] uppercase font-mono text-gray-500 block">Mayor Fortaleza:</span>
                   <p className="text-xs sm:text-sm font-bold text-gray-900 font-sans">{currentDetails.strength}</p>
+                </div>
+
+                <div className="border-l-4 border-red-400 pl-4 py-1">
+                  <span className="text-[10px] uppercase font-mono text-gray-500 block">Debilidad CAP:</span>
+                  <p className="text-xs sm:text-sm text-red-700 font-sans">{currentDetails.weakness}</p>
                 </div>
               </div>
             </div>

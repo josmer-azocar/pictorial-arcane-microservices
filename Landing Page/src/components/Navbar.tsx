@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Shield, Users, Layers, Cpu, Database, BookOpen, Terminal, Network } from 'lucide-react';
+import { Menu, X, Shield, Users, Layers, Cpu, Database, BookOpen, Terminal, Network, Info } from 'lucide-react';
 
 interface NavbarProps {
   activeSection: string;
@@ -19,14 +19,14 @@ export default function Navbar({ activeSection }: NavbarProps) {
 
   const navItems = [
     { id: 'hero', label: 'Inicio', icon: Cpu },
+    { id: 'team', label: 'Equipo', icon: Users },
     { id: 'architecture', label: 'Arquitectura', icon: Layers },
     { id: 'cap', label: 'CAP', icon: Database },
     { id: 'dictionary', label: 'Diccionario', icon: BookOpen },
-    { id: 'live-demo', label: 'Demo', icon: Terminal },
-    { id: 'api-documentation', label: 'APIs', icon: BookOpen },
-    { id: 'fault-tolerance', label: 'Tolerancia', icon: Shield },
     { id: 'neo4j-graphs', label: 'Grafos', icon: Network },
-    { id: 'team', label: 'Equipo', icon: Users },
+    { id: 'api-documentation', label: 'APIs', icon: BookOpen },
+    { id: 'about', label: 'Explicación', icon: Info },
+    { id: 'live-demo', label: 'Demo', icon: Terminal },
   ];
 
   const handleScrollTo = (id: string) => {

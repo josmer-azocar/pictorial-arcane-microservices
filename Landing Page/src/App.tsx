@@ -6,14 +6,14 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Team from './components/Team';
 import ArchitectureDiagram from './components/ArchitectureDiagram';
 import CapTheorem from './components/CapTheorem';
 import PolyglotDictionary from './components/PolyglotDictionary';
-import LiveDemo from './components/LiveDemo';
-import ApiDocumentation from './components/ApiDocumentation';
-import FaultTolerance from './components/FaultTolerance';
 import Neo4jGraphs from './components/Neo4jGraphs';
-import Team from './components/Team';
+import ApiDocumentation from './components/ApiDocumentation';
+import About from './components/About';
+import LiveDemo from './components/LiveDemo';
 export default function App() {
   const [activeSection, setActiveSection] = useState<string>('hero');
   const [demoStep, setDemoStep] = useState<number>(0);
@@ -23,14 +23,14 @@ export default function App() {
   useEffect(() => {
     const sections = [
       'hero',
+      'team',
       'architecture',
       'cap',
       'dictionary',
-      'live-demo',
-      'api-documentation',
-      'fault-tolerance',
       'neo4j-graphs',
-      'team'
+      'api-documentation',
+      'about',
+      'live-demo'
     ];
 
     const handleScroll = () => {
@@ -80,29 +80,29 @@ export default function App() {
         {/* Section 1: Hero Cover */}
         <Hero />
 
-        {/* Section 2: Interactive SVG Architecture Path diagram */}
+        {/* Section 2: Authors credits and institution official footer */}
+        <Team />
+
+        {/* Section 3: Interactive SVG Architecture Path diagram */}
         <ArchitectureDiagram onNodeHover={handleEngineHighlight} />
 
-        {/* Section 3: CAP Triangle & Eventual Consistency Pipeline */}
+        {/* Section 4: CAP Triangle & Eventual Consistency Pipeline */}
         <CapTheorem onEngineSelect={handleEngineHighlight} />
 
-        {/* Section 4: Polyglot database schema matching tabs */}
+        {/* Section 5: Polyglot database schema matching tabs */}
         <PolyglotDictionary onEngineSelect={handleEngineHighlight} />
 
-        {/* Section 5: Real-time user buy transactional simulator stepper */}
-        <LiveDemo onStepChange={handleStepChange} />
-
-        {/* Section 6: Swagger Spec API Expanders */}
-        <ApiDocumentation />
-
-        {/* Section 7: Failing Mitigation and PBFT Quorum panels */}
-        <FaultTolerance />
-
-        {/* Section 8: Neo4j Graph Visualization */}
+        {/* Section 6: Neo4j Graph Visualization */}
         <Neo4jGraphs />
 
-        {/* Section 9: Authors credits and institution official footer */}
-        <Team />
+        {/* Section 7: Swagger Spec API Expanders */}
+        <ApiDocumentation />
+
+        {/* Section 8: Platform explanation (museum + search + purchase engine) */}
+        <About />
+
+        {/* Section 9: Real-time user buy transactional simulator stepper */}
+        <LiveDemo onStepChange={handleStepChange} />
 
       </main>
 
