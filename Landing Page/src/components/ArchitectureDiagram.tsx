@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, Laptop, Zap, Layers } from 'lucide-react';
+import { Database, Laptop, Zap, Layers, FileJson, HardDrive, Share2 } from 'lucide-react';
 
 interface ArchitectureDiagramProps {
   onNodeHover: (nodeId: string | null) => void;
@@ -20,6 +20,7 @@ interface SelectedNodeInfo {
 
 export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagramProps) {
   const [activeNode, setActiveNode] = useState<string>('core');
+  const [activeStep, setActiveStep] = useState(-1);
 
   const nodesInfo: Record<string, SelectedNodeInfo> = {
     client: {
@@ -94,136 +95,158 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
   return (
     <section 
       id="architecture" 
-      className="pt-14 pb-4 px-6 lg:px-12 border-b border-purple-500/10 bg-[#f5f0fa] relative flex flex-col justify-center overflow-hidden font-sans select-none min-h-screen"
+      className="pt-24 pb-16 px-6 lg:px-12 border-b border-purple-500/10 bg-[#f5f0fa] relative flex flex-col justify-start font-sans select-none"
     >
-      <div className="max-w-7xl mx-auto flex flex-col justify-center w-full h-full z-10">
+      <div onMouseLeave={() => setActiveStep(-1)} className="max-w-7xl mx-auto flex flex-col lg:flex-row w-full z-10 gap-2 items-stretch min-h-[500px]">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch max-h-[85vh] w-full">
-          
-          {/* CANVAS TOPOLÓGICO (Izquierda) */}
-          <div className="lg:col-span-7 bg-gradient-to-br from-[#1a0f2e] via-[#1a0f2e] to-[#0f0820] p-5 rounded-[2rem] border border-purple-900/60 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative flex flex-col justify-between aspect-[600/490] group">
-            
-            {/* Wall spotlight vignette */}
-            <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/[0.03] rounded-[2rem] pointer-events-none" />
-            
-            {/* Spotlight Dinámico de Fondo que persigue al color del nodo activo */}
-            <div 
-              className="absolute -top-20 -left-20 w-96 h-96 rounded-full blur-[120px] opacity-20 pointer-events-none transition-all duration-750 ease-out"
-              style={{ backgroundColor: selectedNode.accentColor }}
-            />
-            
-            {/* Grid Sutil de Diseño Editorial */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b10_1px,transparent_1px),linear-gradient(to_bottom,#1e293b10_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-            
-            <div className="flex items-center justify-between border-b border-purple-900/40 pb-3 z-10">
-              <div className="flex items-center gap-2.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: selectedNode.accentColor }}></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: selectedNode.accentColor }}></span>
-                </span>
-                <span className="text-[10px] font-mono text-purple-300 uppercase tracking-widest font-semibold">Esquema Topológico Interactivo</span>
+        {/* BLOQUE 1 — 01 El Origen: Core Relacional */}
+        <div onMouseEnter={() => setActiveStep(0)} className={`overflow-hidden rounded-2xl p-4 flex flex-col gap-3 min-h-[500px] h-full items-start transition-all duration-[600ms] ease-in-out ${activeStep === -1 ? 'flex-1 bg-purple-50 text-gray-500' : activeStep === 0 ? 'flex-[6] bg-purple-700 text-white' : 'flex-[2] bg-purple-50 text-gray-500'}`}>
+          <span className={`text-7xl font-black leading-none select-none transition-colors duration-[600ms] ${activeStep === 0 ? 'text-white' : 'text-purple-700'}`}>01</span>
+          <div>
+            <h2 className={`text-2xl font-black tracking-tight transition-colors duration-[600ms] ${activeStep === 0 ? 'text-white' : 'text-gray-700'}`}>El Origen: Core Relacional</h2>
+            <p className={`text-xs font-mono font-semibold mt-0.5 transition-colors duration-[600ms] ${activeStep === 0 ? 'text-purple-200' : 'text-purple-400'}`}>Sistema de Bases de Datos I — Core SQL</p>
+          </div>
+          {activeStep === 0 && (
+            <>
+              <p className="text-sm text-white/90 leading-relaxed">
+                El museo nació sobre PostgreSQL como núcleo transaccional ACID. Gestión de artistas, obras, clientes y ventas en un modelo relacional estricto.
+              </p>
+              <img
+                src="./assets/diagrama-sql.png"
+                alt="Diagrama ER SQL"
+                className="rounded-2xl border-2 border-white/20 shadow-lg w-full"
+              />
+            </>
+          )}
+        </div>
+
+        {/* BLOQUE 2 — 02 El Problema */}
+        <div onMouseEnter={() => setActiveStep(1)} className={`overflow-hidden rounded-2xl p-4 flex flex-col gap-3 min-h-[500px] h-full items-start transition-all duration-[600ms] ease-in-out ${activeStep === -1 ? 'flex-1 bg-purple-50 text-gray-500' : activeStep === 1 ? 'flex-[6] bg-purple-700 text-white' : 'flex-[2] bg-purple-50 text-gray-500'}`}>
+          <span className={`text-7xl font-black leading-none select-none transition-colors duration-[600ms] ${activeStep === 1 ? 'text-white' : 'text-purple-700'}`}>02</span>
+          <div>
+            <h2 className={`text-2xl font-black tracking-tight transition-colors duration-[600ms] ${activeStep === 1 ? 'text-white' : 'text-gray-700'}`}>El Problema</h2>
+            <p className={`text-xs font-mono font-semibold transition-colors duration-[600ms] ${activeStep === 1 ? 'text-purple-200' : 'text-gray-400'}`}>¿Por qué SQL solo no era suficiente?</p>
+          </div>
+          {activeStep === 1 && (
+            <div className="flex flex-col gap-3 mt-1">
+              <div className="bg-white/10 text-white border border-white/20 rounded-xl p-4 flex items-center gap-3">
+                <FileJson size={20} className="text-purple-300 flex-shrink-0" />
+                <p className="text-xs font-bold leading-snug">Catálogo flexible <span className="text-purple-300 block mt-0.5">→ MongoDB</span></p>
               </div>
-              <div className="text-[9px] text-purple-300 font-mono bg-purple-950/80 px-2.5 py-1 rounded-md border border-purple-900/60 backdrop-blur-md">
-                <span>Flujo reactivo de datos</span>
+              <div className="bg-white/10 text-white border border-white/20 rounded-xl p-4 flex items-center gap-3">
+                <HardDrive size={20} className="text-purple-300 flex-shrink-0" />
+                <p className="text-xs font-bold leading-snug">Auditoría masiva <span className="text-purple-300 block mt-0.5">→ Cassandra</span></p>
+              </div>
+              <div className="bg-white/10 text-white border border-white/20 rounded-xl p-4 flex items-center gap-3">
+                <Share2 size={20} className="text-purple-300 flex-shrink-0" />
+                <p className="text-xs font-bold leading-snug">Recomendaciones <span className="text-purple-300 block mt-0.5">→ Neo4j</span></p>
               </div>
             </div>
+          )}
+        </div>
 
-            {/* SVG Canvas with background — Galería de Arte */}
-            <div 
-              className="relative w-full aspect-[600/490] rounded-[2.5rem] overflow-hidden border-[7px] border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] flex-1 mt-2"
-              style={{ transform: 'perspective(1200px) rotateY(-2.5deg) rotateX(0.5deg)', transformStyle: 'preserve-3d' }}
-            >
-              {/* Background layer */}
-              <div className="absolute inset-0 z-0">
-                <img 
-                  src="/assets/p2.png" 
-                  alt="" 
-                  className="w-full h-full object-cover opacity-30 select-none pointer-events-none"
-                />
-              </div>
-              {/* SVG layer */}
-              <div className="relative z-10 w-full h-full p-5 flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
-              <svg 
-                viewBox="0 0 600 460" 
-                className="w-full h-auto"
-                id="interactive-architecture-svg"
+        {/* BLOQUE 3 — 03 La Evolución: Arquitectura Políglota */}
+        <div onMouseEnter={() => setActiveStep(2)} className={`overflow-hidden rounded-2xl p-4 flex flex-col gap-3 min-h-[500px] h-full items-start transition-all duration-[600ms] ease-in-out ${activeStep === -1 ? 'flex-1 bg-purple-50 text-gray-500 min-w-0' : activeStep === 2 ? 'flex-[6] bg-purple-700 text-white min-w-0' : 'flex-[2] bg-purple-50 text-gray-500 min-w-0'}`}>
+          <span className={`text-7xl font-black leading-none select-none transition-colors duration-[600ms] ${activeStep === 2 ? 'text-white' : 'text-purple-700'}`}>03</span>
+          <div>
+            <h2 className={`text-2xl font-black tracking-tight transition-colors duration-[600ms] ${activeStep === 2 ? 'text-white' : 'text-gray-700'}`}>La Evolución: Arquitectura Políglota</h2>
+            <p className={`text-xs font-mono font-semibold transition-colors duration-[600ms] ${activeStep === 2 ? 'text-purple-200' : 'text-gray-400'}`}>Cada motor optimizado para su patrón de acceso</p>
+          </div>
+          {activeStep === 2 && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
+          
+          {/* CANVAS TOPOLÓGICO (Izquierda) */}
+          <div className="lg:col-span-7 relative flex items-center justify-center p-2 sm:p-4">
+              <div 
+                className="w-full max-w-[90%] sm:max-w-[85%] aspect-[600/490] rounded-[2.5rem] overflow-hidden border-[7px] border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)]"
+                style={{ transform: 'perspective(1200px) rotateY(-2.5deg) rotateX(0.5deg) scale(0.8)', transformStyle: 'preserve-3d', transformOrigin: 'center center' }}
               >
+                {/* Background layer */}
+                <div className="absolute inset-0 z-0">
+                  <img 
+                    src="/assets/p2.png" 
+                    alt="" 
+                    className="w-full h-full object-cover opacity-30 select-none pointer-events-none"
+                  />
+                </div>
+                {/* SVG layer */}
+                <div className="relative z-10 w-full h-full p-5 flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
+                <svg
+                  viewBox="0 0 600 540"
+                  className="w-full h-auto"
+                  id="interactive-architecture-svg"
+                >
                 <defs>
-                  {/* Filtros de Resplandor UI Premium */}
                   <filter id="glow-active" x="-20%" y="-20%" width="140%" height="140%">
                     <feGaussianBlur stdDeviation="8" result="blur" />
                     <feComposite in="SourceGraphic" in2="blur" operator="over" />
                   </filter>
                 </defs>
 
-                {/* ENLACES / PIPELINES ANIMADOS */}
-                <path d="M 300,70 L 300,150" stroke={activeNode === 'client' || activeNode === 'core' ? '#06b6d4' : '#1e293b'} strokeWidth={activeNode === 'client' || activeNode === 'core' ? '3' : '2'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-fast" />
-                <path d="M 270,175 L 140,310" stroke={activeNode === 'core' || activeNode === 'mongodb' ? '#10b981' : '#1e293b'} strokeWidth={activeNode === 'core' || activeNode === 'mongodb' ? '2.5' : '1.5'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-reverse" />
-                <path d="M 300,200 L 300,310" stroke={activeNode === 'core' || activeNode === 'neo4j' ? '#22c55e' : '#1e293b'} strokeWidth={activeNode === 'core' || activeNode === 'neo4j' ? '2.5' : '1.5'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-normal" />
-                <path d="M 330,175 L 460,310" stroke={activeNode === 'core' || activeNode === 'cassandra' ? '#0ea5e9' : '#1e293b'} strokeWidth={activeNode === 'core' || activeNode === 'cassandra' ? '2.5' : '1.5'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-normal" />
+                <path d="M 300,88 L 300,150" stroke={activeNode === 'client' || activeNode === 'core' ? '#06b6d4' : '#334155'} strokeWidth={activeNode === 'client' || activeNode === 'core' ? '3' : '2'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-fast" />
+                <path d="M 255,195 L 135,335" stroke={activeNode === 'core' || activeNode === 'mongodb' ? '#10b981' : '#334155'} strokeWidth={activeNode === 'core' || activeNode === 'mongodb' ? '2.5' : '1.5'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-reverse" />
+                <path d="M 300,215 L 300,345" stroke={activeNode === 'core' || activeNode === 'neo4j' ? '#22c55e' : '#334155'} strokeWidth={activeNode === 'core' || activeNode === 'neo4j' ? '2.5' : '1.5'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-normal" />
+                <path d="M 345,195 L 465,335" stroke={activeNode === 'core' || activeNode === 'cassandra' ? '#0ea5e9' : '#334155'} strokeWidth={activeNode === 'core' || activeNode === 'cassandra' ? '2.5' : '1.5'} fill="none" strokeDasharray="6 4" className="path-transition animate-flow-normal" />
 
-                {/* BADGES DE PROTOCOLO CON ESTILO GLASSMORPHISM */}
                 <g className="transition-opacity duration-300">
-                  <rect x="252" y="97" width="96" height="18" rx="5" fill="#090d16" stroke={activeNode === 'client' || activeNode === 'core' ? '#06b6d4' : '#1e293b'} strokeWidth="1" />
-                  <text x="300" y="109" fill="#94a3b8" fontSize="8" fontFamily="monospace" fontWeight="600" textAnchor="middle">REST HTTP API</text>
+                  <rect x="246" y="118" width="108" height="20" rx="5" fill="#ffffff" stroke={activeNode === 'client' || activeNode === 'core' ? '#06b6d4' : '#cbd5e1'} strokeWidth="1" />
+                  <text x="300" y="132" fill="#1e293b" fontSize="9" fontFamily="monospace" fontWeight="700" textAnchor="middle">REST HTTP API</text>
 
-                  <rect x="132" y="227" width="96" height="18" rx="5" fill="#090d16" stroke={activeNode === 'mongodb' || activeNode === 'core' ? '#10b981' : '#1e293b'} strokeWidth="1" />
-                  <text x="180" y="239" fill="#94a3b8" fontSize="8" fontFamily="monospace" fontWeight="600" textAnchor="middle">Async Event</text>
+                  <rect x="112" y="250" width="108" height="20" rx="5" fill="#ffffff" stroke={activeNode === 'mongodb' || activeNode === 'core' ? '#10b981' : '#cbd5e1'} strokeWidth="1" />
+                  <text x="166" y="264" fill="#1e293b" fontSize="9" fontFamily="monospace" fontWeight="700" textAnchor="middle">Async Event</text>
 
-                  <rect x="252" y="247" width="96" height="18" rx="5" fill="#090d16" stroke={activeNode === 'neo4j' || activeNode === 'core' ? '#22c55e' : '#1e293b'} strokeWidth="1" />
-                  <text x="300" y="259" fill="#94a3b8" fontSize="8" fontFamily="monospace" fontWeight="600" textAnchor="middle">JDBC / Sync</text>
+                  <rect x="246" y="270" width="108" height="20" rx="5" fill="#ffffff" stroke={activeNode === 'neo4j' || activeNode === 'core' ? '#22c55e' : '#cbd5e1'} strokeWidth="1" />
+                  <text x="300" y="284" fill="#1e293b" fontSize="9" fontFamily="monospace" fontWeight="700" textAnchor="middle">JDBC / Sync</text>
 
-                  <rect x="372" y="227" width="96" height="18" rx="5" fill="#090d16" stroke={activeNode === 'cassandra' || activeNode === 'core' ? '#0ea5e9' : '#1e293b'} strokeWidth="1" />
-                  <text x="420" y="239" fill="#94a3b8" fontSize="8" fontFamily="monospace" fontWeight="600" textAnchor="middle">Async Broker</text>
+                  <rect x="382" y="250" width="108" height="20" rx="5" fill="#ffffff" stroke={activeNode === 'cassandra' || activeNode === 'core' ? '#0ea5e9' : '#cbd5e1'} strokeWidth="1" />
+                  <text x="436" y="264" fill="#1e293b" fontSize="9" fontFamily="monospace" fontWeight="700" textAnchor="middle">Async Broker</text>
                 </g>
 
-                {/* NODOS DE RED */}
-                {/* Presentación: Client */}
                 <g onClick={() => handleNodeSelect('client')} className="node-group">
-                  <circle cx="300" cy="45" r="26" fill="#0f172a" stroke={activeNode === 'client' ? '#06b6d4' : '#334155'} strokeWidth={activeNode === 'client' ? '3' : '1.5'} filter={activeNode === 'client' ? 'url(#glow-active)' : undefined} className="node-transition" />
-                  <g transform="translate(291, 36)">
-                    <Laptop size={18} className={activeNode === 'client' ? 'text-cyan-400' : 'text-slate-400'} />
+                  <circle cx="300" cy="50" r="38" fill="#ffffff" stroke={activeNode === 'client' ? '#06b6d4' : '#cbd5e1'} strokeWidth={activeNode === 'client' ? '3' : '2'} filter={activeNode === 'client' ? 'url(#glow-active)' : undefined} className="node-transition" />
+                  <g transform="translate(288, 38)">
+                    <Laptop size={24} className={activeNode === 'client' ? 'text-cyan-600' : 'text-slate-500'} />
                   </g>
-                  <text x="300" y="88" fill={activeNode === 'client' ? '#f8fafc' : '#cbd5e1'} fontSize="10" fontWeight="600" textAnchor="middle" className="node-transition">React Web (SPA)</text>
-                  <text x="300" y="99" fill="#475569" fontSize="8" fontFamily="monospace" textAnchor="middle">Capa Presentación</text>
+                  <text x="300" y="108" fill={activeNode === 'client' ? '#0f172a' : '#475569'} fontSize="12" fontWeight="700" textAnchor="middle" className="node-transition">React Web (SPA)</text>
+                  <text x="300" y="122" fill="#64748b" fontSize="10" fontFamily="monospace" textAnchor="middle">Capa Presentación</text>
+                  <text x="300" y="136" fill="#94a3b8" fontSize="9" fontFamily="monospace" textAnchor="middle">CAP: N/A</text>
                 </g>
 
-                {/* Relacional: Core */}
                 <g onClick={() => handleNodeSelect('core')} className="node-group">
-                  <rect x="210" y="145" width="180" height="54" rx="12" fill="#0f172a" stroke={activeNode === 'core' ? '#6366f1' : '#334155'} strokeWidth={activeNode === 'core' ? '3' : '1.5'} filter={activeNode === 'core' ? 'url(#glow-active)' : undefined} className="node-transition" />
-                  <text x="300" y="166" fill={activeNode === 'core' ? '#f8fafc' : '#cbd5e1'} fontSize="10" fontWeight="700" textAnchor="middle" className="node-transition">Core (Spring Boot + Postgres)</text>
-                  <text x="300" y="178" fill="#818cf8" fontSize="8" fontFamily="monospace" textAnchor="middle">Núcleo Transaccional ACID</text>
-                  <text x="300" y="189" fill="#4f46e5" fontSize="7.5" fontWeight="600" textAnchor="middle">Capa Relacional (CA)</text>
+                  <rect x="185" y="155" width="230" height="80" rx="14" fill="#ffffff" stroke={activeNode === 'core' ? '#6366f1' : '#cbd5e1'} strokeWidth={activeNode === 'core' ? '3' : '2'} filter={activeNode === 'core' ? 'url(#glow-active)' : undefined} className="node-transition" />
+                  <text x="300" y="181" fill={activeNode === 'core' ? '#0f172a' : '#475569'} fontSize="12" fontWeight="800" textAnchor="middle" className="node-transition">Core (Spring Boot + Postgres)</text>
+                  <text x="300" y="197" fill="#64748b" fontSize="10" fontFamily="monospace" textAnchor="middle">Núcleo Transaccional ACID</text>
+                  <text x="300" y="214" fill="#6366f1" fontSize="10" fontWeight="700" textAnchor="middle">CA / CP</text>
                 </g>
 
-                {/* NoSQL: MongoDB */}
                 <g onClick={() => handleNodeSelect('mongodb')} className="node-group">
-                  <circle cx="120" cy="340" r="32" fill="#0f172a" stroke={activeNode === 'mongodb' ? '#10b981' : '#334155'} strokeWidth={activeNode === 'mongodb' ? '3' : '1.5'} filter={activeNode === 'mongodb' ? 'url(#glow-active)' : undefined} className="node-transition" />
-                  <g transform="translate(111, 331)">
-                    <Database size={18} className={activeNode === 'mongodb' ? 'text-emerald-400' : 'text-slate-400'} />
+                  <circle cx="110" cy="370" r="38" fill="#ffffff" stroke={activeNode === 'mongodb' ? '#10b981' : '#cbd5e1'} strokeWidth={activeNode === 'mongodb' ? '3' : '2'} filter={activeNode === 'mongodb' ? 'url(#glow-active)' : undefined} className="node-transition" />
+                  <g transform="translate(97, 357)">
+                    <Database size={24} className={activeNode === 'mongodb' ? 'text-emerald-600' : 'text-slate-500'} />
                   </g>
-                  <text x="120" y="390" fill={activeNode === 'mongodb' ? '#f8fafc' : '#cbd5e1'} fontSize="10" fontWeight="600" textAnchor="middle" className="node-transition">MongoDB</text>
-                  <text x="120" y="401" fill="#059669" fontSize="7.5" fontFamily="monospace" textAnchor="middle">Catálogo Dinámico</text>
+                  <text x="110" y="428" fill={activeNode === 'mongodb' ? '#0f172a' : '#475569'} fontSize="12" fontWeight="700" textAnchor="middle" className="node-transition">MongoDB</text>
+                  <text x="110" y="442" fill="#64748b" fontSize="10" fontFamily="monospace" textAnchor="middle">Catálogo Dinámico</text>
+                  <text x="110" y="456" fill="#10b981" fontSize="9" fontWeight="700" fontFamily="monospace" textAnchor="middle">CP</text>
                 </g>
 
-                {/* NoSQL: Neo4j */}
                 <g onClick={() => handleNodeSelect('neo4j')} className="node-group">
-                  <circle cx="300" cy="340" r="32" fill="#0f172a" stroke={activeNode === 'neo4j' ? '#22c55e' : '#334155'} strokeWidth={activeNode === 'neo4j' ? '3' : '1.5'} filter={activeNode === 'neo4j' ? 'url(#glow-active)' : undefined} className="node-transition" />
-                  <g transform="translate(291, 331)">
-                    <Layers size={18} className={activeNode === 'neo4j' ? 'text-green-400' : 'text-slate-400'} />
+                  <circle cx="300" cy="370" r="38" fill="#ffffff" stroke={activeNode === 'neo4j' ? '#22c55e' : '#cbd5e1'} strokeWidth={activeNode === 'neo4j' ? '3' : '2'} filter={activeNode === 'neo4j' ? 'url(#glow-active)' : undefined} className="node-transition" />
+                  <g transform="translate(288, 357)">
+                    <Layers size={24} className={activeNode === 'neo4j' ? 'text-green-600' : 'text-slate-500'} />
                   </g>
-                  <text x="300" y="390" fill={activeNode === 'neo4j' ? '#f8fafc' : '#cbd5e1'} fontSize="10" fontWeight="600" textAnchor="middle" className="node-transition">Neo4j</text>
-                  <text x="300" y="401" fill="#16a34a" fontSize="7.5" fontFamily="monospace" textAnchor="middle">Recomendaciones</text>
+                  <text x="300" y="428" fill={activeNode === 'neo4j' ? '#0f172a' : '#475569'} fontSize="12" fontWeight="700" textAnchor="middle" className="node-transition">Neo4j</text>
+                  <text x="300" y="442" fill="#64748b" fontSize="10" fontFamily="monospace" textAnchor="middle">Recomendaciones</text>
+                  <text x="300" y="456" fill="#22c55e" fontSize="9" fontWeight="700" fontFamily="monospace" textAnchor="middle">CP</text>
                 </g>
 
-                {/* NoSQL: Cassandra */}
                 <g onClick={() => handleNodeSelect('cassandra')} className="node-group">
-                  <circle cx="480" cy="340" r="32" fill="#0f172a" stroke={activeNode === 'cassandra' ? '#0ea5e9' : '#334155'} strokeWidth={activeNode === 'cassandra' ? '3' : '1.5'} filter={activeNode === 'cassandra' ? 'url(#glow-active)' : undefined} className="node-transition" />
-                  <g transform="translate(471, 331)">
-                    <Database size={18} className={activeNode === 'cassandra' ? 'text-sky-400' : 'text-slate-400'} />
+                  <circle cx="490" cy="370" r="38" fill="#ffffff" stroke={activeNode === 'cassandra' ? '#0ea5e9' : '#cbd5e1'} strokeWidth={activeNode === 'cassandra' ? '3' : '2'} filter={activeNode === 'cassandra' ? 'url(#glow-active)' : undefined} className="node-transition" />
+                  <g transform="translate(477, 357)">
+                    <Database size={24} className={activeNode === 'cassandra' ? 'text-sky-600' : 'text-slate-500'} />
                   </g>
-                  <text x="480" y="390" fill={activeNode === 'cassandra' ? '#f8fafc' : '#cbd5e1'} fontSize="10" fontWeight="600" textAnchor="middle" className="node-transition">Cassandra</text>
-                  <text x="480" y="401" fill="#2563eb" fontSize="7.5" fontFamily="monospace" textAnchor="middle">Logs e Historial</text>
+                  <text x="490" y="428" fill={activeNode === 'cassandra' ? '#0f172a' : '#475569'} fontSize="12" fontWeight="700" textAnchor="middle" className="node-transition">Cassandra</text>
+                  <text x="490" y="442" fill="#64748b" fontSize="10" fontFamily="monospace" textAnchor="middle">Logs e Historial</text>
+                  <text x="490" y="456" fill="#0ea5e9" fontSize="9" fontWeight="700" fontFamily="monospace" textAnchor="middle">AP</text>
                 </g>
               </svg>
               </div>
@@ -312,6 +335,8 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
             </div>
           </div>
 
+          </div>
+          )}
         </div>
       </div>
 
@@ -327,13 +352,13 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
 
         /* Hover dinámico sobre los elementos SVG del mapa */
         .node-group:hover circle, .node-group:hover rect {
-          fill: #1e293b;
-          stroke-width: 2.5px;
-          transform: scale(1.02);
+          fill: #f8fafc;
+          stroke-width: 3px;
+          transform: scale(1.04);
           transform-origin: center;
         }
         .node-group:hover text {
-          fill: #ffffff;
+          fill: #0f172a;
         }
         .node-group {
           cursor: pointer;

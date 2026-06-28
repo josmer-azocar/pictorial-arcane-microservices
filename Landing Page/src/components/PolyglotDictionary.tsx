@@ -206,103 +206,81 @@ LIMIT 10;`,
             Tablas SQL, Documentos BSON, Wide-Column CQL o Nodos Cypher.
           </p>
         </div>
+        {/* Layout: ficha | code | buttons */}
+        <div className="flex flex-col lg:flex-row gap-6 items-stretch">
 
-        {/* Tab Selection Row */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {(Object.keys(dictionaryItems) as DBEngine[]).map((engine) => (
-            <button
-              key={engine}
-              id={`dict-tab-btn-${engine.toLowerCase().replace(' ', '-')}`}
-              onClick={() => handleTabChange(engine)}
-              className={`px-5 py-3 rounded-xl font-display font-bold text-sm flex items-center gap-2.5 transition-all duration-300 border cursor-pointer ${
-                activeTab === engine
-                  ? 'bg-gradient-to-r from-arcane-purple-dark to-arcane-purple text-white border-arcane-lavender shadow-[0_4px_20px_rgba(139,47,201,0.35)] scale-105'
-                  : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800 hover:border-gray-300 hover:scale-102'
-              }`}
-            >
-              <span className="text-sm"><EngineIcon engine={engine} /></span>
-              <span>{engine}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Screen/Layout: Grid with description left, and IDE-like code panel right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          
-          {/* Left Column: Conceptual Details (4 cols) */}
-          <div className="lg:col-span-4 flex flex-col justify-between p-6 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm arcane-glass-light">
-            <div>
+          {/* Left: Ficha de Persistencia */}
+          <div className="lg:w-80 flex-shrink-0">
+            <div className="p-5 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm h-full">
               <div className="inline-flex items-center gap-2 text-xs font-mono text-arcane-purple mb-3 bg-arcane-purple/10 px-2 py-0.5 rounded border border-arcane-purple/20">
                 <BookOpen size={12} />
                 Ficha de Persistencia
               </div>
               
-              <h3 className="font-display font-black text-2xl text-gray-900 mb-1 tracking-tight flex items-center gap-2">
+              <h3 className="font-display font-black text-xl text-gray-900 mb-1 tracking-tight flex items-center gap-2">
                 <span><EngineIcon engine={activeTab} /></span>
                 <span>{currentItem.title}</span>
               </h3>
-              <p className="text-xs font-mono text-arcane-purple mb-5">{currentItem.subtitle}</p>
+              <p className="text-[11px] font-mono text-arcane-purple mb-4">{currentItem.subtitle}</p>
               
-              <p className="text-xs sm:text-sm text-gray-600 font-sans leading-relaxed mb-6">
+              <p className="text-xs text-gray-600 font-sans leading-relaxed mb-4 line-clamp-3">
                 {currentItem.description}
               </p>
-            </div>
 
-            <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 text-xs text-gray-500 space-y-2">
-              <span className="font-mono font-bold text-gray-900 block">💡 Claves Evaluativas SBDII:</span>
-              <p className="font-sans">
-                {activeTab === DBEngine.PostgreSQL && 'PostgreSQL garantiza el cumplimiento absoluto del ACID transaccional. Es la única fuente confiable para verificar si un cliente tiene saldo y si la obra está realmente libre.'}
-                {activeTab === DBEngine.MongoDB && 'El catálogo polimórfico en MongoDB permite agregar campos sobre la marcha para obras de disciplinas disonantes (arte digital, esculturas cinéticas o videoarte).'}
-                {activeTab === DBEngine.Cassandra && 'La bitácora CQL está optimizada para anexar registros a velocidades de red sin bloqueos bloqueantes. La consulta se filtra eficientemente por DNI.'}
-                {activeTab === DBEngine.Neo4j && 'Cypher no realiza JOINs costosos sino punteros directos físicos en memoria (Index-free Adj.). Permite enlazar compras y géneros para recomendar obras concurrentes.'}
-              </p>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs text-gray-500">
+                <span className="font-mono font-bold text-gray-900 block mb-1">💡 Claves Evaluativas SBDII:</span>
+                <p className="font-sans text-[11px] line-clamp-3">
+                  {activeTab === DBEngine.PostgreSQL && 'PostgreSQL garantiza el cumplimiento absoluto del ACID transaccional. Es la única fuente confiable para verificar si un cliente tiene saldo y si la obra está realmente libre.'}
+                  {activeTab === DBEngine.MongoDB && 'El catálogo polimórfico en MongoDB permite agregar campos sobre la marcha para obras de disciplinas disonantes (arte digital, esculturas cinéticas o videoarte).'}
+                  {activeTab === DBEngine.Cassandra && 'La bitácora CQL está optimizada para anexar registros a velocidades de red sin bloqueos bloqueantes. La consulta se filtra eficientemente por DNI.'}
+                  {activeTab === DBEngine.Neo4j && 'Cypher no realiza JOINs costosos sino punteros directos físicos en memoria (Index-free Adj.). Permite enlazar compras y géneros para recomendar obras concurrentes.'}
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Right Column: Code Editor Console (8 cols) */}
-          <div className="lg:col-span-8 flex flex-col rounded-2xl border border-arcane-purple/10 bg-[#0a0a0a] shadow-sm relative overflow-hidden">
-            
+          {/* Center: Code Editor */}
+          <div className="flex-1 flex flex-col rounded-2xl border border-arcane-purple/10 bg-[#0a0a0a] shadow-sm relative overflow-hidden">
+
             {/* Header of Code Console */}
-            <div className="bg-[#0c0717] px-4 py-3 border-b border-arcane-lavender/10 flex items-center justify-between select-none">
+            <div className="bg-[#0c0717] px-4 py-2 border-b border-arcane-lavender/10 flex items-center justify-between select-none">
               <div className="flex items-center gap-2">
-                {/* Simulated operating dots */}
-                <div className="h-3 w-3 rounded-full bg-rose-500/85"></div>
-                <div className="h-3 w-3 rounded-full bg-amber-500/85"></div>
-                <div className="h-3 w-3 rounded-full bg-emerald-500/85"></div>
-                <span className="text-xs font-mono font-bold text-gray-400 ml-4 flex items-center gap-1">
-                  <Code size={12} className="text-arcane-lavender" />
+                <div className="h-2.5 w-2.5 rounded-full bg-rose-500/85"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-amber-500/85"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/85"></div>
+                <span className="text-[11px] font-mono font-bold text-gray-400 ml-3 flex items-center gap-1">
+                  <Code size={11} className="text-arcane-lavender" />
                   {currentItem.codeBlocks[0].filename}
                 </span>
               </div>
               
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono font-black text-arcane-lavender uppercase tracking-widest bg-arcane-purple/20 px-2 py-0.5 rounded border border-arcane-lavender/10">
+                <span className="text-[9px] font-mono font-black text-arcane-lavender uppercase tracking-widest bg-arcane-purple/20 px-2 py-0.5 rounded border border-arcane-lavender/10">
                   {currentItem.language}
                 </span>
                 <button
                   id="copy-code-btn"
                   onClick={() => handleCopyCode(currentItem.codeBlocks[0].code)}
-                  className="px-2.5 py-1 text-[10px] font-mono text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-all flex items-center gap-1 cursor-pointer"
+                  className="px-2 py-0.5 text-[9px] font-mono text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-all flex items-center gap-1 cursor-pointer"
                   title="Copiar código estructurado"
                 >
                   {copied ? (
                     <>
-                      <Check size={10} className="text-emerald-400" /> Copiado
+                      <Check size={9} className="text-emerald-400" /> Copiado
                     </>
                   ) : (
                     'Copiar'
                   )}
                 </button>
               </div>
+
             </div>
 
             {/* Code lines container */}
-            <div className="p-4 sm:p-6 overflow-x-auto font-mono text-xs md:text-sm text-gray-200 leading-relaxed bg-[#050209]">
+            <div className="p-3 sm:p-4 overflow-x-auto font-mono text-[11px] text-gray-200 leading-[1.3] bg-[#050209] max-h-[360px]">
               <pre className="relative whitespace-pre">
-                {/* Real-time styled syntax highlights */}
                 <code className="block select-text">
                   {currentItem.codeBlocks[0].code.split('\n').map((line, idx) => {
-                    // Inject customized colors to highlights matching target texts
                     let styledLine = line;
                     const commentRegex = /(\/\/.*|--.*)/;
                     const matchesComment = line.match(commentRegex);
@@ -317,7 +295,6 @@ LIMIT 10;`,
                         }
                       });
                       
-                      // General Keywords
                       const sqlKeywords = ['CREATE TABLE', 'UUID', 'VARCHAR', 'VARCHAR', 'NUMERIC', 'TIMESTAMP WITH TIME ZONE', 'DEFAULT', 'NOT NULL', 'PRIMARY KEY', 'CHECK', 'CONSTRAINT', 'REFERENCES', 'CREATE', 'MATCH', 'WHERE NOT', 'RETURN', 'ORDER BY', 'LIMIT', 'WITH CLUSTERING', 'ORDER BY'];
                       sqlKeywords.forEach(kw => {
                         if (styledLine.includes(kw)) {
@@ -327,8 +304,8 @@ LIMIT 10;`,
                     }
 
                     return (
-                      <div key={idx} className="flex gap-4 hover:bg-white/5 px-2 py-0.5 rounded">
-                        <span className="text-gray-600 block text-right w-5 select-none">{idx + 1}</span>
+                      <div key={idx} className="flex gap-3 hover:bg-white/5 px-1.5 py-0 rounded">
+                        <span className="text-gray-600 block text-right w-4 select-none text-[10px]">{idx + 1}</span>
                         <span dangerouslySetInnerHTML={{ __html: styledLine }} />
                       </div>
                     );
@@ -338,12 +315,51 @@ LIMIT 10;`,
             </div>
             
             {/* Status bar */}
-            <div className="bg-[#0b0616] px-4 py-2 border-t border-arcane-lavender/10 text-[10px] font-mono text-gray-500 flex justify-between items-center select-none">
+            <div className="bg-[#0b0616] px-4 py-1.5 border-t border-arcane-lavender/10 text-[9px] font-mono text-gray-500 flex justify-between items-center select-none">
               <span>UTF-8 · UTF-8-Encoding</span>
               <span className="flex items-center gap-1">
-                <Sparkles size={10} className="text-amber-400 animate-pulse" /> Syntax Highlighted
+                <Sparkles size={8} className="text-amber-400 animate-pulse" /> Syntax Highlighted
               </span>
             </div>
+          </div>
+
+          {/* Right: Vertical Icon Buttons (desktop only) */}
+          <div className="hidden lg:flex flex-col gap-3 items-center justify-center flex-shrink-0 sticky top-1/2 -translate-y-1/2 self-start">
+            {(Object.keys(dictionaryItems) as DBEngine[]).map((engine) => (
+              <button
+                key={engine}
+                id={`dict-tab-btn-${engine.toLowerCase().replace(' ', '-')}`}
+                onClick={() => handleTabChange(engine)}
+                className="group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border-2 cursor-pointer select-none"
+                style={{
+                  backgroundColor: activeTab === engine ? '#7c3aed' : '#ffffff',
+                  borderColor: activeTab === engine ? '#a78bfa' : '#e5e7eb',
+                  boxShadow: activeTab === engine ? '0 0 20px rgba(139,47,201,0.4)' : 'none',
+                }}
+              >
+                <span className="scale-[0.8]"><EngineIcon engine={engine} /></span>
+                <span className="absolute right-full mr-3 px-2.5 py-1 rounded-lg bg-gray-900 text-white text-[10px] font-mono font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg border border-gray-700">
+                  {engine}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile tabs (below code on small screens) */}
+          <div className="flex lg:hidden flex-row gap-2 flex-wrap">
+            {(Object.keys(dictionaryItems) as DBEngine[]).map((engine) => (
+              <button
+                key={engine}
+                onClick={() => handleTabChange(engine)}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold border cursor-pointer transition-all ${
+                  activeTab === engine
+                    ? 'bg-arcane-purple text-white border-arcane-lavender'
+                    : 'bg-white text-gray-500 border-gray-200'
+                }`}
+              >
+                {engine}
+              </button>
+            ))}
           </div>
 
         </div>

@@ -66,13 +66,13 @@ export default function Team() {
   return (
     <section
       id="team"
-      className="pt-14 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden min-h-screen flex items-center"
+      className="pt-24 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden min-h-screen flex items-center"
     >
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-arcane-purple/[0.03] rounded-full blur-[120px]" />
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
         {/* Section Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 pt-6">
           <h2 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 tracking-tight">
             AUTORES DEL PROYECTO ACADÉMICO
           </h2>
