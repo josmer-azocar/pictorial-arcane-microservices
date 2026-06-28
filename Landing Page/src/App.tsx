@@ -10,6 +10,7 @@ import Neo4jGraphs from './components/Neo4jGraphs';
 import ApiDocumentation from './components/ApiDocumentation';
 import About from './components/About';
 import LiveDemo from './components/LiveDemo';
+import Footer from './components/Footer';
 
 const SLIDE_IDS = [
   'hero', 'team', 'architecture', 'cap', 'dictionary',
@@ -83,7 +84,7 @@ export default function App() {
           <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto"><Neo4jGraphs /></div>
           <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto"><ApiDocumentation /></div>
           <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto"><About /></div>
-          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto"><LiveDemo onStepChange={handleStepChange} /></div>
+          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto"><LiveDemo onStepChange={handleStepChange} /><Footer /></div>
         </div>
 
         {/* Navigation arrows */}
