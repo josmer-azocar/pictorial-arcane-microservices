@@ -84,7 +84,7 @@ export default function App() {
           <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto"><Neo4jGraphs /></div>
           <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto"><ApiDocumentation /></div>
           <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto"><About /></div>
-          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto"><LiveDemo onStepChange={handleStepChange} /><Footer /></div>
+          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto"><LiveDemo onStepChange={handleStepChange} onNavigateFrontend={() => window.open('http://localhost:5173', '_blank')} /><Footer /></div>
         </div>
 
         {/* Navigation arrows */}
