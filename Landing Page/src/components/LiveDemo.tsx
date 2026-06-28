@@ -217,29 +217,21 @@ v-23456789 | 2026-06-11T00:15:32.4 | ccb90a2a-... | PURCHASE | 42f9e612-... | 19
       apiRoute: 'NEO4J TRANSACTIONS: SUGGEST_ARTS',
       logMessage: 'Grafo Neo4j mapea la arista :COMPRÓ. Compilando grafo de conocimiento...',
       payloadDescription: 'Sincroniza la relación del usuario con la obra de arte y calcula recomendaciones de alta afinidad usando consultas recursivas Cypher.',
-      codeOutput: `[
-  {
-    "artwork_id": "887a02b4-da13-4411-ae90",
-    "title": "Simetrías Ocultas",
-    "artist": "Salazar Inés",
-    "genre": "Abstracto Púrpura",
-    "affinity_score": 0.95
-  },
-  {
-    "artwork_id": "99ee2a10-2b11-4770-ae40",
-    "title": "Ecos del Púrpura",
-    "artist": "Avendaño Licett",
-    "genre": "Abstracto / Óleo",
-    "affinity_score": 0.88
-  },
-  {
-    "artwork_id": "aa145ba2-fc75-43ea-9f82",
-    "title": "Laberinto del Tiempo",
-    "artist": "Azocar Josue",
-    "genre": "Geométrico",
-    "affinity_score": 0.72
-  }
-]`
+      codeOutput: `// 6.7 Obtener la obra más recientemente vista por el usuario
+// y recomendar obras del mismo género
+MATCH (u:Comprador {id: 'user1'})-[v:SAW]->(ultima:Artwork)
+WITH ultima
+ORDER BY v.fecha DESC LIMIT 1
+MATCH (ultima)-[:HAS_GENRE]->(g:Genre)<-[:HAS_GENRE]-(recomendada:Artwork)
+WHERE recomendada.artworkId <> ultima.artworkId
+  AND recomendada.status = 'AVAILABLE'
+RETURN
+  recomendada.artworkId AS artwork_id,
+  recomendada.name AS title,
+  g.name AS genre,
+  recomendada.price AS price
+ORDER BY recomendada.price DESC
+LIMIT 3`
     }
   ];
 
@@ -287,9 +279,9 @@ v-23456789 | 2026-06-11T00:15:32.4 | ccb90a2a-... | PURCHASE | 42f9e612-... | 19
         stepLogs = [
           '[Neo4j] Ejecutando transacción gráfica nativa en memoria...',
           '[Neo4j] MATCH (c:Comprador {dni: "v-23456789"}), (o:Obra {id: "42f9e612"}), CREATE (c)-[:COMPRÓ {timestamp: now()}]->(o)',
-          '[Neo4j] Ejecutando query de recomendaciones Cypher para género del usuario...',
-          '[Neo4j] Atrevesando aristas (:PERTENECE_A) locales en RAM',
-          '[Neo4j] Grafo actualizado. Algoritmo retorna 3 obras recomendadas.'
+          '[Neo4j] Ejecutando query 6.7 — recomendación por última obra vista...',
+          '[Neo4j] Navegando arista :SAW y propagando por :HAS_GENRE en RAM',
+          '[Neo4j] Consulta 6.7 completa. Retorna 3 sugerencias del mismo género.'
         ];
       }
 
@@ -314,14 +306,14 @@ v-23456789 | 2026-06-11T00:15:32.4 | ccb90a2a-... | PURCHASE | 42f9e612-... | 19
   return (
     <section 
       id="live-demo" 
-      className="py-20 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white relative"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white relative"
     >
       <div className="absolute top-0 bottom-0 left-0 right-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,47,201,0.03),transparent_50%)] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-4">
           <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
             Laboratorio Interactivo
           </span>
@@ -577,8 +569,12 @@ v-23456789 | 2026-06-11T00:15:32.4 | ccb90a2a-... | PURCHASE | 42f9e612-... | 19
                 )}
 
                 {currentStep === 4 && (
-                  <div className="w-full animate-fade-in select-none">
-                    <span className="text-[10px] text-purple-400 font-mono block mb-2">Sugerencias gráficas calculadas:</span>
+                  <div className="w-full animate-fade-in select-text">
+                    <span className="text-[10px] text-purple-400 font-mono block mb-2">// 6.7 — Recomendación por última obra vista (Cypher)</span>
+                    <pre className="text-purple-300 bg-[#050209] p-3 rounded border border-white/5 text-[10px] leading-relaxed overflow-x-auto mb-4">
+                      <code>{steps[3].codeOutput}</code>
+                    </pre>
+                    <span className="text-[10px] text-purple-400 font-mono block mb-2">Sugerencias calculadas por co‑compra:</span>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       {[
                         { title: 'Simetrías Ocultas', artist: 'Salazar Inés', score: '95% match', bg: 'from-emerald-950/40' },

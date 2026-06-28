@@ -137,19 +137,36 @@ export default function PolyglotDictionary({ onEngineSelect }: PolyglotDictionar
     [DBEngine.Neo4j]: {
       engine: DBEngine.Neo4j,
       title: 'Neo4j: Topología y Recomendaciones Cypher',
-      subtitle: '',
-      language: '',
+      subtitle: 'Motor de Grafos con adyacencia directa y recomendaciones semánticas',
+      language: 'Cypher',
       icon: 'graph',
-      description: 'en construcion',
+      description: 'Neo4j almacena la ontología del dominio artístico en nodos etiquetados (Artist, Artwork, Genre, Comprador) conectados por aristas con tipo semántico (:CREATED, :HAS_GENRE, :BOUGHT, :SAW). La recomendación funciona por "propagación de aristas": partiendo de las obras que un usuario compró, se navega hacia los géneros de esas obras y luego hacia otras obras del mismo género que el usuario aún no haya adquirido — todo en una sola consulta Cypher sin JOINs, gracias al puntero físico Index‑free Adjacency.',
       codeBlocks: [
         {
           filename: 'recommendation.cypher',
-          code: `en construcion`,
+          code: `// 6.1 Recomendar obras del mismo género que las que compró user1
+// Navega: Comprador -[:BOUGHT]-> Obra -[:HAS_GENRE]-> Género
+MATCH (u:Comprador {id: 'user1'})-[:BOUGHT]->(comprada:Artwork)-[:HAS_GENRE]->(g:Genre)
+WITH u, COLLECT(comprada) AS compradas, COLLECT(DISTINCT g) AS generos
+UNWIND generos AS gen
+MATCH (gen)<-[:HAS_GENRE]-(recomendada:Artwork)
+WHERE NOT recomendada IN compradas
+  AND recomendada.status = 'AVAILABLE'
+RETURN DISTINCT
+  recomendada.artworkId AS id,
+  recomendada.name AS obra,
+  gen.name AS genero,
+  recomendada.price AS precio
+ORDER BY recomendada.price DESC
+LIMIT 10;`,
           highlights: [
-            { text: '[:CREÓ]', color: 'text-emerald-400 font-bold' },
-            { text: '[:COMPRÓ', color: 'text-emerald-400 font-bold' },
             { text: 'MATCH', color: 'text-amber-400 font-bold' },
-            { text: 'CREATE (', color: 'text-purple-400 font-bold' }
+            { text: '-[:BOUGHT]->', color: 'text-rose-400 font-bold' },
+            { text: '-[:HAS_GENRE]->', color: 'text-sky-400 font-bold' },
+            { text: 'WHERE NOT', color: 'text-purple-400 font-bold' },
+            { text: 'RETURN DISTINCT', color: 'text-emerald-400 font-bold' },
+            { text: 'ORDER BY', color: 'text-amber-400 font-bold' },
+            { text: 'LIMIT', color: 'text-amber-400 font-bold' }
           ]
         }
       ]
@@ -172,7 +189,7 @@ export default function PolyglotDictionary({ onEngineSelect }: PolyglotDictionar
   return (
     <section 
       id="dictionary" 
-      className="py-20 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
     >
       <div className="max-w-7xl mx-auto">
         

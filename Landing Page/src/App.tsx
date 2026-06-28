@@ -1,120 +1,116 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Team from './components/Team';
 import ArchitectureDiagram from './components/ArchitectureDiagram';
 import CapTheorem from './components/CapTheorem';
 import PolyglotDictionary from './components/PolyglotDictionary';
-import LiveDemo from './components/LiveDemo';
+import Neo4jGraphs from './components/Neo4jGraphs';
 import ApiDocumentation from './components/ApiDocumentation';
-import FaultTolerance from './components/FaultTolerance';
-import Team from './components/Team';
+import About from './components/About';
+import LiveDemo from './components/LiveDemo';
+
+const SLIDE_IDS = [
+  'hero', 'team', 'architecture', 'cap', 'dictionary',
+  'neo4j-graphs', 'api-documentation', 'about', 'live-demo'
+];
+
 export default function App() {
-  const [page, setPage] = useState<string>(window.location.pathname);
-  const [activeSection, setActiveSection] = useState<string>('hero');
-  const [demoStep, setDemoStep] = useState<number>(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [demoStep, setDemoStep] = useState(0);
   const [highlightedEngine, setHighlightedEngine] = useState<string | null>(null);
 
-  // Listen for pathname changes (manual pushState routing)
-  useEffect(() => {
-    const handlePath = () => setPage(window.location.pathname);
-    window.addEventListener('popstate', handlePath);
-    return () => window.removeEventListener('popstate', handlePath);
+  const goToSlide = useCallback((index: number) => {
+    if (index >= 0 && index < SLIDE_IDS.length) {
+      setCurrentSlide(index);
+    }
   }, []);
 
-  // Monitor client screen scroll positions to highlight active navigation link automatically
+  const nextSlide = useCallback(() => {
+    if (currentSlide < SLIDE_IDS.length - 1) {
+      setCurrentSlide(s => s + 1);
+    }
+  }, [currentSlide]);
+
+  const prevSlide = useCallback(() => {
+    if (currentSlide > 0) {
+      setCurrentSlide(s => s - 1);
+    }
+  }, [currentSlide]);
+
   useEffect(() => {
-    const sections = [
-      'hero',
-      'architecture',
-      'cap',
-      'dictionary',
-      'live-demo',
-      'api-documentation',
-      'fault-tolerance',
-      'team'
-    ];
-
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200; // threshold offset offset
-
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); nextSlide(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
     };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nextSlide, prevSlide]);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleNavigateFrontend = () => {
-    window.location.href = 'http://localhost:5173';
-  };
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0) nextSlide();
+      else prevSlide();
+    };
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [nextSlide, prevSlide]);
 
   const handleStepChange = (step: number) => {
     setDemoStep(step);
-    // Clear engine hovers during live transactional flow so Capy focuses on operations output logs
-    if (step > 0) {
-      setHighlightedEngine(null);
-    }
+    if (step > 0) setHighlightedEngine(null);
   };
 
   const handleEngineHighlight = (engine: string | null) => {
-    // Only allow hovering highlights if the user is not actively executing the transactional demo
-    if (demoStep === 0 || demoStep === 4) {
-      setHighlightedEngine(engine);
-    }
+    if (demoStep === 0 || demoStep === 4) setHighlightedEngine(engine);
   };
 
   return (
-    <div className="bg-white text-gray-900 font-sans min-h-screen selection:bg-arcane-purple/40 selection:text-white">
-      {/* 1. Glassmorphic sticky header nav */}
-      <Navbar activeSection={activeSection} />
+    <div className="bg-white text-gray-900 font-sans selection:bg-arcane-purple/40 selection:text-white">
+      <Navbar activeSection={SLIDE_IDS[currentSlide]} onNavigate={goToSlide} />
 
-      {/* 2. Main content pages */}
-      <main className="relative">
-        
-        {/* Section 1: Hero Cover */}
-        <Hero />
+      <main className="h-screen w-full overflow-hidden relative">
+        <div
+          className="flex flex-col transition-transform duration-700 ease-in-out will-change-transform"
+          style={{ transform: `translateY(-${currentSlide * 100}vh)` }}
+        >
+          <div id="hero" className="h-screen w-full flex-shrink-0 overflow-y-auto"><Hero onNavigate={goToSlide} /></div>
+          <div id="team" className="h-screen w-full flex-shrink-0 overflow-y-auto"><Team /></div>
+          <div id="architecture" className="h-screen w-full flex-shrink-0 overflow-y-auto"><ArchitectureDiagram onNodeHover={handleEngineHighlight} /></div>
+          <div id="cap" className="h-screen w-full flex-shrink-0 overflow-y-auto"><CapTheorem onEngineSelect={handleEngineHighlight} /></div>
+          <div id="dictionary" className="h-screen w-full flex-shrink-0 overflow-y-auto"><PolyglotDictionary onEngineSelect={handleEngineHighlight} /></div>
+          <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto"><Neo4jGraphs /></div>
+          <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto"><ApiDocumentation /></div>
+          <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto"><About /></div>
+          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto"><LiveDemo onStepChange={handleStepChange} /></div>
+        </div>
 
-        {/* Section 2: Interactive SVG Architecture Path diagram */}
-        <ArchitectureDiagram onNodeHover={handleEngineHighlight} />
+        {/* Navigation arrows */}
+        <div className="fixed bottom-8 right-8 flex flex-col gap-2 z-50">
+          {currentSlide > 0 && (
+            <button onClick={prevSlide} className="w-10 h-10 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer">
+              <ChevronUp size={20} />
+            </button>
+          )}
+          {currentSlide < SLIDE_IDS.length - 1 && (
+            <button onClick={nextSlide} className="w-10 h-10 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer">
+              <ChevronDown size={20} />
+            </button>
+          )}
+        </div>
 
-        {/* Section 3: CAP Triangle & Eventual Consistency Pipeline */}
-        <CapTheorem onEngineSelect={handleEngineHighlight} />
-
-        {/* Section 4: Polyglot database schema matching tabs */}
-        <PolyglotDictionary onEngineSelect={handleEngineHighlight} />
-
-        {/* Section 5: Real-time user buy transactional simulator stepper */}
-        <LiveDemo onStepChange={handleStepChange} onNavigateFrontend={handleNavigateFrontend} />
-
-        {/* Section 6: Swagger Spec API Expanders */}
-        <ApiDocumentation />
-
-        {/* Section 7: Failing Mitigation and PBFT Quorum panels */}
-        <FaultTolerance />
-
-        {/* Section 8: Authors credits and institution official footer */}
-        <Team />
-
+        {/* Dot indicator */}
+        <div className="fixed bottom-8 left-8 flex flex-col gap-2 z-50">
+          {SLIDE_IDS.map((_, idx) => (
+            <button key={idx} onClick={() => goToSlide(idx)}
+              className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
+                idx === currentSlide ? 'bg-arcane-purple scale-125' : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+            />
+          ))}
+        </div>
       </main>
-
-      
     </div>
   );
 }
-

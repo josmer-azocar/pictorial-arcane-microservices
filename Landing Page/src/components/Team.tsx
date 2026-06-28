@@ -59,7 +59,7 @@ export default function Team() {
   return (
     <section 
       id="team" 
-      className="py-20 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden"
+      className="pt-14 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden"
     >
       {/* Delicate background overlays */}
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-arcane-purple/[0.03] rounded-full blur-[120px]" />
@@ -67,7 +67,7 @@ export default function Team() {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-6">
           <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
             Equipo Desarrollador
           </span>
@@ -81,7 +81,7 @@ export default function Team() {
         </div>
 
         {/* 5-Column Responsive Grid centered nicely */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-20 items-stretch justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6 items-stretch justify-center">
           {members.map((member, idx) => (
             <div 
               key={idx}
@@ -119,7 +119,7 @@ export default function Team() {
         </div>
 
         {/* UNEG Official Banner Footer */}
-        <footer className="pt-12 border-t border-arcane-purple/10 text-center text-xs text-gray-500 space-y-6 select-none bg-gradient-to-b from-[#f5f0fa] to-[#ede6f5] rounded-2xl py-8 px-4 border border-purple-200 shadow-[0_8px_30px_rgba(0,0,0,0.08),0_2px_8px_rgba(139,47,201,0.1)]">
+        <footer className="pt-4 border-t border-arcane-purple/10 text-center text-xs text-gray-500 space-y-3 select-none bg-gradient-to-b from-[#f5f0fa] to-[#ede6f5] rounded-2xl py-4 px-4 border border-purple-200 shadow-[0_8px_30px_rgba(0,0,0,0.08),0_2px_8px_rgba(139,47,201,0.1)]">
           
           <div className="flex flex-col items-center justify-center gap-2">
             <div className="h-10 w-10 rounded-full bg-arcane-purple/10 border border-arcane-purple/20 flex items-center justify-center text-lg shadow-sm">
