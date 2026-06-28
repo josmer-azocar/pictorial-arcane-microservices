@@ -17,7 +17,7 @@ export default defineConfig({
  server: {
     proxy: {
       '/api': {
-        target: 'https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net',
+        target: 'http://localhost:8060',
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api/, '')

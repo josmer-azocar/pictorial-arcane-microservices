@@ -1,5 +1,5 @@
 import axios from "axios";
-const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
+const url = import.meta.env.VITE_API_URL;
 
 export async function getUserData(token) {
     try {

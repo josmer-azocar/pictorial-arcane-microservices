@@ -1,6 +1,6 @@
 import axios from 'axios';
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-const url = "https://pictorialarcane-h5g8cdgug9d5awd3.canadacentral-01.azurewebsites.net";
+const url = import.meta.env.VITE_API_URL;
+const API_BASE_URL = url;
 
 // we keep two base URLs: one for auth endpoints and one general server url
 //const authUrl = "http://localhost:8080/auth";
