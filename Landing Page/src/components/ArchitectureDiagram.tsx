@@ -21,6 +21,8 @@ interface SelectedNodeInfo {
 export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagramProps) {
   const [activeNode, setActiveNode] = useState<string>('core');
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
+  const [showZoom, setShowZoom] = useState(false);
 
   const nodesInfo: Record<string, SelectedNodeInfo> = {
     client: {
@@ -164,23 +166,19 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
                 {/* ── VISTA EXPANDIDA ── */}
                 {isActive && (
                   <div className="flex flex-col gap-5 p-8 h-full overflow-hidden">
-                    {/* Número + título (solo para bloques 01 y 02; bloque 03 tiene su propio header horizontal) */}
-                    {idx !== 2 && (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-8xl font-black text-white/20 leading-none select-none">
-                          {step.num}
-                        </span>
-                        <h2 className="text-3xl font-black text-white tracking-tight -mt-4">
-                          {step.title}
-                        </h2>
-                        <p className="text-sm font-mono text-purple-200 font-semibold">
-                          {step.subtitle}
-                        </p>
+                    {/* Header horizontal para todos los pasos */}
+                    <div className="flex flex-row items-start gap-5">
+                      <span className="text-8xl font-black text-white/20 leading-none select-none shrink-0">
+                        {step.num}
+                      </span>
+                      <div className="flex flex-col gap-1 pt-2">
+                        <h2 className="text-3xl font-black text-white tracking-tight">{step.title}</h2>
+                        <p className="text-sm font-mono text-purple-200 font-semibold">{step.subtitle}</p>
                         {step.label && (
                           <p className="text-xs text-purple-300">{step.label}</p>
                         )}
                       </div>
-                    )}
+                    </div>
 
                     {/* ── CONTENIDO BLOQUE 01 ── */}
                     {idx === 0 && (
@@ -189,11 +187,36 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
                           El museo nació sobre PostgreSQL como núcleo transaccional ACID.
                           Gestión de artistas, obras, clientes y ventas en un modelo relacional estricto.
                         </p>
-                        <img
-                          src="./assets/diagrama-sql.png"
-                          alt="Diagrama ER SQL"
-                          className="rounded-2xl border-2 border-white/20 shadow-lg w-full max-w-lg object-contain"
-                        />
+                        <div className="relative" style={{ position: 'relative' }}
+                          onMouseMove={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setZoomPos({
+                              x: ((e.clientX - rect.left) / rect.width) * 100,
+                              y: ((e.clientY - rect.top) / rect.height) * 100,
+                            });
+                          }}
+                          onMouseEnter={() => setShowZoom(true)}
+                          onMouseLeave={() => setShowZoom(false)}
+                        >
+                          <img
+                            src="./assets/diagrama-sql.png"
+                            alt="Diagrama ER SQL"
+                            className="rounded-2xl border-2 border-white/20 shadow-lg max-w-xs object-contain"
+                          />
+                          {showZoom && (
+                            <div style={{
+                              position: 'absolute', top: 0, right: '-24px',
+                              width: '260px', height: '260px',
+                              border: '3px solid rgba(255,255,255,0.3)', borderRadius: '16px',
+                              backgroundImage: `url(./assets/diagrama-sql.png)`,
+                              backgroundSize: '400%',
+                              backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
+                              backgroundRepeat: 'no-repeat',
+                              zIndex: 100, pointerEvents: 'none',
+                              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                            }} />
+                          )}
+                        </div>
                       </div>
                     )}
 
@@ -221,19 +244,7 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
 
                     {/* ── CONTENIDO BLOQUE 03 ── */}
                     {idx === 2 && (
-                      <>
-                        {/* Header horizontal: número a la izquierda, título a la derecha */}
-                        <div className="flex flex-row items-start gap-5">
-                          <span className="text-8xl font-black text-white/20 leading-none select-none shrink-0">
-                            03
-                          </span>
-                          <div className="flex flex-col gap-1 pt-2">
-                            <h2 className="text-3xl font-black text-white tracking-tight">La Evolución</h2>
-                            <p className="text-sm font-mono text-purple-200 font-semibold">Arquitectura Políglota</p>
-                            <p className="text-xs text-purple-300">Cada motor optimizado para su patrón de acceso</p>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch w-full flex-1 min-h-0">
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch w-full flex-1 min-h-0">
 
                         {/* SVG diagrama */}
                         <div className="lg:col-span-7 relative flex items-center justify-center">
@@ -354,8 +365,7 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </>
+                        </div>
                     )}
                   </div>
                 )}
