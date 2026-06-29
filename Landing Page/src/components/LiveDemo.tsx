@@ -328,307 +328,285 @@ LIMIT 3`
 
         {/* Workspace: Bento Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          
-          {/* Left Column: Interactive Stepper (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm arcane-glass-light">
-            
-            <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
-              <span className="text-xs font-mono text-gray-500 uppercase tracking-wider">Línea de Secuencialidad</span>
-              
-              <button
-                id="reset-demo-top-btn"
-                onClick={resetDemo}
-                className="px-2.5 py-1 text-[10px] font-mono text-arcane-purple hover:text-white bg-arcane-purple/10 hover:bg-arcane-purple rounded border border-arcane-purple/20 flex items-center gap-1 cursor-pointer transition"
-                title="Reiniciar flujo demostración"
-              >
-                <RotateCcw size={10} /> Reiniciar Demo
-              </button>
-            </div>
 
-            {/* Steps Vertical Timeline layout */}
-            <div className="space-y-6 relative flex-grow mb-6">
-              {/* Virtual vertical connection pipeline */}
-              <div className="absolute top-4 bottom-4 left-6 w-[2px] bg-gray-200 -z-10" />
-              {currentStep > 0 && (
-                <div 
-                  className="absolute top-4 left-6 w-[2px] bg-gradient-to-b from-arcane-purple via-cyan-400 to-green-500 transition-all duration-500 -z-10" 
-                  style={{ height: `${((currentStep - 1) / 3) * 88}%` }}
-                />
-              )}
+          {viewMode === null ? (
 
-              {steps.map((step, idx) => {
-                const isActive = idx === currentStep;
-                const isCompleted = idx < currentStep;
-                const isUpcoming = idx > currentStep;
-                
-                let stepColor = 'border-gray-200 text-gray-500 bg-white';
-                let circleColor = 'border-gray-300 text-gray-500 bg-white';
-                
-                if (isActive) {
-                  stepColor = 'border-arcane-purple text-gray-900 bg-arcane-purple/5 shadow-sm scale-[1.02]';
-                  circleColor = 'border-arcane-purple text-arcane-purple bg-arcane-purple/10 animate-pulse';
-                } else if (isCompleted) {
-                  stepColor = 'border-emerald-300 text-emerald-700 bg-emerald-50';
-                  circleColor = 'border-emerald-500 text-emerald-500 bg-emerald-100';
-                }
-
-                return (
-                  <div 
-                    key={idx} 
-                    id={`demo-step-card-${step.stepNumber}`}
-                    className={`p-4 rounded-xl border transition-all duration-300 flex gap-4 items-start ${stepColor}`}
-                  >
-                    {/* Circle identifier */}
-                    <div className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center font-mono text-xs font-bold transition-all duration-300 ${circleColor}`}>
-                      {isCompleted ? <Check size={12} strokeWidth={3} /> : step.stepNumber}
-                    </div>
-
-                    <div className="space-y-1 pr-2">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-display font-bold text-xs sm:text-sm text-gray-900">{step.title}</h4>
-                        <span className="text-[9px] font-mono uppercase bg-gray-100 px-1.5 py-0.2 rounded text-gray-500 border border-gray-200">
-                          {step.engine}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-gray-500 font-sans leading-relaxed">{step.payloadDescription}</p>
-                      
-                      {/* Interactive Button ONLY inside active card */}
-                      {isActive && (
-                        <div className="pt-2 animate-fade-in">
-                          <button
-                            id={`execute-btn-step-${step.stepNumber}`}
-                            onClick={triggerNextStep}
-                            disabled={loadingStep}
-                            className={`px-4 py-1.5 rounded bg-gradient-to-r from-arcane-purple to-arcane-lavender text-white text-[11px] font-mono font-bold tracking-wide uppercase hover:opacity-90 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_2px_12px_rgba(139,47,201,0.35)] ${
-                              loadingStep ? 'opacity-40 pointer-events-none' : ''
-                            }`}
-                          >
-                            {loadingStep ? (
-                              <>
-                                <RotateCcw size={10} className="animate-spin" /> Procesando...
-                              </>
-                            ) : (
-                              <>
-                                <Play size={10} fill="currentColor" /> {step.actionLabel}
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Overall finished message */}
-            {currentStep === 4 && (
-              <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-center animate-fade-in select-none">
-                <p className="font-display font-extrabold text-sm flex justify-center items-center gap-1">
-                  <Sparkles size={14} className="text-amber-300 animate-pulse" /> Sincronización Exitosa ✓
-                </p>
-                <p className="font-sans text-[11px] text-emerald-400 mt-1 leading-relaxed">
-                  PostgreSQL procesó la venta con total aislamiento ACID. MongoDB, Cassandra y Neo4j se actualizaron de forma independiente garantizando la consistencia global en milisegundos.
+            /* ── SELECTOR DE MODO (full width) ── */
+            <div className="lg:col-span-12 flex flex-col items-center justify-center p-8 rounded-2xl border border-arcane-purple/10 bg-gray-50 shadow-sm gap-6">
+              <div className="text-center">
+                <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
+                  Panel de Visualización
+                </span>
+                <h3 className="font-display font-bold text-xl text-gray-900 mt-3 mb-1">
+                  Selecciona el modo de visualización
+                </h3>
+                <p className="text-sm text-gray-500 font-sans max-w-md">
+                  Elige cómo quieres ver los datos de cada paso de la transacción políglota.
                 </p>
               </div>
-            )}
-          </div>
+              <div className="flex gap-4 mt-2">
+                <button
+                  onClick={() => setViewMode('console')}
+                  className="px-8 py-4 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 text-white border border-gray-700 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-2 min-w-[180px]"
+                >
+                  <Terminal size={28} />
+                  <span className="font-display font-bold text-base">Consola</span>
+                  <span className="text-[10px] text-gray-400 font-sans">Terminal con logs y JSON</span>
+                </button>
+                <button
+                  onClick={() => onNavigateFrontend?.()}
+                  className="px-8 py-4 rounded-xl bg-gradient-to-br from-arcane-purple to-arcane-lavender text-white border border-arcane-purple/30 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-2 min-w-[180px]"
+                >
+                  <LayoutDashboard size={28} />
+                  <span className="font-display font-bold text-base">Frontend</span>
+                  <span className="text-[10px] text-purple-200 font-sans">Ir al Home del Frontend</span>
+                </button>
+              </div>
+            </div>
 
-          {/* Right Column: Mode Selector / Viewer (7 cols) */}
-          <div className="lg:col-span-7 flex flex-col rounded-2xl border border-arcane-purple/10 bg-[#050209] shadow-sm overflow-hidden">
-            
-            {viewMode === null ? (
-              <div className="flex flex-col items-center justify-center flex-grow p-8 bg-gray-50 gap-6">
-                <div className="text-center">
-                  <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
-                    Panel de Visualizaci&oacute;n
-                  </span>
-                  <h3 className="font-display font-bold text-xl text-gray-900 mt-3 mb-1">
-                    Selecciona el modo de visualizaci&oacute;n
-                  </h3>
-                  <p className="text-sm text-gray-500 font-sans max-w-md">
-                    Elige c&oacute;mo quieres ver los datos de cada paso de la transacci&oacute;n pol&iacute;glota.
+          ) : (
+
+            <>
+
+            {/* Left Column: Línea de Secuencialidad + Steps (5 cols) */}
+            <div className="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm arcane-glass-light">
+              
+              <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
+                <span className="text-xs font-mono text-gray-500 uppercase tracking-wider">Línea de Secuencialidad</span>
+                
+                <button
+                  id="reset-demo-top-btn"
+                  onClick={resetDemo}
+                  className="px-2.5 py-1 text-[10px] font-mono text-arcane-purple hover:text-white bg-arcane-purple/10 hover:bg-arcane-purple rounded border border-arcane-purple/20 flex items-center gap-1 cursor-pointer transition"
+                  title="Reiniciar flujo demostración"
+                >
+                  <RotateCcw size={10} /> Reiniciar Demo
+                </button>
+              </div>
+
+              {/* Steps Vertical Timeline layout */}
+              <div className="space-y-6 relative flex-grow mb-6">
+                {/* Virtual vertical connection pipeline */}
+                <div className="absolute top-4 bottom-4 left-6 w-[2px] bg-gray-200 -z-10" />
+                {currentStep > 0 && (
+                  <div 
+                    className="absolute top-4 left-6 w-[2px] bg-gradient-to-b from-arcane-purple via-cyan-400 to-green-500 transition-all duration-500 -z-10" 
+                    style={{ height: `${((currentStep - 1) / 3) * 88}%` }}
+                  />
+                )}
+
+                {steps.map((step, idx) => {
+                  const isActive = idx === currentStep;
+                  const isCompleted = idx < currentStep;
+                  const isUpcoming = idx > currentStep;
+                  
+                  let stepColor = 'border-gray-200 text-gray-500 bg-white';
+                  let circleColor = 'border-gray-300 text-gray-500 bg-white';
+                  
+                  if (isActive) {
+                    stepColor = 'border-arcane-purple text-gray-900 bg-arcane-purple/5 shadow-sm scale-[1.02]';
+                    circleColor = 'border-arcane-purple text-arcane-purple bg-arcane-purple/10 animate-pulse';
+                  } else if (isCompleted) {
+                    stepColor = 'border-emerald-300 text-emerald-700 bg-emerald-50';
+                    circleColor = 'border-emerald-500 text-emerald-500 bg-emerald-100';
+                  }
+
+                  return (
+                    <div 
+                      key={idx} 
+                      id={`demo-step-card-${step.stepNumber}`}
+                      className={`p-4 rounded-xl border transition-all duration-300 flex gap-4 items-start ${stepColor}`}
+                    >
+                      {/* Circle identifier */}
+                      <div className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center font-mono text-xs font-bold transition-all duration-300 ${circleColor}`}>
+                        {isCompleted ? <Check size={12} strokeWidth={3} /> : step.stepNumber}
+                      </div>
+
+                      <div className="space-y-1 pr-2">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-display font-bold text-xs sm:text-sm text-gray-900">{step.title}</h4>
+                          <span className="text-[9px] font-mono uppercase bg-gray-100 px-1.5 py-0.2 rounded text-gray-500 border border-gray-200">
+                            {step.engine}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-gray-500 font-sans leading-relaxed">{step.payloadDescription}</p>
+                        
+                        {/* Interactive Button ONLY inside active card */}
+                        {isActive && (
+                          <div className="pt-2 animate-fade-in">
+                            <button
+                              id={`execute-btn-step-${step.stepNumber}`}
+                              onClick={triggerNextStep}
+                              disabled={loadingStep}
+                              className={`px-4 py-1.5 rounded bg-gradient-to-r from-arcane-purple to-arcane-lavender text-white text-[11px] font-mono font-bold tracking-wide uppercase hover:opacity-90 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_2px_12px_rgba(139,47,201,0.35)] ${
+                                loadingStep ? 'opacity-40 pointer-events-none' : ''
+                              }`}
+                            >
+                              {loadingStep ? (
+                                <>
+                                  <RotateCcw size={10} className="animate-spin" /> Procesando...
+                                </>
+                              ) : (
+                                <>
+                                  <Play size={10} fill="currentColor" /> {step.actionLabel}
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Overall finished message */}
+              {currentStep === 4 && (
+                <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-center animate-fade-in select-none">
+                  <p className="font-display font-extrabold text-sm flex justify-center items-center gap-1">
+                    <Sparkles size={14} className="text-amber-300 animate-pulse" /> Sincronización Exitosa ✓
+                  </p>
+                  <p className="font-sans text-[11px] text-emerald-400 mt-1 leading-relaxed">
+                    PostgreSQL procesó la venta con total aislamiento ACID. MongoDB, Cassandra y Neo4j se actualizaron de forma independiente garantizando la consistencia global en milisegundos.
                   </p>
                 </div>
-                <div className="flex gap-4 mt-2">
-                  <button
-                    onClick={() => setViewMode('console')}
-                    className="px-8 py-4 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 text-white border border-gray-700 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-2 min-w-[180px]"
-                  >
-                    <Terminal size={28} />
-                    <span className="font-display font-bold text-base">Consola</span>
-                    <span className="text-[10px] text-gray-400 font-sans">Terminal con logs y JSON</span>
-                  </button>
-                  <button
-                    onClick={() => onNavigateFrontend?.()}
-                    className="px-8 py-4 rounded-xl bg-gradient-to-br from-arcane-purple to-arcane-lavender text-white border border-arcane-purple/30 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-2 min-w-[180px]"
-                  >
-                    <LayoutDashboard size={28} />
-                    <span className="font-display font-bold text-base">Frontend</span>
-                    <span className="text-[10px] text-purple-200 font-sans">Ir al Home del Frontend</span>
-                  </button>
-                </div>
-              </div>
-            ) : viewMode === 'console' ? (
-              <>
-
-            {/* Terminal bar */}
-            <div className="bg-[#0b0616] px-4 py-3 border-b border-arcane-purple/10 flex items-center justify-between select-none">
-              <div className="flex items-center gap-2">
-                <Terminal size={14} className="text-arcane-lavender" />
-                <span className="text-xs font-mono font-bold text-gray-300">Terminal SBDII (Outbox + Message Broker Logger)</span>
-              </div>
-              <button
-                onClick={() => setViewMode(null)}
-                className="text-[9px] font-mono text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition cursor-pointer"
-              >
-                Cambiar modo
-              </button>
-            </div>
-
-            {/* Terminal screen */}
-            <div className="p-4 h-48 overflow-y-auto bg-black font-mono text-[10px] md:text-xs text-white leading-relaxed flex flex-col gap-1 shadow-inner select-text">
-              {logs.map((log, idx) => {
-                let logClass = 'text-gray-400';
-                if (log.startsWith('[PETICIÓN')) {
-                  logClass = 'text-amber-400 font-bold';
-                } else if (log.includes('[PostgreSQL]') || log.includes('[Core SQL]')) {
-                  logClass = 'text-emerald-400 font-bold';
-                } else if (log.includes('[MongoDB]')) {
-                  logClass = 'text-amber-300';
-                } else if (log.includes('[Cassandra]')) {
-                  logClass = 'text-sky-300';
-                } else if (log.includes('[Neo4j]')) {
-                  logClass = 'text-purple-300';
-                } else if (log.includes('[SEGURIDAD]')) {
-                  logClass = 'text-rose-300';
-                }
-                
-                return (
-                  <div key={idx} className={`${logClass} hover:bg-white/5 py-0.5 px-1 rounded transition`}>
-                    {log}
-                  </div>
-                );
-              })}
-              {loadingStep && (
-                <div className="text-amber-400 font-bold animate-pulse flex items-center gap-1.5 py-1">
-                  <span className="h-1.5 w-1.5 bg-amber-400 rounded-full animate-ping"></span>
-                  <span>[SISTEMA] Sincronizando con base física... Espere</span>
-                </div>
               )}
             </div>
 
-            {/* Visual DB Output representation */}
-            <div className="p-4 border-t border-arcane-purple/10 bg-gray-50 flex-grow flex flex-col justify-center">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-[10px] uppercase font-mono tracking-wider text-gray-500">Salida de Datos por Paso</span>
-                <span className="text-[10px] font-mono text-arcane-purple">
-                  {currentStep === 0 && 'Inicialice el flujo'}
-                  {currentStep === 1 && 'JSON de respuesta del API Core REST'}
-                  {currentStep === 2 && 'Documento BSON actualizado (MongoDB)'}
-                  {currentStep === 3 && 'Fila de Auditoría Insertada (Cassandra)'}
-                  {currentStep === 4 && 'Diferenciación Cypher: Sugerencias Recomendadas (Neo4j)'}
-                </span>
+            {/* Right Column: Mode Selector / Viewer (7 cols) */}
+            <div className="lg:col-span-7 flex flex-col rounded-2xl border border-arcane-purple/10 bg-[#050209] shadow-sm overflow-hidden">
+
+              {viewMode === 'console' ? (
+                <>
+
+              {/* Terminal bar */}
+              <div className="bg-[#0b0616] px-4 py-3 border-b border-arcane-purple/10 flex items-center justify-between select-none">
+                <div className="flex items-center gap-2">
+                  <Terminal size={14} className="text-arcane-lavender" />
+                  <span className="text-xs font-mono font-bold text-gray-300">Terminal SBDII (Outbox + Message Broker Logger)</span>
+                </div>
+                <button
+                  onClick={() => setViewMode(null)}
+                  className="text-[9px] font-mono text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition cursor-pointer"
+                >
+                  Cambiar modo
+                </button>
               </div>
 
-              {/* Dynamic screen box for data */}
-              <div className="p-4 rounded-xl bg-black border border-white/5 font-mono text-[11px] text-gray-300 leading-relaxed overflow-x-auto min-h-[160px] flex items-center justify-center">
-                
-                {currentStep === 0 && (
-                  <div className="text-center text-gray-500 p-6 flex flex-col items-center gap-2 select-none">
-                    <Database size={24} className="text-gray-600 animate-pulse" />
-                    <span className="font-bold">Consola en espera</span>
-                    <span className="text-[10px]">Presiona "DESENCADENAR VENTA" en el Paso 1 para ver el JSON transaccional</span>
-                  </div>
-                )}
-
-                {currentStep === 1 && (
-                  <pre className="text-teal-300 w-full animate-fade-in select-text">
-                    <code>{steps[0].codeOutput}</code>
-                  </pre>
-                )}
-
-                {currentStep === 2 && (
-                  <pre className="text-emerald-300 w-full animate-fade-in select-text">
-                    <code>{steps[1].codeOutput.split('\n').map((line, i) => {
-                      if (line.includes('"status": "SOLD"')) {
-                        return <span key={i} className="bg-red-500/20 text-red-300 font-bold px-1 rounded border border-red-500/30 block animate-pulse">{line}</span>;
-                      }
-                      return <span key={i}>{line}{'\n'}</span>;
-                    })}</code>
-                  </pre>
-                )}
-
-                {currentStep === 3 && (
-                  <div className="w-full text-sky-300 overflow-x-auto animate-fade-in select-text">
-                    <pre className="text-[10px] text-sky-400 font-mono mb-2">CQL schema: audit_trail_by_user</pre>
-                    <pre className="bg-[#050209] p-2 rounded border border-white/5 w-full block text-[10px] leading-tight">
-                      {steps[2].codeOutput}
-                    </pre>
-                  </div>
-                )}
-
-                {currentStep === 4 && (
-                  <div className="w-full animate-fade-in select-text">
-                    <span className="text-[10px] text-purple-400 font-mono block mb-2">// 6.7 — Recomendación por última obra vista (Cypher)</span>
-                    <pre className="text-purple-300 bg-[#050209] p-3 rounded border border-white/5 text-[10px] leading-relaxed overflow-x-auto mb-4">
-                      <code>{steps[3].codeOutput}</code>
-                    </pre>
-                    <span className="text-[10px] text-purple-400 font-mono block mb-2">Sugerencias calculadas por co‑compra:</span>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      {[
-                        { title: 'Simetrías Ocultas', artist: 'Salazar Inés', score: '95% match', bg: 'from-emerald-950/40' },
-                        { title: 'Ecos del Púrpura', artist: 'Avendaño Licett', score: '88% match', bg: 'from-purple-950/40' },
-                        { title: 'Laberinto del Tiempo', artist: 'Azocar Josue', score: '72% match', bg: 'from-sky-950/40' }
-                      ].map((item, id) => (
-                        <div key={id} className={`p-2.5 rounded-lg border border-arcane-lavender/10 bg-gradient-to-b ${item.bg} to-black flex flex-col justify-between`}>
-                          <div>
-                            <span className="text-[9px] font-mono text-arcane-lavender">{item.score}</span>
-                            <h5 className="font-display font-bold text-xs text-white truncate mt-0.5">{item.title}</h5>
-                          </div>
-                          <span className="text-[10px] text-gray-400 mt-2 block italic">Por {item.artist}</span>
-                        </div>
-                      ))}
+              {/* Terminal screen */}
+              <div className="p-4 h-48 overflow-y-auto bg-black font-mono text-[10px] md:text-xs text-white leading-relaxed flex flex-col gap-1 shadow-inner select-text">
+                {logs.map((log, idx) => {
+                  let logClass = 'text-gray-400';
+                  if (log.startsWith('[PETICIÓN')) {
+                    logClass = 'text-amber-400 font-bold';
+                  } else if (log.includes('[PostgreSQL]') || log.includes('[Core SQL]')) {
+                    logClass = 'text-emerald-400 font-bold';
+                  } else if (log.includes('[MongoDB]')) {
+                    logClass = 'text-amber-300';
+                  } else if (log.includes('[Cassandra]')) {
+                    logClass = 'text-sky-300';
+                  } else if (log.includes('[Neo4j]')) {
+                    logClass = 'text-purple-300';
+                  } else if (log.includes('[SEGURIDAD]')) {
+                    logClass = 'text-rose-300';
+                  }
+                  
+                  return (
+                    <div key={idx} className={`${logClass} hover:bg-white/5 py-0.5 px-1 rounded transition`}>
+                      {log}
                     </div>
+                  );
+                })}
+                {loadingStep && (
+                  <div className="text-amber-400 font-bold animate-pulse flex items-center gap-1.5 py-1">
+                    <span className="h-1.5 w-1.5 bg-amber-400 rounded-full animate-ping"></span>
+                    <span>[SISTEMA] Sincronizando con base física... Espere</span>
                   </div>
                 )}
-
               </div>
-              
-              {/* Stepper Footer actions triggers */}
-              {currentStep > 0 && (
-                <div className="mt-3 flex justify-end">
-                  <button
-                    id="reset-demo-bottom-btn"
-                    onClick={resetDemo}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded text-[10px] font-mono cursor-pointer transition flex items-center gap-1 border border-gray-200"
-                  >
-                    <RotateCcw size={10} /> Reiniciar Simulación
-                  </button>
-                </div>
-              )}
-            </div>
 
-              </>
-            ) : (
-              <div className="p-4 bg-gray-50 flex-grow flex flex-col">
+              {/* Visual DB Output representation */}
+              <div className="p-4 border-t border-arcane-purple/10 bg-gray-50 flex-grow flex flex-col justify-center">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-gray-500">Vista Visual de Datos</span>
-                  <button
-                    onClick={() => setViewMode(null)}
-                    className="text-[9px] font-mono text-arcane-purple hover:text-white bg-arcane-purple/10 hover:bg-arcane-purple px-2 py-1 rounded transition cursor-pointer"
-                  >
-                    Cambiar modo
-                  </button>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-gray-500">Salida de Datos por Paso</span>
+                  <span className="text-[10px] font-mono text-arcane-purple">
+                    {currentStep === 0 && 'Inicialice el flujo'}
+                    {currentStep === 1 && 'JSON de respuesta del API Core REST'}
+                    {currentStep === 2 && 'Documento BSON actualizado (MongoDB)'}
+                    {currentStep === 3 && 'Fila de Auditoría Insertada (Cassandra)'}
+                    {currentStep === 4 && 'Diferenciación Cypher: Sugerencias Recomendadas (Neo4j)'}
+                  </span>
                 </div>
 
-                <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm min-h-[280px] flex items-center justify-center">
-                  {renderFrontendView()}
-                </div>
+                {/* Dynamic screen box for data */}
+                <div className="p-4 rounded-xl bg-black border border-white/5 font-mono text-[11px] text-gray-300 leading-relaxed overflow-x-auto min-h-[160px] flex items-center justify-center">
+                  
+                  {currentStep === 0 && (
+                    <div className="text-center text-gray-500 p-6 flex flex-col items-center gap-2 select-none">
+                      <Database size={24} className="text-gray-600 animate-pulse" />
+                      <span className="font-bold">Consola en espera</span>
+                      <span className="text-[10px]">Presiona "DESENCADENAR VENTA" en el Paso 1 para ver el JSON transaccional</span>
+                    </div>
+                  )}
 
+                  {currentStep === 1 && (
+                    <pre className="text-teal-300 w-full animate-fade-in select-text">
+                      <code>{steps[0].codeOutput}</code>
+                    </pre>
+                  )}
+
+                  {currentStep === 2 && (
+                    <pre className="text-emerald-300 w-full animate-fade-in select-text">
+                      <code>{steps[1].codeOutput.split('\n').map((line, i) => {
+                        if (line.includes('"status": "SOLD"')) {
+                          return <span key={i} className="bg-red-500/20 text-red-300 font-bold px-1 rounded border border-red-500/30 block animate-pulse">{line}</span>;
+                        }
+                        return <span key={i}>{line}{'\n'}</span>;
+                      })}</code>
+                    </pre>
+                  )}
+
+                  {currentStep === 3 && (
+                    <div className="w-full text-sky-300 overflow-x-auto animate-fade-in select-text">
+                      <pre className="text-[10px] text-sky-400 font-mono mb-2">CQL schema: audit_trail_by_user</pre>
+                      <pre className="bg-[#050209] p-2 rounded border border-white/5 w-full block text-[10px] leading-tight">
+                        {steps[2].codeOutput}
+                      </pre>
+                    </div>
+                  )}
+
+                  {currentStep === 4 && (
+                    <div className="w-full animate-fade-in select-text">
+                      <span className="text-[10px] text-purple-400 font-mono block mb-2">// 6.7 — Recomendación por última obra vista (Cypher)</span>
+                      <pre className="text-purple-300 bg-[#050209] p-3 rounded border border-white/5 text-[10px] leading-relaxed overflow-x-auto mb-4">
+                        <code>{steps[3].codeOutput}</code>
+                      </pre>
+                      <span className="text-[10px] text-purple-400 font-mono block mb-2">Sugerencias calculadas por co‑compra:</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {[
+                          { title: 'Simetrías Ocultas', artist: 'Salazar Inés', score: '95% match', bg: 'from-emerald-950/40' },
+                          { title: 'Ecos del Púrpura', artist: 'Avendaño Licett', score: '88% match', bg: 'from-purple-950/40' },
+                          { title: 'Laberinto del Tiempo', artist: 'Azocar Josue', score: '72% match', bg: 'from-sky-950/40' }
+                        ].map((item, id) => (
+                          <div key={id} className={`p-2.5 rounded-lg border border-arcane-lavender/10 bg-gradient-to-b ${item.bg} to-black flex flex-col justify-between`}>
+                            <div>
+                              <span className="text-[9px] font-mono text-arcane-lavender">{item.score}</span>
+                              <h5 className="font-display font-bold text-xs text-white truncate mt-0.5">{item.title}</h5>
+                            </div>
+                            <span className="text-[10px] text-gray-400 mt-2 block italic">Por {item.artist}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+                
+                {/* Stepper Footer actions triggers */}
                 {currentStep > 0 && (
                   <div className="mt-3 flex justify-end">
                     <button
+                      id="reset-demo-bottom-btn"
                       onClick={resetDemo}
                       className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded text-[10px] font-mono cursor-pointer transition flex items-center gap-1 border border-gray-200"
                     >
@@ -637,9 +615,42 @@ LIMIT 3`
                   </div>
                 )}
               </div>
-            )}
 
-          </div>
+                </>
+              ) : (
+                <div className="p-4 bg-gray-50 flex-grow flex flex-col">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-gray-500">Vista Visual de Datos</span>
+                    <button
+                      onClick={() => setViewMode(null)}
+                      className="text-[9px] font-mono text-arcane-purple hover:text-white bg-arcane-purple/10 hover:bg-arcane-purple px-2 py-1 rounded transition cursor-pointer"
+                    >
+                      Cambiar modo
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm min-h-[280px] flex items-center justify-center">
+                    {renderFrontendView()}
+                  </div>
+
+                  {currentStep > 0 && (
+                    <div className="mt-3 flex justify-end">
+                      <button
+                        onClick={resetDemo}
+                        className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded text-[10px] font-mono cursor-pointer transition flex items-center gap-1 border border-gray-200"
+                      >
+                        <RotateCcw size={10} /> Reiniciar Simulación
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+            </div>
+
+            </>
+
+          )}
 
         </div>
       </div>
