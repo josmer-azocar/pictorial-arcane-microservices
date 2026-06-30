@@ -418,63 +418,66 @@ export default function Neo4jGraphs() {
       id="neo4j-graphs" 
       className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
         
-        {/* Section Header */}
-        <div className="text-center mb-4">
-          <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20 flex items-center gap-1.5 w-fit mx-auto">
-            <Network size={12} className="text-arcane-purple" />
-            Persistencia de Grafos con Neo4j
-          </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 mt-3 mb-4 tracking-tight uppercase">
-            Visualizador de Grafos de Conocimiento
-          </h2>
-          <p className="font-sans text-gray-500 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            Explora las interconexiones en tiempo real del clúster de grafos. 
-            Navega por la ontología y haz drill-down en los datos insertados mediante el script <code className="bg-gray-100 text-purple-700 px-1 py-0.5 rounded text-xs font-mono font-bold">seed-completo.cypher</code>.
-          </p>
+        {/* LEFT COLUMN */}
+        <div className="flex flex-col gap-4">
+          {/* Section Header */}
+          <div className="mb-4">
+            <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20 flex items-center gap-1.5 w-fit">
+              <Network size={12} className="text-arcane-purple" />
+              Persistencia de Grafos con Neo4j
+            </span>
+            <h2 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 mt-3 mb-4 tracking-tight uppercase">
+              Visualizador de Grafos de Conocimiento
+            </h2>
+            <p className="font-sans text-gray-500 max-w-2xl text-sm sm:text-base leading-relaxed">
+              Explora las interconexiones en tiempo real del clúster de grafos. 
+              Navega por la ontología y haz drill-down en los datos insertados mediante el script <code className="bg-gray-100 text-purple-700 px-1 py-0.5 rounded text-xs font-mono font-bold">seed-completo.cypher</code>.
+            </p>
+          </div>
+
+          {/* Tab Selection - Vertical */}
+          <div className="flex flex-col gap-2 select-none">
+            <button 
+              onClick={() => setActiveTab('schema')} 
+              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'schema' ? 'bg-arcane-purple text-white border-arcane-lavender' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800 hover:border-gray-300'}`}
+            >
+              <Network size={14} />
+              Esquema General
+            </button>
+            <button 
+              onClick={() => setActiveTab('artists')} 
+              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'artists' ? 'bg-purple-100 text-purple-700 border-purple-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
+            >
+              <Users size={14} />
+              Artistas ({parsedGraph.artists.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('genres')} 
+              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'genres' ? 'bg-sky-100 text-sky-700 border-sky-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
+            >
+              <Tag size={14} />
+              Géneros ({parsedGraph.genres.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('artworks')} 
+              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'artworks' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
+            >
+              <Layers size={14} />
+              Obras ({parsedGraph.artworks.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('buyers')} 
+              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'buyers' ? 'bg-rose-100 text-rose-700 border-rose-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
+            >
+              <ShoppingCart size={14} />
+              Compradores ({parsedGraph.buyers.length})
+            </button>
+          </div>
         </div>
 
-        {/* Tab Selection */}
-        <div className="flex flex-wrap justify-center gap-2 mb-4 select-none">
-          <button 
-            onClick={() => setActiveTab('schema')} 
-            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'schema' ? 'bg-arcane-purple text-white border-arcane-lavender' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800 hover:border-gray-300'}`}
-          >
-            <Network size={14} />
-            Esquema General
-          </button>
-          <button 
-            onClick={() => setActiveTab('artists')} 
-            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'artists' ? 'bg-purple-100 text-purple-700 border-purple-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
-          >
-            <Users size={14} />
-            Artistas ({parsedGraph.artists.length})
-          </button>
-          <button 
-            onClick={() => setActiveTab('genres')} 
-            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'genres' ? 'bg-sky-100 text-sky-700 border-sky-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
-          >
-            <Tag size={14} />
-            Géneros ({parsedGraph.genres.length})
-          </button>
-          <button 
-            onClick={() => setActiveTab('artworks')} 
-            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'artworks' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
-          >
-            <Layers size={14} />
-            Obras ({parsedGraph.artworks.length})
-          </button>
-          <button 
-            onClick={() => setActiveTab('buyers')} 
-            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer flex items-center gap-2 ${activeTab === 'buyers' ? 'bg-rose-100 text-rose-700 border-rose-300' : 'bg-white text-gray-500 border-gray-200 hover:text-gray-800'}`}
-          >
-            <ShoppingCart size={14} />
-            Compradores ({parsedGraph.buyers.length})
-          </button>
-        </div>
-
-        {/* MAIN PANEL CONTENT */}
+        {/* MAIN PANEL CONTENT (RIGHT COLUMN) */}
         <div className="arcane-glass-light rounded-3xl p-6 border border-arcane-purple/10 shadow-lg min-h-[500px] flex flex-col lg:flex-row gap-6">
           
           {/* ==================== TAB 1: SCHEMA VIEW ==================== */}
