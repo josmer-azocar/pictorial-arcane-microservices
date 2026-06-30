@@ -19,7 +19,7 @@ const engineIcons: Record<string, string> = {
 const members: MemberInfo[] = [
   { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.PostgreSQL, photo: '/assets/josue.jpg' },
   { name: 'Azocar Josmer', role: 'DBA Relacional', engine: DBEngine.PostgreSQL, photo: '/assets/josmer.jpg' },
-  { name: 'Patricia', role: 'DBA Documental', engine: DBEngine.MongoDB, photo: '/assets/patricia.jpeg' },
+  { name: 'Avendaño Licett', role: 'DBA Documental', engine: DBEngine.MongoDB, photo: '/assets/patricia.jpeg' },
   { name: 'Salazar Inés', role: 'Ingeniero de Datos', engine: DBEngine.Cassandra, photo: '/assets/ines.jpeg' },
   { name: 'Gamboa Lismarx', role: 'Especialista en Grafos', engine: DBEngine.Neo4j, photo: '/assets/lismarx.jpeg' },
 ];
