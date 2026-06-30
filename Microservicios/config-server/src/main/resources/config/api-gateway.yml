@@ -33,3 +33,16 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Core Service
+        url: /core/v3/api-docs
+      - name: Artwork Service
+        url: /artwork/v3/api-docs
+      - name: Audit Service
+        url: /artwork-status-history/v3/api-docs
+      - name: Recommendation Service
+        url: /api/recommendations/v3/api-docs
+
