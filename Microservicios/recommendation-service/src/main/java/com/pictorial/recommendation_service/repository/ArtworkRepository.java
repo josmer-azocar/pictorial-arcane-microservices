@@ -26,6 +26,16 @@ public interface ArtworkRepository extends Neo4jRepository<ArtworkNode, Long> {
             "ORDER BY vecesComprada DESC LIMIT 5")
     List<TopArtworkProjection> findTop5MostBoughtArtworks();
 
+    // Fallback: Obras disponibles más compradas/populares en el catálogo
+    @Query("MATCH (aw: Artwork) " +
+            "WHERE aw.status = 'AVAILABLE' " +
+            "OPTIONAL MATCH (aw)<-[b:BOUGHT]-(:Comprador) " +
+            "WITH aw, COUNT(b) AS compras " +
+            "OPTIONAL MATCH (aw)-[:HAS_GENRE]->(g:Genre) " +
+            "RETURN aw.artworkId AS artworkId, aw.name AS obra, g.name AS genero, toFloat(aw.price) AS precio " +
+            "ORDER BY compras DESC LIMIT $limit")
+    List<ArtworkRecommendationProjection> findTopAvailableArtworks(@Param("limit") int limit);
+
     // Verifica la existencia de una obra por su clave de negocio (para validar antes del sync)
     @Query("MATCH (aw: Artwork {artworkId: $artworkId}) RETURN count(aw) > 0")
     boolean existsByArtworkId(@Param("artworkId") Long artworkId);

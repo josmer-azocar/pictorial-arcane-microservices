@@ -23,8 +23,8 @@ public interface CompradorRepository extends Neo4jRepository<CompradorNode, Stri
             "WHERE NOT recomendada IN compradas AND recomendada.status = 'AVAILABLE' " +
             "RETURN DISTINCT recomendada.artworkId AS artworkId, recomendada.name AS obra, " +
             "       gen.name AS genero, toFloat(recomendada.price) AS precio " +
-            "ORDER BY precio DESC LIMIT 10")
-    List<ArtworkRecommendationProjection> getRecommendationsBasedOnPurchases(@Param("compradorId") String compradorId);
+            "ORDER BY precio DESC LIMIT $limit")
+    List<ArtworkRecommendationProjection> getRecommendationsBasedOnPurchases(@Param("compradorId") String compradorId, @Param("limit") int limit);
 
     // 7.3 Historial de compras de un usuario con detalles de artista y género (Proyección tabular)
     @Query("MATCH (u: Comprador {id: $compradorId})-[c:BOUGHT]->(aw: Artwork)<-[:CREATED]-(a: Artist) " +
@@ -37,21 +37,23 @@ public interface CompradorRepository extends Neo4jRepository<CompradorNode, Stri
             "WITH u, COLLECT(obraVista) AS vistas, COLLECT(DISTINCT g) AS generos " +
             "UNWIND generos AS gen " +
             "MATCH (gen)<-[:HAS_GENRE]-(recomendada: Artwork) " +
-            "WHERE NOT recomendada IN vistas AND recomendada.status = 'AVAILABLE' " +
+            "OPTIONAL MATCH (u)-[b:BOUGHT]->(recomendada) " +
+            "WHERE NOT recomendada IN vistas AND recomendada.status = 'AVAILABLE' AND b IS NULL " +
             "RETURN DISTINCT recomendada.artworkId AS artworkId, recomendada.name AS obra, " +
             "       gen.name AS genero, toFloat(recomendada.price) AS precio " +
-            "ORDER BY precio DESC LIMIT 10")
-    List<ArtworkRecommendationProjection> getRecommendationsBasedOnViews(@Param("compradorId") String compradorId);
+            "ORDER BY precio DESC LIMIT $limit")
+    List<ArtworkRecommendationProjection> getRecommendationsBasedOnViews(@Param("compradorId") String compradorId, @Param("limit") int limit);
 
     // 7.7 Recomendaciones basadas estrictamente en la ÚLTIMA obra vista
     @Query("MATCH (u: Comprador {id: $compradorId})-[v:SAW]->(ultima: Artwork) " +
-            "WITH ultima ORDER BY v.fecha DESC LIMIT 1 " +
+            "WITH u, ultima ORDER BY v.fecha DESC LIMIT 1 " +
             "MATCH (ultima)-[:HAS_GENRE]->(g: Genre)<-[:HAS_GENRE]-(recomendada: Artwork) " +
-            "WHERE recomendada.artworkId <> ultima.artworkId AND recomendada.status = 'AVAILABLE' " +
+            "OPTIONAL MATCH (u)-[b:BOUGHT]->(recomendada) " +
+            "WHERE recomendada.artworkId <> ultima.artworkId AND recomendada.status = 'AVAILABLE' AND b IS NULL " +
             "RETURN recomendada.artworkId AS artworkId, recomendada.name AS obra, " +
             "       g.name AS genero, toFloat(recomendada.price) AS precio " +
-            "ORDER BY precio DESC LIMIT 10")
-    List<ArtworkRecommendationProjection> getRecommendationsBasedOnLastViewed(@Param("compradorId") String compradorId);
+            "ORDER BY precio DESC LIMIT $limit")
+    List<ArtworkRecommendationProjection> getRecommendationsBasedOnLastViewed(@Param("compradorId") String compradorId, @Param("limit") int limit);
 
     // Verifica la existencia de un comprador por su id (para validar antes del sync)
     @Query("MATCH (u:Comprador {id: $compradorId}) RETURN count(u) > 0")

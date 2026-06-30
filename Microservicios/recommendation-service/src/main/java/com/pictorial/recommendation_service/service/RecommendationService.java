@@ -17,7 +17,7 @@ import java.util.List;
 public interface RecommendationService {
 
     // 7.1 — Recomendaciones por compras de un usuario
-    List<ArtworkRecommendationResponseDto> getRecommendationsByPurchases(String compradorId);
+    List<ArtworkRecommendationResponseDto> getRecommendationsByPurchases(String compradorId, int limit);
 
     // 7.2 — Recomendaciones por género de una obra específica
     List<ArtworkRecommendationResponseDto> getRecommendationsByArtworkGenre(Long artworkId);
@@ -32,10 +32,10 @@ public interface RecommendationService {
     List<TopArtistResponseDto> getTopArtists();
 
     // 7.6 — Recomendaciones por obras vistas
-    List<ArtworkRecommendationResponseDto> getRecommendationsByViews(String compradorId);
+    List<ArtworkRecommendationResponseDto> getRecommendationsByViews(String compradorId, int limit);
 
     // 7.7 — Recomendaciones por la última obra vista
-    List<ArtworkRecommendationResponseDto> getRecommendationsByLastViewed(String compradorId);
+    List<ArtworkRecommendationResponseDto> getRecommendationsByLastViewed(String compradorId, int limit);
 
     // SYNC.1 — Registrar compra (relación :BOUGHT)
     void syncPurchase(PurchaseSyncRequestDto request);

@@ -7,6 +7,7 @@ import com.pictorialarcane.core_service.client.dto.SecurityLogRequest;
 import com.pictorialarcane.core_service.client.dto.ViewSyncRequest;
 import com.pictorialarcane.core_service.domain.dto.response.PurchaseResponseDto;
 import com.pictorialarcane.core_service.domain.exception.InvalidSecurityCodeException;
+import com.pictorialarcane.core_service.domain.exception.CommissionRateIncorrectException;
 import com.pictorialarcane.core_service.domain.exception.UserDoesNotExistsException;
 import com.pictorialarcane.core_service.persistence.crud_repository.CrudClientRepository;
 import com.pictorialarcane.core_service.persistence.crud_repository.CrudUserRepository;
@@ -64,7 +65,12 @@ public class SaleService {
         //validación de membresia
         membershipService.getActiveMembership(email);
 
-        if (!passwordEncoder.matches(securityCode, client.getSecurityCode())) {
+        //validación de comisión de artista (5% - 10%)
+        if (commissionRate == null || commissionRate < 0.05 || commissionRate > 0.10) {
+            throw new CommissionRateIncorrectException();
+        }
+
+        if (client.getSecurityCode() == null || !passwordEncoder.matches(securityCode, client.getSecurityCode())) {
             // Auditoría: registrar el intento de compra con código de seguridad inválido.
             auditClient.registerSecurityLog(new SecurityLogRequest(
                     "INVALID_SECURITY_CODE",
@@ -86,6 +92,13 @@ public class SaleService {
     }
 
     public Page<PurchaseResponseDto> getClientPurchases(int page, int size, String clientEmail) {
+        if (page < 0) {
+            throw new IllegalArgumentException("Page number cannot be negative");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Page size must be greater than zero");
+        }
+
         UserEntity user = crudUserRepository.findFirstByEmail(clientEmail);
         if (user == null) {
             throw new UserDoesNotExistsException(clientEmail);

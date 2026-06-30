@@ -93,6 +93,9 @@ public class SaleRepository {
 
     public void rejectPendingSale(Long saleId, Long adminId) {
         SaleEntity sale = this.crudSaleRepository.findByIdSale(saleId);
+        if (!SaleStatus.PENDING.name().equals(sale.getSaleStatus())) {
+            throw new SaleException(saleId, sale.getSaleStatus());
+        }
         sale.setAdmin(this.crudUserRepository.findByDniUser(adminId));
         sale.setSaleStatus(SaleStatus.CANCELED.name());
         sale.setShippingStatus(ShippingStatus.CANCELED.name());
@@ -177,7 +180,7 @@ public class SaleRepository {
     public SaleResponseDto updateShippingStatus(Long saleId, ShippingStatus shippingStatus) {
         SaleEntity saleEntity = crudSaleRepository.findByIdSale(saleId);
 
-        if (!saleEntity.getShippingStatus().equals(ShippingStatus.PENDING.name())) throw new RuntimeException("The current Shipping Status must be PENDING to be updated");
+        if (!saleEntity.getShippingStatus().equals(ShippingStatus.PENDING.name())) throw new IllegalArgumentException("The current Shipping Status must be PENDING to be updated");
         if (!saleEntity.getSaleStatus().equals(SaleStatus.APPROVED.name())) throw new SaleException(saleId, saleEntity.getSaleStatus());
 
         saleEntity.setShippingStatus(shippingStatus.name());

@@ -25,7 +25,7 @@ public class ArtistController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ArtistResponseDto> create(@RequestBody @Valid ArtistRequestDto dto) {
-        return ResponseEntity.ok(artistService.create(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(artistService.create(dto));
     }
 
     @PreAuthorize("permitAll()")

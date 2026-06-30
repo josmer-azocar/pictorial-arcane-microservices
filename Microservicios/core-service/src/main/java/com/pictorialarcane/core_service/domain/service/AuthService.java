@@ -94,6 +94,10 @@ public class AuthService {
             throw new UserAlreadyExistsException(requestDto.email()); // Lanza excepción si ya existe
         }
 
+        if (this.crudUserRepository.findByDniUser(requestDto.dniUser()) != null) {
+            throw new UserAlreadyExistsException(requestDto.dniUser());
+        }
+
         // Construye la entidad del nuevo usuario con la contraseña codificada
         UserEntity user = UserEntity.builder()
                 .dniUser(requestDto.dniUser())

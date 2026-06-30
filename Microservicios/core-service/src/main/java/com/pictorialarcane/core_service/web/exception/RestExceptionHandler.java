@@ -58,6 +58,12 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(ClientDoesNotExistsException.class)
+    public ResponseEntity<Error> handleException(ClientDoesNotExistsException ex){
+        Error error = new Error("client-does-not-exist", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(AnswersAreNotCorrectException.class)
     public ResponseEntity<Error> handleException(AnswersAreNotCorrectException ex){
         Error error = new Error("the-answers-are-not-correct", ex.getMessage());

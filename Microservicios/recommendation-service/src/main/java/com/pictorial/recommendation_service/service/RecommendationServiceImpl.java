@@ -35,10 +35,12 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final TopArtistMapper topArtistMapper;
 
     @Override
-    public List<ArtworkRecommendationResponseDto> getRecommendationsByPurchases(String compradorId) {
+    public List<ArtworkRecommendationResponseDto> getRecommendationsByPurchases(String compradorId, int limit) {
         List<ArtworkRecommendationProjection> result =
-                compradorRepository.getRecommendationsBasedOnPurchases(compradorId);
-        ensureCompradorExistsWhenEmpty(compradorId, result.isEmpty());
+                compradorRepository.getRecommendationsBasedOnPurchases(compradorId, limit);
+        if (result.isEmpty()) {
+            result = artworkRepository.findTopAvailableArtworks(limit);
+        }
         return artworkRecommendationMapper.toDtoList(result);
     }
 
@@ -56,7 +58,6 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public List<PurchaseHistoryResponseDto> getPurchaseHistory(String compradorId) {
         var result = compradorRepository.getPurchaseHistoryDetails(compradorId);
-        ensureCompradorExistsWhenEmpty(compradorId, result.isEmpty());
         return purchaseHistoryMapper.toDtoList(result);
     }
 
@@ -71,18 +72,22 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public List<ArtworkRecommendationResponseDto> getRecommendationsByViews(String compradorId) {
+    public List<ArtworkRecommendationResponseDto> getRecommendationsByViews(String compradorId, int limit) {
         List<ArtworkRecommendationProjection> result =
-                compradorRepository.getRecommendationsBasedOnViews(compradorId);
-        ensureCompradorExistsWhenEmpty(compradorId, result.isEmpty());
+                compradorRepository.getRecommendationsBasedOnViews(compradorId, limit);
+        if (result.isEmpty()) {
+            result = artworkRepository.findTopAvailableArtworks(limit);
+        }
         return artworkRecommendationMapper.toDtoList(result);
     }
 
     @Override
-    public List<ArtworkRecommendationResponseDto> getRecommendationsByLastViewed(String compradorId) {
+    public List<ArtworkRecommendationResponseDto> getRecommendationsByLastViewed(String compradorId, int limit) {
         List<ArtworkRecommendationProjection> result =
-                compradorRepository.getRecommendationsBasedOnLastViewed(compradorId);
-        ensureCompradorExistsWhenEmpty(compradorId, result.isEmpty());
+                compradorRepository.getRecommendationsBasedOnLastViewed(compradorId, limit);
+        if (result.isEmpty()) {
+            result = artworkRepository.findTopAvailableArtworks(limit);
+        }
         return artworkRecommendationMapper.toDtoList(result);
     }
 

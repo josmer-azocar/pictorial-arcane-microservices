@@ -31,7 +31,7 @@ spring:
             - id: recommendation-service
               uri: lb://recommendation-service
               predicates:
-                - Path=/api/v1/recommendations/**
+                - Path=/api/v1/recommendations/**,/api/recommendations/**,/api/users/**
 
 eureka:
   client:
