@@ -32,6 +32,35 @@
 		<mapstruct.version>1.6.3</mapstruct.version>
 	</properties>
 	<dependencies>
+		<!-- Seguridad compartida: JWT + @PreAuthorize (regido por core-service vía secreto común) -->
+		<dependency>
+			<groupId>com.pictorial</groupId>
+			<artifactId>security-commons</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<!-- Declaradas explícitamente (además de venir por security-commons) para que el classpath
+		     del servicio no dependa de cómo el IDE resuelva los transitivos del SNAPSHOT local. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>

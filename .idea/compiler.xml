@@ -21,7 +21,16 @@
         </processorPath>
         <module name="pictorialArcane" />
       </profile>
-      <profile name="Annotation profile for core-service" enabled="true">
+      <profile name="Annotation profile for recommendation-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
+        </processorPath>
+        <module name="recommendation-service" />
+      </profile>
+      <profile name="Annotation profile for audit-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -43,6 +52,7 @@
       <module name="config-server" options="-parameters" />
       <module name="core-service" options="-parameters" />
       <module name="pictorialArcane" options="-parameters" />
+      <module name="recommendation-service" options="-parameters" />
       <module name="service-registry" options="-parameters" />
     </option>
   </component>

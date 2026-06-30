@@ -5,20 +5,28 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 @Service // Marca la clase como un servicio de Spring
 public class JwtService {
 
-    // Clave secreta para firmar los tokens (Debería estar en application.properties en producción)
-    public static final String SECRET_KEY = "586E3272357538782F413F4428472B4B6250655368566859703373373676397924";
+    // Clave secreta y expiración centralizadas en el config-server (security.jwt.*).
+    // El valor por defecto mantiene el comportamiento previo si el config-server no está disponible.
+    @Value("${security.jwt.secret:586E3272357538782F413F4428472B4B6250655368566859703373373676397924}")
+    private String secretKey;
+
+    @Value("${security.jwt.expiration:86400000}") // Vida del token en milisegundos (24h por defecto)
+    private long expiration;
 
     // Genera un token para un usuario sin claims extra
     public String getToken(UserDetails user) {
@@ -27,19 +35,28 @@ public class JwtService {
 
     // Genera el token con claims extra, subject, fecha de emisión y expiración, y firma
     private String getToken(Map<String,Object> extraClaims, UserDetails user) {
+        Map<String,Object> claims = new HashMap<>(extraClaims);
+
+        // FASE 0: incrustar los roles dentro del token (ej. ["ROLE_ADMIN"]).
+        // Así el gateway y los demás microservicios pueden autorizar sin consultar la BD de core-service.
+        List<String> roles = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+        claims.put("roles", roles);
+
         return Jwts
                 .builder()
-                .setClaims(extraClaims) // Añade claims personalizados
+                .setClaims(claims) // Añade claims personalizados (incluye roles)
                 .setSubject(user.getUsername()) // El subject es el email
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de creación actual
-                .setExpiration(new Date(System.currentTimeMillis() + 1000*60*24)) // Expira en 24 minutos (ajustable)
+                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // Expira según configuración
                 .signWith(getKey(), SignatureAlgorithm.HS256) // Firma con algoritmo HMAC SH256
                 .compact(); // Construye el token string
     }
 
     // Decodifica la clave secreta Base64 para obtener la Key criptográfica
     private Key getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

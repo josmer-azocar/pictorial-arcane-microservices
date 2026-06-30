@@ -3,8 +3,10 @@ package com.pictorialarcane.core_service.persistence.mapper;
 import com.pictorialarcane.core_service.domain.dto.response.ClientResponseDto;
 import com.pictorialarcane.core_service.domain.dto.update.UpdateClientDto;
 import com.pictorialarcane.core_service.persistence.entity.ClientEntity;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
@@ -14,5 +16,6 @@ public interface ClientMappper{
     ClientResponseDto toResponseDto(ClientEntity entity);
     List<ClientResponseDto> toResponseDto(Iterable<ClientEntity> entities);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto (UpdateClientDto updateClientDto, @MappingTarget ClientEntity clientEntity);
 }

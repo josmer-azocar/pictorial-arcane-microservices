@@ -23,6 +23,14 @@ public class BillingByMonthService {
     }
 
     public BillingByMonthResponseDto create(BillingByMonthRequestDto dto) {
+        if (dto.saleDate() != null) {
+            String yearMonthStr = dto.saleDate().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM"));
+            BillingByMonthKey key = new BillingByMonthKey(yearMonthStr, dto.saleDate(), dto.saleId());
+            if (repository.existsById(key)) {
+                throw new com.pictorial.audit_service.exception.DuplicateResourceException(
+                        "Billing record already exists for sale ID: " + dto.saleId() + " on " + dto.saleDate());
+            }
+        }
         BillingByMonthTable table = mapper.toTable(dto);
         BillingByMonthTable saved = repository.save(table);
         return mapper.toResponseDto(saved);
@@ -40,12 +48,20 @@ public class BillingByMonthService {
 
     public BillingByMonthResponseDto getById(String yearMonth, LocalDate saleDate, Long saleId) {
         BillingByMonthKey key = new BillingByMonthKey(yearMonth, saleDate, saleId);
-        BillingByMonthTable table = repository.findById(key).orElse(null);
+        BillingByMonthTable table = repository.findById(key)
+                .orElseThrow(() -> new com.pictorial.audit_service.exception.ResourceNotFoundException(
+                        "billing-by-month",
+                        "Billing record not found for yearMonth: " + yearMonth + ", saleDate: " + saleDate + ", saleId: " + saleId));
         return mapper.toResponseDto(table);
     }
 
     public void delete(String yearMonth, LocalDate saleDate, Long saleId) {
         BillingByMonthKey key = new BillingByMonthKey(yearMonth, saleDate, saleId);
+        if (!repository.existsById(key)) {
+            throw new com.pictorial.audit_service.exception.ResourceNotFoundException(
+                    "billing-by-month",
+                    "Billing record not found for yearMonth: " + yearMonth + ", saleDate: " + saleDate + ", saleId: " + saleId);
+        }
         repository.deleteById(key);
     }
 

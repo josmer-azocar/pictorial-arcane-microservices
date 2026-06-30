@@ -5,6 +5,7 @@ import com.pictorial.audit_service.dto.response.ArtworkStatusHistoryResponseDto;
 import com.pictorial.audit_service.service.ArtworkStatusHistoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -21,21 +22,26 @@ public class ArtworkStatusHistoryController {
         this.service = service;
     }
 
+    // Escritura interna desde artwork-service (lb://, sin token): debe permanecer abierta.
+    @PreAuthorize("permitAll()")
     @PostMapping("/add")
     public ResponseEntity<ArtworkStatusHistoryResponseDto> create(@RequestBody @Valid ArtworkStatusHistoryRequestDto dto) {
         return ResponseEntity.ok(service.create(dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<ArtworkStatusHistoryResponseDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/artwork/{artworkId}")
     public ResponseEntity<List<ArtworkStatusHistoryResponseDto>> getByArtworkId(@PathVariable Long artworkId) {
         return ResponseEntity.ok(service.getByArtworkId(artworkId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/find")
     public ResponseEntity<ArtworkStatusHistoryResponseDto> getById(
             @RequestParam Long artworkId,
@@ -44,6 +50,7 @@ public class ArtworkStatusHistoryController {
         return ResponseEntity.ok(service.getById(artworkId, changedAt, changeId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete")
     public ResponseEntity<Void> delete(
             @RequestParam Long artworkId,

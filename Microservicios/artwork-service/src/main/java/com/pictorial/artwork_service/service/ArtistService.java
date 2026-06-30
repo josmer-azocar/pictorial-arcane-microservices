@@ -30,8 +30,11 @@ public class ArtistService {
         this.artistMapper = artistMapper;
     }
 
-    public ArtistResponseDto create( ArtistRequestDto dto) {
-         return artistMapper.toResponseDto(artistRepository.save(artistMapper.toDocument(dto)));
+    public ArtistResponseDto create(ArtistRequestDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Artist request body cannot be null");
+        }
+        return artistMapper.toResponseDto(artistRepository.save(artistMapper.toDocument(dto)));
     }
 
     public List<ArtistResponseDto> getAll() {
@@ -39,19 +42,34 @@ public class ArtistService {
     }
 
     public ArtistResponseDto getById(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Artist ID cannot be null or blank");
+        }
         ArtistDocument artist = artistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found"));
         return artistMapper.toResponseDto(artist);
     }
 
     public ArtistResponseDto update(String id, @Valid UpdateArtistDto dto) {
-            ArtistDocument artist = artistRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found"));
-            artistMapper.updateDocumentFromDto(dto,artist);
-            return artistMapper.toResponseDto(artistRepository.save(artist));
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Artist ID cannot be null or blank");
+        }
+        if (dto == null) {
+            throw new IllegalArgumentException("Artist update body cannot be null");
+        }
+        ArtistDocument artist = artistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("artist", "Artist not found"));
+        artistMapper.updateDocumentFromDto(dto, artist);
+        return artistMapper.toResponseDto(artistRepository.save(artist));
     }
 
     public void delete(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Artist ID cannot be null or blank");
+        }
+        if (!artistRepository.existsById(id)) {
+            throw new ResourceNotFoundException("artist", "Artist not found");
+        }
         artistRepository.deleteById(id);
     }
 }

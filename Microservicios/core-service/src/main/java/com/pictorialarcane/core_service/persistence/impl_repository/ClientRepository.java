@@ -31,6 +31,9 @@ public class ClientRepository {
         Long clientDni = user.getDniUser();
 
         ClientEntity client = crudClientRepository.findFirstByDniUser(clientDni);
+        if (client == null) {
+            throw new ClientDoesNotExistsException(clientDni);
+        }
 
         clientMappper.updateEntityFromDto(updateClientDto, client);
 

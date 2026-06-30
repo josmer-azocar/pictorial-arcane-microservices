@@ -53,6 +53,9 @@ public class ArtWorkService {
     }
 
     public ArtWorkResponseDto create(ArtWorkRequestDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Artwork request body cannot be null");
+        }
         ArtWorkDocument document = buildBaseArtwork(dto);
         return artWorkMapper.toResponseDto(artWorkRepository.save(document));
     }
@@ -62,12 +65,21 @@ public class ArtWorkService {
     }
 
     public ArtWorkResponseDto getById(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Artwork ID cannot be null or blank");
+        }
         ArtWorkDocument document = artWorkRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("artwork", "Artwork not found"));
         return artWorkMapper.toResponseDto(document);
     }
 
     public ArtWorkResponseDto update(String id, UpdateArtWorkDto dto) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Artwork ID cannot be null or blank");
+        }
+        if (dto == null) {
+            throw new IllegalArgumentException("Artwork update body cannot be null");
+        }
         ArtWorkDocument document = artWorkRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("artwork", "Artwork not found"));
         artWorkMapper.updateDocumentFromDto(dto, document);
@@ -76,6 +88,9 @@ public class ArtWorkService {
     }
 
     public void delete(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Artwork ID cannot be null or blank");
+        }
         if (!artWorkRepository.existsById(id)) {
             throw new ResourceNotFoundException("artwork", "Artwork not found");
         }
@@ -126,8 +141,16 @@ public class ArtWorkService {
         List<ArtWorkDocument> results = mongoTemplate.find(query, ArtWorkDocument.class);
         return new PageImpl<>(artWorkMapper.toResponseDto(results), pageRequest, total);
     }
-
-    public ContainerCeramicResponseDto createCeramic(ContainerCeramicRequestDto dto) {
+    public ContainerCeramicResponseDto createCeramic(ContainerCeramicRequestDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Container ceramic request body cannot be null");
+        }
+        if (dto.artWorkRequest() == null) {
+            throw new IllegalArgumentException("Artwork request cannot be null");
+        }
+        if (dto.ceramicRequest() == null) {
+            throw new IllegalArgumentException("Ceramic details request cannot be null");
+        }
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         CeramicDocument ceramic = artWorkMapper.toCeramicDocument(dto.ceramicRequest());
         ArtWorkDocument saved = saveWithDetails(document, ceramic);
@@ -137,6 +160,15 @@ public class ArtWorkService {
     }
 
     public ContainerGoldsmithResponseDto createGoldsmith(ContainerGoldsmithRequestDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Container goldsmith request body cannot be null");
+        }
+        if (dto.artWorkRequest() == null) {
+            throw new IllegalArgumentException("Artwork request cannot be null");
+        }
+        if (dto.goldsmithRequest() == null) {
+            throw new IllegalArgumentException("Goldsmith details request cannot be null");
+        }
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         GoldsmithDocument goldsmith = artWorkMapper.toGoldsmithDocument(dto.goldsmithRequest());
         ArtWorkDocument saved = saveWithDetails(document, goldsmith);
@@ -146,6 +178,15 @@ public class ArtWorkService {
     }
 
     public ContainerPaintingResponseDto createPainting(ContainerPaintingRequestDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Container painting request body cannot be null");
+        }
+        if (dto.artWorkRequest() == null) {
+            throw new IllegalArgumentException("Artwork request cannot be null");
+        }
+        if (dto.paintingRequest() == null) {
+            throw new IllegalArgumentException("Painting details request cannot be null");
+        }
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         PaintingDocument painting = artWorkMapper.toPaintingDocument(dto.paintingRequest());
         ArtWorkDocument saved = saveWithDetails(document, painting);
@@ -155,6 +196,15 @@ public class ArtWorkService {
     }
 
     public ContainerPhotographyResponseDto createPhotography(ContainerPhotographyRequestDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Container photography request body cannot be null");
+        }
+        if (dto.artWorkRequest() == null) {
+            throw new IllegalArgumentException("Artwork request cannot be null");
+        }
+        if (dto.photographyRequest() == null) {
+            throw new IllegalArgumentException("Photography details request cannot be null");
+        }
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         PhotographyDocument photography = artWorkMapper.toPhotographyDocument(dto.photographyRequest());
         ArtWorkDocument saved = saveWithDetails(document, photography);
@@ -164,6 +214,15 @@ public class ArtWorkService {
     }
 
     public ContainerSculptureResponseDto createSculpture(ContainerSculptureRequestDto dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Container sculpture request body cannot be null");
+        }
+        if (dto.artWorkRequest() == null) {
+            throw new IllegalArgumentException("Artwork request cannot be null");
+        }
+        if (dto.sculptureRequest() == null) {
+            throw new IllegalArgumentException("Sculpture details request cannot be null");
+        }
         ArtWorkDocument document = buildBaseArtwork(dto.artWorkRequest());
         SculptureDocument sculpture = artWorkMapper.toSculptureDocument(dto.sculptureRequest());
         ArtWorkDocument saved = saveWithDetails(document, sculpture);
@@ -173,6 +232,9 @@ public class ArtWorkService {
     }
 
     public ArtWorkDocument getArtWorkDocumentById(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Artwork ID cannot be null or blank");
+        }
         return artWorkRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("artwork", "Artwork not found"));
     }
@@ -311,6 +373,12 @@ public class ArtWorkService {
 
     private ArtWorkResponseDto changeStatus(Long artworkId, ArtWorkStatus expected, ArtWorkStatus target,
                                             Long changedBy, String reason) {
+        if (artworkId == null) {
+            throw new IllegalArgumentException("Artwork ID cannot be null");
+        }
+        if (changedBy == null) {
+            throw new IllegalArgumentException("ChangedBy user ID cannot be null");
+        }
         ArtWorkDocument doc = artWorkRepository.findByArtworkId(artworkId)
                 .orElseThrow(() -> new ResourceNotFoundException("artwork", "Artwork not found for id " + artworkId));
 

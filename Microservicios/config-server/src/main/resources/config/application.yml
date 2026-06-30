@@ -1,0 +1,11 @@
+# Configuración compartida por TODOS los microservicios (perfil native del config-server).
+# Spring Cloud Config sirve este 'application.yml' como propiedades comunes a cualquier cliente,
+# por lo que core-service, api-gateway, artwork-service, audit-service y recommendation-service
+# reciben el mismo secreto y, por tanto, validan/firman el mismo JWT.
+security:
+  jwt:
+    # Clave HMAC en Base64 usada para firmar (core-service) y verificar (gateway + servicios) el token.
+    # En producción debe inyectarse por variable de entorno JWT_SECRET.
+    secret: ${JWT_SECRET:586E3272357538782F413F4428472B4B6250655368566859703373373676397924}
+    # Vida del token en milisegundos (24 horas).
+    expiration: ${JWT_EXPIRATION:86400000}

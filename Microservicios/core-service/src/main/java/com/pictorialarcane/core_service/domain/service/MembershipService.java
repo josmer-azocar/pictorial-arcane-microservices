@@ -41,7 +41,7 @@ public class MembershipService {
     public MembershipResponseDto getActiveMembership(String email) {
         ClientEntity client = crudClientRepository.findByUser_Email(email);
         if (client == null) {
-            throw new UserDoesNotExistsException("Client not found for email: " + email);
+            throw new UserDoesNotExistsException(email);
         }
 
         return membershipRepository.findActiveByClient(client.getDniUser())
@@ -51,7 +51,7 @@ public class MembershipService {
     public MembershipResponseDto renewMembership(String email) {
         ClientEntity client = crudClientRepository.findByUser_Email(email);
         if (client == null) {
-            throw new UserDoesNotExistsException("Client not found for email: " + email);
+            throw new UserDoesNotExistsException(email);
         }
 
         if (membershipRepository.findActiveByClient(client.getDniUser()).isPresent()) {
@@ -79,7 +79,11 @@ public class MembershipService {
         MembershipEntity entity = membershipRepository.findById(id)
                 .orElseThrow(() -> new ActiveMembershipNotFoundException("Membership not found with ID: " + id));
 
-        entity.setStatus(MembershipStatus.CANCELLED.name());
+        if (!MembershipStatus.ACTIVE.name().equals(entity.getStatus())) {
+            throw new IllegalArgumentException("Cannot cancel a membership that is not active. Current status: " + entity.getStatus());
+        }
+
+        entity.setStatus(MembershipStatus.CANCELED.name());
         return membershipRepository.save(entity);
     }
 
