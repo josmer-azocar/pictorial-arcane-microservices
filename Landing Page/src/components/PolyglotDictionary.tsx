@@ -9,7 +9,7 @@ function EngineIcon({ engine }: { engine: DBEngine }) {
     [DBEngine.Cassandra]: '/assets/cassndra.ico',
     [DBEngine.Neo4j]: '/assets/Neo4j-logo_color.ico',
   };
-  return <img src={iconMap[engine]} alt="" className="w-6 h-6 object-contain" />;
+  return <img src={iconMap[engine]} alt="" className="w-9 h-9 object-contain" />;
 }
 
 interface PolyglotDictionaryProps {
@@ -59,7 +59,7 @@ export default function PolyglotDictionary({ onEngineSelect }: PolyglotDictionar
     },
     [DBEngine.MongoDB]: {
       engine: DBEngine.MongoDB,
-      title: 'MongoDB: Catálogo de Obras',
+      title: 'MongoDB: Documento artworks',
       subtitle: 'Documento JSON/BSON Polimórfico (Estructuras Flexibles)',
       language: 'JSON',
       icon: 'doc',
@@ -68,35 +68,55 @@ export default function PolyglotDictionary({ onEngineSelect }: PolyglotDictionar
         {
           filename: 'artwork-document.json',
           code: `{
-  "_id": ObjectId("6667b2d5fbcb8b2bac10de01"),
-  "artwork_id": "42f9e612-da13-4318-8fe9-825fb4d1ff01",
-  "title": "Círculos Arcanos en Púrpura",
-  "medium": "Pintura Digital",
-  
-  // Esquema Dinámico: metadatos embebidos si es NFT
-  "digital_metadata": {
-    "is_nft": true,
-    "token_address": "0x3fb1aef0a912bb09f1d0a8459dfc120c15982e0a",
-    "blockchain": "Ethereum",
-    "token_id": 9917
+  "_id": {
+    "$oid": "6a2ac9cf82395d5f41a99314"
   },
-  
-  // Relación Desnormalizada en favor de velocidad de lectura
-  "artist": {
-    "artist_id": "e45a20d4-1a93-4bef-8bf2",
-    "name": "Salazar Inés",
-    "country": "Venezuela"
+  "artworkId": {
+    "$numberLong": "5"
   },
-  
-  "tags": ["arcano", "abstracto", "púrpura", "óleo"],
-  "status": "SOLD",
-  "price": 450000.00
+  "name": "Escultura \\"Amanecer del Orinoco\\" #5",
+  "status": "AVAILABLE",
+  "type_details": {
+    "_class": "com.pictorial.artwork_service.document.CeramicDocument",
+    "materialType": "Porcelana",
+    "technique": "Colada",
+    "finish": "Bruñido",
+    "cookingTemperature": 1150,
+    "weight": 6,
+    "width": 20,
+    "height": 25
+  },
+  "price": 1500,
+  "artistId": "6a2ac9b282395d5f41a992c5",
+  "artistName": "Víctor Poleo",
+  "genre": {
+    "_id": {
+      "$oid": "6a2ac9a782395d5f41a992bb"
+    },
+    "name": "Expresionismo",
+    "description": "Distorsión emocional de la realidad para transmitir sentimientos.",
+    "createdAt": {
+      "$date": "2026-06-11T14:43:49.490Z"
+    },
+    "modifiedAt": {
+      "$date": "2026-06-11T14:43:49.490Z"
+    }
+  },
+  "imageUrl": "https://picsum.photos/seed/art5/600/400",
+  "createdAt": {
+    "$date": "2026-06-11T14:43:49.490Z"
+  },
+  "modifiedAt": {
+    "$date": "2026-06-11T14:43:49.490Z"
+  },
+  "_class": "com.pictorial.artwork_service.document.ArtWorkDocument"
 }`,
           highlights: [
-            { text: 'ObjectId', color: 'text-emerald-400 font-bold' },
-            { text: '"digital_metadata"', color: 'text-sky-400 font-bold' },
-            { text: '"artist"', color: 'text-rose-400' },
-            { text: '"SOLD"', color: 'text-red-400 font-bold' }
+            { text: '"$oid"', color: 'text-emerald-400 font-bold' },
+            { text: '"$numberLong"', color: 'text-sky-400 font-bold' },
+            { text: '"AVAILABLE"', color: 'text-green-400 font-bold' },
+            { text: '"type_details"', color: 'text-rose-400' },
+            { text: '"$date"', color: 'text-amber-400 font-bold' }
           ]
         }
       ]
@@ -189,7 +209,7 @@ LIMIT 10;`,
   return (
     <section 
       id="dictionary" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
     >
       <div className="max-w-7xl mx-auto">
         
@@ -324,20 +344,20 @@ LIMIT 10;`,
           </div>
 
           {/* Right: Vertical Icon Buttons (desktop only) */}
-          <div className="hidden lg:flex flex-col gap-3 items-center justify-center flex-shrink-0 sticky top-1/2 -translate-y-1/2 self-start">
+          <div className="hidden lg:flex flex-col gap-3 items-center flex-shrink-0 pt-5">
             {(Object.keys(dictionaryItems) as DBEngine[]).map((engine) => (
               <button
                 key={engine}
                 id={`dict-tab-btn-${engine.toLowerCase().replace(' ', '-')}`}
                 onClick={() => handleTabChange(engine)}
-                className="group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border-2 cursor-pointer select-none"
+                className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 border-2 cursor-pointer select-none"
                 style={{
                   backgroundColor: activeTab === engine ? '#7c3aed' : '#ffffff',
                   borderColor: activeTab === engine ? '#a78bfa' : '#e5e7eb',
                   boxShadow: activeTab === engine ? '0 0 20px rgba(139,47,201,0.4)' : 'none',
                 }}
               >
-                <span className="scale-[0.8]"><EngineIcon engine={engine} /></span>
+                <span className="scale-100"><EngineIcon engine={engine} /></span>
                 <span className="absolute right-full mr-3 px-2.5 py-1 rounded-lg bg-gray-900 text-white text-[10px] font-mono font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg border border-gray-700">
                   {engine}
                 </span>
@@ -351,7 +371,7 @@ LIMIT 10;`,
               <button
                 key={engine}
                 onClick={() => handleTabChange(engine)}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold border cursor-pointer transition-all ${
+                className={`px-4 py-2 rounded-lg text-xs font-mono font-bold border cursor-pointer transition-all ${
                   activeTab === engine
                     ? 'bg-arcane-purple text-white border-arcane-lavender'
                     : 'bg-white text-gray-500 border-gray-200'

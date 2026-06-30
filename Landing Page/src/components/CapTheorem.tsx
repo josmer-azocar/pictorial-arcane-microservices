@@ -60,7 +60,7 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
   return (
     <section 
       id="cap" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
     >
       <div className="max-w-7xl mx-auto">
         
@@ -252,73 +252,7 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
           </div>
         </div>
 
-        {/* Part 2: Section of Eventual Consistency Flow */}
-        <div className="bg-gray-50 p-4 sm:p-5 rounded-2xl border border-arcane-purple/10 relative overflow-hidden shadow-sm">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-arcane-purple/[0.03] blur-[100px]" />
-          
-          <div className="border-b border-gray-200 pb-2 mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h3 className="font-display font-bold text-sm sm:text-base text-gray-900 flex items-center gap-2">
-                <RefreshCcw size={14} className="text-arcane-purple animate-spin" />
-                Mecanismo de Consistencia Eventual SBDII
-              </h3>
-              <p className="text-[10px] text-gray-500 font-sans">Sincronismo tolerante a demoras sin comprometer la base principal.</p>
-            </div>
-            <span className="self-start sm:self-center px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 text-[10px] font-mono uppercase tracking-widest border border-emerald-200">
-              Desafío Académico Resuelto
-            </span>
-          </div>
 
-          {/* Eventual Consistency Stepper Diagram (4 blocks in row) */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
-            
-            {/* Step 1: Core transactional outbox representation */}
-            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold shadow-[0_0_8px_rgba(139,47,201,1)]">1</div>
-              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">Outbox Transaccional</h4>
-              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
-                Al registrar la venta se realiza una única transacción local en **PostgreSQL**. Se escribe la factura y una fila de evento en la tabla OUTBOX de forma atómica.
-              </p>
-              <div className="text-[9px] font-mono text-emerald-600 mt-2 bg-emerald-50 p-1 rounded font-bold border border-emerald-200">ACID Transaccional ✓</div>
-            </div>
-
-            {/* Step 2: Message/Event Dispatcher representation */}
-            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold">2</div>
-              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">Dispatcher de Eventos</h4>
-              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
-                Un componente Scheduler o Broker (RabbitMQ) lee secuencialmente la tabla OUTBOX y emite mensajes serializados en formato JSON hacia la cola del sistema.
-              </p>
-              <div className="text-[9px] font-mono text-purple-600 mt-2 bg-purple-50 p-1 rounded font-bold border border-purple-200">Async Event Stream ↯</div>
-            </div>
-
-            {/* Step 3: Consumers Workers representation */}
-            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold">3</div>
-              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">Microservices Consumers</h4>
-              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
-                Los endpoints NoSQL escuchan las colas de forma independiente. Si el servicio de catálogo anda lento, el mensaje espera en cola sin bloquear al comprador.
-              </p>
-              <div className="text-[9px] font-mono text-cyan-600 mt-2 bg-cyan-50 p-1 rounded font-bold border border-cyan-200">Worker Isolation ⚡</div>
-            </div>
-
-            {/* Step 4: Sincronismo Relacional Graph database */}
-            <div className="p-3 rounded-xl bg-white border border-gray-200 flex flex-col relative shadow-sm">
-              <div className="absolute -top-3 -left-2 h-5 w-5 rounded-full bg-arcane-purple border border-arcane-lavender flex items-center justify-center font-mono text-[10px] text-white font-bold">4</div>
-              <h4 className="font-display font-bold text-xs text-gray-900 mt-1 mb-1">State Consolidation</h4>
-              <p className="text-[10px] text-gray-500 leading-relaxed flex-grow">
-                **MongoDB** actualiza el catálogo a 'SOLD', **Cassandra** añade el histórico y **Neo4j** enlaza la compra para refinar algoritmos de IA en milisegundos.
-              </p>
-              <div className="text-[9px] font-mono text-emerald-600 mt-2 bg-emerald-50 p-1 rounded font-bold border border-emerald-200">Consistent State ✓</div>
-            </div>
-
-          </div>
-
-          {/* Connective arrows overlay on big screens */}
-          <div className="hidden md:block absolute top-[52%] left-[23%] w-[4%] h-[2px] bg-gradient-to-r from-arcane-purple to-transparent z-10"></div>
-          <div className="hidden md:block absolute top-[52%] left-[48%] w-[4%] h-[2px] bg-gradient-to-r from-arcane-purple to-transparent z-10"></div>
-          <div className="hidden md:block absolute top-[52%] left-[73%] w-[4%] h-[2px] bg-gradient-to-r from-arcane-purple to-transparent z-10"></div>
-        </div>
 
       </div>
     </section>

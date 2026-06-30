@@ -118,7 +118,7 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
   return (
     <section
       id="architecture"
-      className="pt-24 pb-16 px-6 lg:px-12 border-b border-purple-500/10 bg-[#f5f0fa] relative flex flex-col justify-start font-sans select-none"
+      className="pt-24 pb-16 px-6 lg:px-12 border-b border-purple-500/10 relative flex flex-col justify-start font-sans select-none"
     >
       <div className="max-w-7xl mx-auto flex flex-col w-full z-10 gap-8">
 

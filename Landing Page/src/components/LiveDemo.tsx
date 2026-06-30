@@ -306,7 +306,7 @@ LIMIT 3`
   return (
     <section 
       id="live-demo" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white relative"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 relative"
     >
       <div className="absolute top-0 bottom-0 left-0 right-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,47,201,0.03),transparent_50%)] pointer-events-none" />
       
