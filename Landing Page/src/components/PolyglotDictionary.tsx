@@ -189,7 +189,7 @@ LIMIT 10;`,
   return (
     <section 
       id="dictionary" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
     >
       <div className="max-w-7xl mx-auto">
         

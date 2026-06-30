@@ -6,6 +6,7 @@ interface MemberInfo {
   name: string;
   role: string;
   engine: DBEngine;
+  photo: string;
 }
 
 const engineIcons: Record<string, string> = {
@@ -16,11 +17,11 @@ const engineIcons: Record<string, string> = {
 };
 
 const members: MemberInfo[] = [
-  { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.PostgreSQL },
-  { name: 'Azocar Josmer', role: 'DBA Relacional', engine: DBEngine.PostgreSQL },
-  { name: 'Patricia', role: 'DBA Documental', engine: DBEngine.MongoDB },
-  { name: 'Salazar Inés', role: 'Ingeniero de Datos', engine: DBEngine.Cassandra },
-  { name: 'Gamboa Lismarx', role: 'Especialista en Grafos', engine: DBEngine.Neo4j },
+  { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.PostgreSQL, photo: '/assets/josue.jpg' },
+  { name: 'Azocar Josmer', role: 'DBA Relacional', engine: DBEngine.PostgreSQL, photo: '/assets/josmer.jpg' },
+  { name: 'Patricia', role: 'DBA Documental', engine: DBEngine.MongoDB, photo: '/assets/patricia.jpeg' },
+  { name: 'Salazar Inés', role: 'Ingeniero de Datos', engine: DBEngine.Cassandra, photo: '/assets/ines.jpeg' },
+  { name: 'Gamboa Lismarx', role: 'Especialista en Grafos', engine: DBEngine.Neo4j, photo: '/assets/lismarx.jpeg' },
 ];
 
 export default function Team() {
@@ -66,7 +67,7 @@ export default function Team() {
   return (
     <section
       id="team"
-      className="pt-24 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden min-h-screen flex items-center"
+      className="pt-24 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 relative overflow-hidden min-h-screen flex items-center"
     >
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-arcane-purple/[0.03] rounded-full blur-[120px]" />
 
@@ -123,15 +124,13 @@ export default function Team() {
                     backdropFilter: isCenter ? 'none' : 'blur(2px)',
                   }}
                 >
-                  {/* Engine Icon */}
-                  <div className={`rounded-2xl border flex items-center justify-center select-none transition-all duration-500 ${
+                  {/* Developer Photo */}
+                  <div className={`rounded-2xl border flex items-center justify-center select-none overflow-hidden transition-all duration-500 ${
                     isCenter
-                      ? 'w-16 h-16 bg-purple-50 border-arcane-purple/10 shadow-sm'
-                      : 'w-12 h-12 bg-purple-100/60 border-arcane-purple/5'
+                      ? 'w-16 h-16 border-arcane-purple/10 shadow-sm'
+                      : 'w-12 h-12 border-arcane-purple/5'
                   }`}>
-                    <img src={engineIcons[member.engine]} alt="" className={`object-contain select-none pointer-events-none transition-all duration-500 ${
-                      isCenter ? 'w-10 h-10' : 'w-7 h-7'
-                    }`} />
+                    <img src={member.photo} alt={member.name} className="object-cover w-full h-full select-none pointer-events-none transition-all duration-500" />
                   </div>
 
                   {/* Name */}
@@ -141,20 +140,23 @@ export default function Team() {
                     {member.name}
                   </h3>
 
+                  {/* Engine Icon + Badge */}
+                  <div className="flex items-center gap-2">
+                    <img src={engineIcons[member.engine]} alt="" className="w-4 h-4 object-contain select-none pointer-events-none" />
+                    <span className={`rounded-full font-mono font-bold tracking-wide uppercase transition-all duration-500 ${
+                      isCenter
+                        ? 'px-4 py-1.5 text-[10px] bg-purple-50 text-arcane-purple border border-arcane-purple/20'
+                        : 'px-2 py-1 text-[8px] bg-gray-100 text-gray-500 border border-gray-200'
+                    }`}>
+                      {member.engine}
+                    </span>
+                  </div>
+
                   {/* Role */}
                   <span className={`font-mono tracking-wider uppercase transition-all duration-500 ${
                     isCenter ? 'text-[11px] text-arcane-purple' : 'text-[9px] text-gray-500'
                   }`}>
                     {member.role}
-                  </span>
-
-                  {/* Engine Badge */}
-                  <span className={`rounded-full font-mono font-bold tracking-wide uppercase transition-all duration-500 ${
-                    isCenter
-                      ? 'px-4 py-1.5 text-[10px] bg-purple-50 text-arcane-purple border border-arcane-purple/20'
-                      : 'px-2 py-1 text-[8px] bg-gray-100 text-gray-500 border border-gray-200'
-                  }`}>
-                    {member.engine}
                   </span>
                 </div>
               );

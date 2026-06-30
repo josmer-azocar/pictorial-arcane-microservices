@@ -10,7 +10,7 @@ export default function ClosingSlide() {
 
   return (
     <section
-      className="h-full w-full bg-[#f5f0ff] relative overflow-hidden flex items-center justify-center"
+      className="h-full w-full relative overflow-hidden flex items-center justify-center"
     >
       {/* Ambient glow */}
       <div className="absolute w-[400px] h-[400px] rounded-full blur-[100px] opacity-[0.12] pointer-events-none -top-12 -left-12 bg-purple-500" />
