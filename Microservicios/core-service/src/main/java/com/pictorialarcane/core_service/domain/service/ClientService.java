@@ -26,10 +26,12 @@ public class ClientService {
     }
 
     public void createSecurityCode(String email) {
-        if (clientRepository.getClientByEmail(email) == null) throw new UserDoesNotExistsException(email);
+        ClientResponseDto clientResponseDto = clientRepository.getClientByEmail(email);
+        if (clientResponseDto == null) {
+            throw new UserDoesNotExistsException(email);
+        }
 
         String code = SecurityCodeGenerator.generateNumericPin(6);
-        ClientResponseDto clientResponseDto = clientRepository.getClientByEmail(email);
 
         clientRepository.assignClientCode(clientResponseDto, passwordEncoder.encode(code));
         emailService.sendSimpleEmail(email, "CODIGO DE SEGURIDAD DE PICTORIAL ARCANE", "Tu Codigo de Seguridad es el Siguiente: " + code);

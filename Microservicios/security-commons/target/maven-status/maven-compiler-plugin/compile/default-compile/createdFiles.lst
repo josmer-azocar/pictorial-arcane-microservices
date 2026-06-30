@@ -1,0 +1,4 @@
+com\pictorial\security\JwtTokenValidator.class
+com\pictorial\security\CommonSecurityAutoConfiguration.class
+com\pictorial\security\JwtAuthenticationFilter.class
+com\pictorial\security\SecurityExceptionAdvice.class

@@ -10,10 +10,10 @@ import java.time.LocalDate;
 
 public record UpdateUserDto (
 
-        @Size(max = 35, message = "First name cannot exceed 35 characters.")
+        @Size(max = 25, message = "First name cannot exceed 25 characters.")
         String firstName,
 
-        @Size(max = 35, message = "Last name cannot exceed 35 characters.")
+        @Size(max = 25, message = "Last name cannot exceed 25 characters.")
         String lastName,
 
         LocalDate dateOfBirth,

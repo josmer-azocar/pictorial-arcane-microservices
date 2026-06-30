@@ -8,18 +8,22 @@ import java.time.LocalDate;
 
 public record BillingByMonthRequestDto(
         @NotNull(message = "Sale ID cannot be null")
+        @Positive(message = "Sale ID must be positive")
         Long saleId,
 
         @NotNull(message = "Sale date cannot be null")
         LocalDate saleDate,
 
         @NotNull(message = "Admin DNI cannot be null")
+        @Positive(message = "Admin DNI must be positive")
         Long adminDni,
 
         @NotNull(message = "Artwork ID cannot be null")
+        @Positive(message = "Artwork ID must be positive")
         Long artworkId,
 
         @NotNull(message = "Client DNI cannot be null")
+        @Positive(message = "Client DNI must be positive")
         Long clientDni,
 
         String description,

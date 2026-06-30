@@ -1,11 +1,11 @@
 package com.pictorial.artwork_service.dto.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record PhotographyRequestDto(
-        @NotNull String printType,
-        @NotNull String resolution,
-        @NotNull String color,
-        @NotNull String serialNumber,
-        @NotNull String camera
+        @NotBlank(message = "printType cant be blank") String printType,
+        @NotBlank(message = "resolution cant be blank") String resolution,
+        @NotBlank(message = "color cant be blank") String color,
+        @NotBlank(message = "serialNumber cant be blank") String serialNumber,
+        @NotBlank(message = "camera cant be blank") String camera
 ) {}

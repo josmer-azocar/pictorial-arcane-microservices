@@ -1,22 +1,24 @@
 package com.pictorial.artwork_service.dto.request;
 
 import com.pictorial.artwork_service.document.ArtWorkStatus;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record ArtWorkRequestDto(
-        @NotNull(message = "name cant be null")
+        @NotBlank(message = "name cant be blank")
         String name,
 
-        @NotNull
+        @NotNull(message = "status cant be null")
         ArtWorkStatus status,
 
-        @Positive
+        @NotNull(message = "price cant be null")
+        @Positive(message = "price must be positive")
         Double price,
 
-        @NotNull
+        @NotBlank(message = "artist id cant be blank")
         String idArtist,
 
-        @NotNull
+        @NotBlank(message = "genre id cant be blank")
         String idGenre
 ) {}

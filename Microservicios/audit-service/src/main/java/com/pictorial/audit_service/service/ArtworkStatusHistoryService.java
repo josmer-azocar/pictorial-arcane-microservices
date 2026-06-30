@@ -41,12 +41,20 @@ public class ArtworkStatusHistoryService {
 
     public ArtworkStatusHistoryResponseDto getById(Long artworkId, Instant changedAt, UUID changeId) {
         ArtworkStatusHistoryKey key = new ArtworkStatusHistoryKey(artworkId, changedAt, changeId);
-        ArtworkStatusHistoryTable table = repository.findById(key).orElse(null);
+        ArtworkStatusHistoryTable table = repository.findById(key)
+                .orElseThrow(() -> new com.pictorial.audit_service.exception.ResourceNotFoundException(
+                        "artwork-status-history",
+                        "Artwork status history record not found for id: " + artworkId + ", changedAt: " + changedAt + ", changeId: " + changeId));
         return mapper.toResponseDto(table);
     }
 
     public void delete(Long artworkId, Instant changedAt, UUID changeId) {
         ArtworkStatusHistoryKey key = new ArtworkStatusHistoryKey(artworkId, changedAt, changeId);
+        if (!repository.existsById(key)) {
+            throw new com.pictorial.audit_service.exception.ResourceNotFoundException(
+                    "artwork-status-history",
+                    "Artwork status history record not found for id: " + artworkId + ", changedAt: " + changedAt + ", changeId: " + changeId);
+        }
         repository.deleteById(key);
     }
 }

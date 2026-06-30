@@ -5,6 +5,7 @@ import com.pictorial.audit_service.dto.response.SecurityLogByEventResponseDto;
 import com.pictorial.audit_service.service.SecurityLogByEventService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -22,16 +23,20 @@ public class SecurityLogByEventController {
         this.service = service;
     }
 
+    // Escritura interna desde core-service (lb://, sin token): debe permanecer abierta.
+    @PreAuthorize("permitAll()")
     @PostMapping("/add")
     public ResponseEntity<SecurityLogByEventResponseDto> create(@RequestBody @Valid SecurityLogByEventRequestDto dto) {
         return ResponseEntity.ok(service.create(dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<SecurityLogByEventResponseDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/event/{eventType}/{eventDate}")
     public ResponseEntity<List<SecurityLogByEventResponseDto>> getByEventTypeAndEventDate(
             @PathVariable String eventType,
@@ -39,6 +44,7 @@ public class SecurityLogByEventController {
         return ResponseEntity.ok(service.getByEventTypeAndEventDate(eventType, eventDate));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/find")
     public ResponseEntity<SecurityLogByEventResponseDto> getById(
             @RequestParam String eventType,
@@ -48,6 +54,7 @@ public class SecurityLogByEventController {
         return ResponseEntity.ok(service.getById(eventType, eventDate, eventTime, eventId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete")
     public ResponseEntity<Void> delete(
             @RequestParam String eventType,

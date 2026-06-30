@@ -3,6 +3,7 @@ package com.pictorialarcane.core_service.persistence.impl_repository;
 import com.pictorialarcane.core_service.domain.dto.request.RequestClientAnswerDto;
 import com.pictorialarcane.core_service.domain.dto.response.QuestionResponseDto;
 import com.pictorialarcane.core_service.domain.exception.AnswersAreNotCorrectException;
+import com.pictorialarcane.core_service.domain.exception.UserDoesNotExistsException;
 import com.pictorialarcane.core_service.persistence.crud_repository.CrudClientAnswerRepository;
 import com.pictorialarcane.core_service.persistence.crud_repository.CrudClientRepository;
 import com.pictorialarcane.core_service.persistence.crud_repository.CrudQuestionRepository;
@@ -43,6 +44,9 @@ public class QuestionRepository {
 
     public void updateQuestion(String answer, Long questionId, String email) {
         ClientEntity client = crudClientRepository.findByUser_Email(email);
+        if (client == null) {
+            throw new UserDoesNotExistsException(email);
+        }
         QuestionEntity question = crudQuestionRepository.findByIdQuestion(questionId);
 
     if(crudClientAnswerRepository.findByClient_User_EmailAndQuestion_IdQuestion(email,questionId) == null){
@@ -69,25 +73,24 @@ public class QuestionRepository {
     }
 
     public Boolean verifyAnswers(List<RequestClientAnswerDto> clientAnswerDtos, String email){
-        List<ClientAnswerEntity> clientAnswerEntities = new ArrayList<>();
-        for(RequestClientAnswerDto clientAnswerDto: clientAnswerDtos){
-            if(clientAnswerDto != null) {
-                clientAnswerEntities.add(this.crudClientAnswerRepository.findByClient_User_EmailAndQuestion_IdQuestion(
-                        email, clientAnswerDto.idQuestion())
-                );
-            }
+        List<ClientAnswerEntity> configuredAnswers = this.crudClientAnswerRepository.findALlClientAnswerEntitiesByClient_User_Email(email);
+        if (configuredAnswers == null || configuredAnswers.isEmpty()) {
+            throw new AnswersAreNotCorrectException();
         }
 
-        for(ClientAnswerEntity clientAnswer: clientAnswerEntities){
-           for(RequestClientAnswerDto answerDto: clientAnswerDtos){
-               if(answerDto != null && clientAnswer != null && clientAnswer.getQuestion().getIdQuestion().equals(answerDto.idQuestion())){
+        if (clientAnswerDtos == null || clientAnswerDtos.size() < configuredAnswers.size()) {
+            throw new AnswersAreNotCorrectException();
+        }
 
-                   if(!this.passwordEncoder.matches(answerDto.Answer().toLowerCase(), clientAnswer.getAnswer())){
-                       throw new AnswersAreNotCorrectException();
-                   }
+        for (ClientAnswerEntity clientAnswer : configuredAnswers) {
+            RequestClientAnswerDto matchingDto = clientAnswerDtos.stream()
+                    .filter(dto -> dto != null && dto.idQuestion().equals(clientAnswer.getQuestion().getIdQuestion()))
+                    .findFirst()
+                    .orElseThrow(() -> new AnswersAreNotCorrectException());
 
-               }
-           }
+            if (!this.passwordEncoder.matches(matchingDto.Answer().toLowerCase(), clientAnswer.getAnswer())) {
+                throw new AnswersAreNotCorrectException();
+            }
         }
         return true;
     }

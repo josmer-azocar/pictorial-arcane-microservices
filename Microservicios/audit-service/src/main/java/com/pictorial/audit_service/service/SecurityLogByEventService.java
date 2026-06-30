@@ -42,12 +42,20 @@ public class SecurityLogByEventService {
 
     public SecurityLogByEventResponseDto getById(String eventType, LocalDate eventDate, Instant eventTime, UUID eventId) {
         SecurityLogByEventKey key = new SecurityLogByEventKey(eventType, eventDate, eventTime, eventId);
-        SecurityLogByEventTable table = repository.findById(key).orElse(null);
+        SecurityLogByEventTable table = repository.findById(key)
+                .orElseThrow(() -> new com.pictorial.audit_service.exception.ResourceNotFoundException(
+                        "security-log-by-event",
+                        "Security log record not found for eventType: " + eventType + ", eventDate: " + eventDate + ", eventTime: " + eventTime + ", eventId: " + eventId));
         return mapper.toResponseDto(table);
     }
 
     public void delete(String eventType, LocalDate eventDate, Instant eventTime, UUID eventId) {
         SecurityLogByEventKey key = new SecurityLogByEventKey(eventType, eventDate, eventTime, eventId);
+        if (!repository.existsById(key)) {
+            throw new com.pictorial.audit_service.exception.ResourceNotFoundException(
+                    "security-log-by-event",
+                    "Security log record not found for eventType: " + eventType + ", eventDate: " + eventDate + ", eventTime: " + eventTime + ", eventId: " + eventId);
+        }
         repository.deleteById(key);
     }
 }

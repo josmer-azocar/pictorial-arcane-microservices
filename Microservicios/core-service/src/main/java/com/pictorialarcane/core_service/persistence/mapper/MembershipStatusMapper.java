@@ -12,7 +12,8 @@ public class MembershipStatusMapper {
         return switch (status.toUpperCase()) {
             case "ACTIVE" -> MembershipStatus.ACTIVE;
             case "EXPIRED" -> MembershipStatus.EXPIRED;
-            case "CANCELLED" -> MembershipStatus.CANCELLED;
+            // Se aceptan ambas grafías para soportar datos históricos guardados como "CANCELLED".
+            case "CANCELED", "CANCELLED" -> MembershipStatus.CANCELED;
             default -> null;
         };
     }
@@ -24,7 +25,7 @@ public class MembershipStatusMapper {
         return switch (status) {
             case ACTIVE -> "ACTIVE";
             case EXPIRED -> "EXPIRED";
-            case CANCELLED -> "CANCELLED";
+            case CANCELED -> "CANCELED";
         };
     }
 }

@@ -53,7 +53,7 @@ public class AdministrationService {
 
     public SaleResponseDto updateShippingStatus(Long saleId, ShippingStatus shippingStatus) {
         if (saleRepository.getSaleById(saleId) == null) throw new SaleDoesNotExistsException(saleId);
-        if (shippingStatus != ShippingStatus.CANCELED && shippingStatus != ShippingStatus.SHIPPED) throw new RuntimeException("The new shipping status must be SHIPPED or CANCELED to be updated");
+        if (shippingStatus != ShippingStatus.CANCELED && shippingStatus != ShippingStatus.SHIPPED) throw new IllegalArgumentException("The new shipping status must be SHIPPED or CANCELED to be updated");
 
         return saleRepository.updateShippingStatus(saleId, shippingStatus);
     }
