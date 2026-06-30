@@ -6,6 +6,9 @@ spring:
     gateway:
       server:
         webflux:
+          default-filters:
+            # Evita cabeceras CORS duplicadas cuando el servicio downstream (core-service) también las añade.
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
           routes:
             - id: artwork-service
               uri: lb://artwork-service

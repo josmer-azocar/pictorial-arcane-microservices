@@ -11,6 +11,7 @@ import com.pictorial.recommendation_service.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,8 @@ public class RecommendationController {
     private final RecommendationService recommendationService;
 
 
+    // Recomendaciones personales: requiere usuario autenticado.
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/{compradorId}/recommendations")
     public ResponseEntity<List<ArtworkRecommendationResponseDto>> getRecommendationsByPurchases(
             @PathVariable String compradorId) {
@@ -36,6 +39,8 @@ public class RecommendationController {
     }
 
 
+    // Público: "obras similares" a una obra, parte de la navegación abierta del catálogo.
+    @PreAuthorize("permitAll()")
     @GetMapping("/artwork/{artworkId}/recommendations")
     public ResponseEntity<List<ArtworkRecommendationResponseDto>> getRecommendationsByArtworkGenre(
             @PathVariable Long artworkId) {
@@ -43,6 +48,7 @@ public class RecommendationController {
     }
 
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/{compradorId}/purchases/history")
     public ResponseEntity<List<PurchaseHistoryResponseDto>> getPurchaseHistory(
             @PathVariable String compradorId) {
@@ -50,18 +56,21 @@ public class RecommendationController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/top-artworks")
     public ResponseEntity<List<TopArtworkResponseDto>> getTopArtworks() {
         return ResponseEntity.ok(recommendationService.getTopArtworks());
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/top-artists")
     public ResponseEntity<List<TopArtistResponseDto>> getTopArtists() {
         return ResponseEntity.ok(recommendationService.getTopArtists());
     }
 
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/{compradorId}/recommendations/by-views")
     public ResponseEntity<List<ArtworkRecommendationResponseDto>> getRecommendationsByViews(
             @PathVariable String compradorId) {
@@ -69,6 +78,7 @@ public class RecommendationController {
     }
 
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/{compradorId}/recommendations/last-viewed")
     public ResponseEntity<List<ArtworkRecommendationResponseDto>> getRecommendationsByLastViewed(
             @PathVariable String compradorId) {
@@ -76,6 +86,8 @@ public class RecommendationController {
     }
 
 
+    // Sincronización interna desde core-service (lb://, sin token): debe permanecer abierta.
+    @PreAuthorize("permitAll()")
     @PostMapping("/sync/purchase")
     @ResponseStatus(HttpStatus.CREATED)
     public void syncPurchase(@RequestBody PurchaseSyncRequestDto request) {
@@ -83,6 +95,7 @@ public class RecommendationController {
     }
 
 
+    @PreAuthorize("permitAll()")
     @PostMapping("/sync/view")
     @ResponseStatus(HttpStatus.CREATED)
     public void syncView(@RequestBody ViewSyncRequestDto request) {
@@ -90,6 +103,7 @@ public class RecommendationController {
     }
 
 
+    @PreAuthorize("permitAll()")
     @PostMapping("/sync/client")
     @ResponseStatus(HttpStatus.CREATED)
     public void syncClient(@RequestBody ClientSyncRequestDto request) {
