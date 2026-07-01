@@ -1,7 +1,7 @@
 import './Reports.css'
 import { useState } from 'react';
 import { fetchPaidArtwork } from '../../services/fetchSoldArtwork';
-import { getBillingByPeriod, getBillingByMonth, getAllBilling, findBilling } from '../../services/auditServices';
+import { getBillingByPeriod, getBillingByMonth, getAllBilling } from '../../services/auditServices';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
 import TicketInvoice from './TicketInvoice';
@@ -69,10 +69,7 @@ function Reports() {
     const [soldPage, setSoldPage] = useState(0);
     const [isPrinting, setIsPrinting] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
-    const [showSearch, setShowSearch] = useState(false);
-    const [searchSaleId, setSearchSaleId] = useState('');
-    const [searchSaleDate, setSearchSaleDate] = useState('');
-    const [searchYearMonth, setSearchYearMonth] = useState('');
+
 
     const handlePrint = () => {
     setIsPrinting(true);
@@ -151,23 +148,7 @@ function Reports() {
         }
     };
 
-    const handleFindBilling = async (e) => {
-        e.preventDefault();
-        if (!searchSaleId || !searchSaleDate || !searchYearMonth) return;
-        setLoading(true);
-        try {
-            const record = await findBilling(searchYearMonth, searchSaleDate, Number(searchSaleId));
-            const data = transformRecords([record]);
-            data.filterLabel = `Factura #${record.saleId}`;
-            setBillingData(data);
-        } catch (error) {
-            console.error("Error al buscar factura:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const renderReportContent = () => {
+const renderReportContent = () => {
         if (loading) return <Loading />;
         if (!activeReport) return <p className="select-prompt">Selecciona un tipo de reporte para comenzar.</p>;
 
@@ -407,84 +388,6 @@ function Reports() {
                     <button className="generate-btn" onClick={handleViewAll} disabled={loading} style={{ background: '#6b21a8' }}>
                         Ver todo
                     </button>
-                    <button
-                        onClick={() => setShowSearch(!showSearch)}
-                        style={{
-                            background: 'transparent',
-                            color: '#7c3aed',
-                            border: '1px solid #7c3aed',
-                            borderRadius: '6px',
-                            padding: '10px 16px',
-                            fontSize: '0.9rem',
-                            fontWeight: 600,
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {showSearch ? 'Cerrar búsqueda' : 'Buscar factura'}
-                    </button>
-                </div>
-            )}
-
-            {activeReport === 'billing' && showSearch && (
-                <div className="date-picker-container" style={{ marginTop: '-16px' }}>
-                    <form onSubmit={handleFindBilling} style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
-                        <input
-                            type="text"
-                            placeholder="ID Factura"
-                            value={searchSaleId}
-                            onChange={(e) => setSearchSaleId(e.target.value)}
-                            style={{
-                                background: '#f5f0ff',
-                                color: '#000',
-                                border: '1px solid #d4b3ff',
-                                borderRadius: '6px',
-                                padding: '10px 14px',
-                                fontFamily: 'inherit',
-                                fontSize: '0.9rem',
-                                outline: 'none',
-                                width: '120px'
-                            }}
-                        />
-                        <input
-                            type="date"
-                            placeholder="Fecha"
-                            value={searchSaleDate}
-                            onChange={(e) => setSearchSaleDate(e.target.value)}
-                            style={{
-                                background: '#f5f0ff',
-                                color: '#000',
-                                border: '1px solid #d4b3ff',
-                                borderRadius: '6px',
-                                padding: '10px 14px',
-                                fontFamily: 'inherit',
-                                fontSize: '0.9rem',
-                                outline: 'none'
-                            }}
-                        />
-                        <select
-                            value={searchYearMonth}
-                            onChange={(e) => setSearchYearMonth(e.target.value)}
-                            style={{
-                                background: '#f5f0ff',
-                                color: '#000',
-                                border: '1px solid #d4b3ff',
-                                borderRadius: '6px',
-                                padding: '10px 14px',
-                                fontFamily: 'inherit',
-                                fontSize: '0.9rem',
-                                cursor: 'pointer',
-                                outline: 'none'
-                            }}
-                        >
-                            <option value="">Seleccionar mes</option>
-                            {MONTH_OPTIONS.map(m => (
-                                <option key={m} value={m}>{m}</option>
-                            ))}
-                        </select>
-                        <button type="submit" className="generate-btn" disabled={loading || !searchSaleId || !searchSaleDate || !searchYearMonth}>
-                            Buscar
-                        </button>
-                    </form>
                 </div>
             )}
 

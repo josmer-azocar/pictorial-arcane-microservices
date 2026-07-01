@@ -28,10 +28,3 @@ export async function getAllBilling() {
     return res.data;
 }
 
-export async function findBilling(yearMonth, saleDate, saleId) {
-    const res = await axios.get(`${url}/billing-by-month/find`, {
-        params: { yearMonth, saleDate, saleId },
-        headers: auth()
-    });
-    return res.data;
-}
