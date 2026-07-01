@@ -1,7 +1,7 @@
 import './Reports.css'
 import { useState } from 'react';
-import { getSoldArtworks } from '../../services/salesServices';
-import { fetchSoldArtwork, fetchPaidArtwork } from '../../services/fetchSoldArtwork';
+import { fetchPaidArtwork } from '../../services/fetchSoldArtwork';
+import { getBillingByPeriod, getBillingByMonth, getAllBilling, findBilling } from '../../services/auditServices';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
 import TicketInvoice from './TicketInvoice';
@@ -25,37 +25,63 @@ ChartJS.register(
   Legend
 );
 
-/*
-- Consultas:
-    - Listado de obras vendidas en un periodo dado por el usuario
-    - Resumen de facturación dado un periodo (código de factura, fecha, precio de la
-obra, ganancia del museo (en porcentaje y en dólares) , total recaudado)
-    - Resumen de membresías dado un período
-*/
+function generateMonths() {
+    const months = [];
+    for (let y = 2020; y <= 2026; y++) {
+        for (let m = 1; m <= 12; m++) {
+            months.push(`${y}-${String(m).padStart(2, '0')}`);
+        }
+    }
+    return months;
+}
+
+const MONTH_OPTIONS = generateMonths();
+
+function transformRecords(records) {
+    const sales = records.map(r => ({
+        invoiceCode: r.saleId.toString(),
+        date: r.saleDate,
+        artworkId: r.artworkId,
+        artworkName: r.description || 'N/A',
+        artworkPrice: r.salePrice,
+        museumProfitAmount: r.profitAmount,
+        museumProfitPercentage: r.profitPercentage,
+        totalPaid: r.totalPaid,
+        saleStatus: r.saleStatus,
+        yearMonth: r.yearMonth
+    }));
+    return {
+        totalCollected: sales.reduce((sum, s) => sum + (s.totalPaid || 0), 0),
+        totalMuseumProfit: sales.reduce((sum, s) => sum + (s.museumProfitAmount || 0), 0),
+        sales,
+        filterLabel: null
+    };
+}
 
 function Reports() {
     const [activeReport, setActiveReport] = useState(null);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [data, setData] = useState([]);          // podrías eliminar esto si no lo usas
+    const [selectedMonth, setSelectedMonth] = useState('');
     const [billingData, setBillingData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [soldResponse, setSoldResponse] = useState(null);
     const [soldPage, setSoldPage] = useState(0);
     const [isPrinting, setIsPrinting] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
+    const [showSearch, setShowSearch] = useState(false);
+    const [searchSaleId, setSearchSaleId] = useState('');
+    const [searchSaleDate, setSearchSaleDate] = useState('');
+    const [searchYearMonth, setSearchYearMonth] = useState('');
 
     const handlePrint = () => {
     setIsPrinting(true);
-    // Pequeño retraso para que React aplique la clase antes del diálogo de impresión
     setTimeout(() => {
         window.print();
-        // Restablecer después de imprimir (evento afterprint)
         window.onafterprint = () => {
         setIsPrinting(false);
         window.onafterprint = null;
         };
-        // por si afterprint no es compatible
         setTimeout(() => setIsPrinting(false), 1000);
     }, 100);
     };
@@ -76,46 +102,69 @@ function Reports() {
         }
     };
 
-    const handleGenerate = (e) => {
+    const handleGenerate = async (e) => {
         if (e) e.preventDefault();
-        
-        // MOCK DATA PARA DESARROLLO — comentar en producción
-        if (import.meta.env.DEV) {
-            console.log("Usando mock data (modo desarrollo)");
-            setBillingData({
-                totalCollected: 45200,
-                totalMuseumProfit: 11300,
-                sales: [
-                    { invoiceCode: "FAC-001", date: "2025-01-15", artworkId: 1, artWork: { name: "Noche Estrellada" }, artworkPrice: 15000, museumProfitAmount: 3750, museumProfitPercentage: 25, totalPaid: 15000 },
-                    { invoiceCode: "FAC-002", date: "2025-02-20", artworkId: 2, artWork: { name: "El Grito" }, artworkPrice: 12200, museumProfitAmount: 3050, museumProfitPercentage: 25, totalPaid: 12200 },
-                    { invoiceCode: "FAC-003", date: "2025-03-10", artworkId: 3, artWork: { name: "La Persistencia de la Memoria" }, artworkPrice: 18000, museumProfitAmount: 4500, museumProfitPercentage: 25, totalPaid: 18000 },
-                ]
-            });
-            setSoldResponse({
-                content: [
-                    { idArtWork: 1, name: "Noche Estrellada", status: "VENDIDO" },
-                    { idArtWork: 2, name: "El Grito", status: "VENDIDO" },
-                    { idArtWork: 3, name: "La Persistencia de la Memoria", status: "VENDIDO" },
-                ],
-                totalPages: 1,
-                number: 0
-            });
-            return;
+        setLoading(true);
+        try {
+            if (activeReport === 'billing') {
+                let records;
+                if (selectedMonth) {
+                    records = await getBillingByMonth(selectedMonth);
+                } else {
+                    const effectiveStart = startDate || '1900-01-01';
+                    const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
+                    records = await getBillingByPeriod(effectiveStart, effectiveEnd);
+                }
+                const data = transformRecords(records);
+                data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : `Periodo: ${startDate || '...'} — ${endDate || '...'}`;
+                setBillingData(data);
+            } else if (activeReport === 'sold') {
+                fetchSoldPage(0);
+            }
+        } catch (error) {
+            console.error("Error al obtener el reporte:", error);
+        } finally {
+            setLoading(false);
         }
-        
-        // CÓDIGO REAL — descomentar en producción
-        // fetchSoldPage(0);
+    };
 
-        // const effectiveStart = startDate || '1900-01-01';
-        // const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
+    const handleViewAll = async () => {
+        setLoading(true);
+        try {
+            const records = await getAllBilling();
+            const data = transformRecords(records);
+            data.filterLabel = 'Todas las facturas';
+            setBillingData(data);
+        } catch (error) {
+            console.error("Error al obtener todas las facturas:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        // try {
-        //     const billing = await fetchSoldArtwork(effectiveStart, effectiveEnd);
-        //     console.log("Datos de ventas:", billing);
-        //     setBillingData(billing);
-        // } catch (error) {
-        //     console.error("Error al obtener el reporte:", error);
-        // }
+    const handleMonthSelect = (e) => {
+        const month = e.target.value;
+        setSelectedMonth(month);
+        if (month) {
+            setStartDate('');
+            setEndDate('');
+        }
+    };
+
+    const handleFindBilling = async (e) => {
+        e.preventDefault();
+        if (!searchSaleId || !searchSaleDate || !searchYearMonth) return;
+        setLoading(true);
+        try {
+            const record = await findBilling(searchYearMonth, searchSaleDate, Number(searchSaleId));
+            const data = transformRecords([record]);
+            data.filterLabel = `Factura #${record.saleId}`;
+            setBillingData(data);
+        } catch (error) {
+            console.error("Error al buscar factura:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const renderReportContent = () => {
@@ -124,8 +173,6 @@ function Reports() {
 
         switch (activeReport) {
             case 'sold':
-                
-
                 if(!soldResponse){
                     return <p>Seleccione un periodo</p>;           
                 }
@@ -172,17 +219,17 @@ function Reports() {
                                 </button>
                             </div>
                         )}
-                        <button onClick={handlePrint} className="print-btn">🖨️ Imprimir</button>
+                        <button onClick={handlePrint} className="print-btn">Imprimir</button>
                     </div>
                     </div>
                 );
 
             case 'billing':
                 if(!billingData){
-                    return <p>Seleccione un periodo</p>;           
+                    return <p>Seleccione un filtro y presione Generar</p>;           
                 }
                 if (billingData.sales.length === 0) {
-                    return <p>No hay datos para el periodo seleccionado.</p>;
+                    return <p>No hay datos para el filtro seleccionado.</p>;
                 }
                 const chartData = {
                     labels: ['Total Recaudado', 'Ganancia Neta Museo'],
@@ -213,16 +260,41 @@ function Reports() {
                             <div className="print-header-left">
                                 <h1 className="print-report-title">REPORTE</h1>
                                 <p className="report-period">
-                                    Período: {startDate || 'Sin fecha inicio'} — {endDate || 'Sin fecha fin'}
+                                    {billingData.filterLabel || `Período: ${startDate || '...'} — ${endDate || '...'}`}
                                 </p>
                             </div>
                             <div className="print-header-right">
                                 <img src="/logo.svg" alt="Pictorial Arcane" className="print-logo" />
                             </div>
                         </div>
-                        <h3>Resumen de Facturación</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                            <h3 style={{ margin: 0 }}>Resumen de Facturación</h3>
+                            <span style={{
+                                fontSize: '10px',
+                                fontFamily: 'monospace',
+                                background: '#e0f2fe',
+                                color: '#0369a1',
+                                padding: '2px 8px',
+                                borderRadius: '999px',
+                                border: '1px solid #7dd3fc',
+                                fontWeight: 600,
+                                letterSpacing: '0.5px'
+                            }}>
+                                Cassandra (audit-service)
+                            </span>
+                            {billingData.filterLabel && (
+                                <span style={{
+                                    fontSize: '11px',
+                                    fontFamily: 'monospace',
+                                    color: '#6b21a8',
+                                    fontWeight: 500
+                                }}>
+                                    {billingData.filterLabel}
+                                </span>
+                            )}
+                        </div>
                         <p className="report-period-screen">
-                            Período: {startDate || 'Sin fecha inicio'} — {endDate || 'Sin fecha fin'}
+                            {billingData.filterLabel || `Período: ${startDate || '...'} — ${endDate || '...'}`}
                         </p>
                         <table className="report-table">
                             <thead>
@@ -242,8 +314,8 @@ function Reports() {
                                     <tr key={sale.invoiceCode} className="clickable-row" onClick={() => setSelectedTicket(sale)}>
                                         <td>{sale.invoiceCode}</td>
                                         <td>{sale.date}</td>
-                                        <td>{sale.artworkId || sale.idArtWork || '-'}</td>
-                                        <td>{sale.artworkName || sale.artWork?.name || 'N/A'}</td>
+                                        <td>{sale.artworkId || '-'}</td>
+                                        <td>{sale.artworkName}</td>
                                         <td>${Number(sale.artworkPrice).toFixed(2)}</td>
                                         <td>${Number(sale.museumProfitAmount).toFixed(2)}</td>
                                         <td>{Number(sale.museumProfitPercentage).toFixed(2)}%</td>
@@ -266,7 +338,7 @@ function Reports() {
                             </div>
                         </div>
                     </div>
-                        <button onClick={handlePrint} className="print-btn">🖨️ Imprimir</button>
+                        <button onClick={handlePrint} className="print-btn">Imprimir</button>
                     </div>
                 );
 
@@ -309,7 +381,114 @@ function Reports() {
                 </ul>
             </div>
 
-            {activeReport && (activeReport === 'sold' || activeReport === 'billing') && (
+            {activeReport === 'billing' && (
+                <div className="date-picker-container">
+                    <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setSelectedMonth(''); }} />
+                    <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setSelectedMonth(''); }} />
+                    <select value={selectedMonth} onChange={handleMonthSelect} style={{
+                        background: '#f5f0ff',
+                        color: '#000',
+                        border: '1px solid #d4b3ff',
+                        borderRadius: '6px',
+                        padding: '10px 14px',
+                        fontFamily: 'inherit',
+                        fontSize: '0.9rem',
+                        cursor: 'pointer',
+                        outline: 'none'
+                    }}>
+                        <option value="">Todos los meses</option>
+                        {MONTH_OPTIONS.map(m => (
+                            <option key={m} value={m}>{m}</option>
+                        ))}
+                    </select>
+                    <button className="generate-btn" onClick={handleGenerate} disabled={loading}>
+                        Generar
+                    </button>
+                    <button className="generate-btn" onClick={handleViewAll} disabled={loading} style={{ background: '#6b21a8' }}>
+                        Ver todo
+                    </button>
+                    <button
+                        onClick={() => setShowSearch(!showSearch)}
+                        style={{
+                            background: 'transparent',
+                            color: '#7c3aed',
+                            border: '1px solid #7c3aed',
+                            borderRadius: '6px',
+                            padding: '10px 16px',
+                            fontSize: '0.9rem',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {showSearch ? 'Cerrar búsqueda' : 'Buscar factura'}
+                    </button>
+                </div>
+            )}
+
+            {activeReport === 'billing' && showSearch && (
+                <div className="date-picker-container" style={{ marginTop: '-16px' }}>
+                    <form onSubmit={handleFindBilling} style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+                        <input
+                            type="text"
+                            placeholder="ID Factura"
+                            value={searchSaleId}
+                            onChange={(e) => setSearchSaleId(e.target.value)}
+                            style={{
+                                background: '#f5f0ff',
+                                color: '#000',
+                                border: '1px solid #d4b3ff',
+                                borderRadius: '6px',
+                                padding: '10px 14px',
+                                fontFamily: 'inherit',
+                                fontSize: '0.9rem',
+                                outline: 'none',
+                                width: '120px'
+                            }}
+                        />
+                        <input
+                            type="date"
+                            placeholder="Fecha"
+                            value={searchSaleDate}
+                            onChange={(e) => setSearchSaleDate(e.target.value)}
+                            style={{
+                                background: '#f5f0ff',
+                                color: '#000',
+                                border: '1px solid #d4b3ff',
+                                borderRadius: '6px',
+                                padding: '10px 14px',
+                                fontFamily: 'inherit',
+                                fontSize: '0.9rem',
+                                outline: 'none'
+                            }}
+                        />
+                        <select
+                            value={searchYearMonth}
+                            onChange={(e) => setSearchYearMonth(e.target.value)}
+                            style={{
+                                background: '#f5f0ff',
+                                color: '#000',
+                                border: '1px solid #d4b3ff',
+                                borderRadius: '6px',
+                                padding: '10px 14px',
+                                fontFamily: 'inherit',
+                                fontSize: '0.9rem',
+                                cursor: 'pointer',
+                                outline: 'none'
+                            }}
+                        >
+                            <option value="">Seleccionar mes</option>
+                            {MONTH_OPTIONS.map(m => (
+                                <option key={m} value={m}>{m}</option>
+                            ))}
+                        </select>
+                        <button type="submit" className="generate-btn" disabled={loading || !searchSaleId || !searchSaleDate || !searchYearMonth}>
+                            Buscar
+                        </button>
+                    </form>
+                </div>
+            )}
+
+            {activeReport === 'sold' && (
                 <div className="date-picker-container">
                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
