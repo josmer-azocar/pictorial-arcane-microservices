@@ -1,7 +1,7 @@
 import './Reports.css'
 import { useState } from 'react';
 import { fetchPaidArtwork } from '../../services/fetchSoldArtwork';
-import { getBillingByPeriod, getBillingByMonth, getAllBilling } from '../../services/auditServices';
+import { getBillingByPeriod, getBillingByMonth, getAllBilling, getAllSecurityLogs, getSecurityLogsByEvent, findSecurityLog } from '../../services/auditServices';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
 import TicketInvoice from './TicketInvoice';
@@ -69,6 +69,15 @@ function Reports() {
     const [soldPage, setSoldPage] = useState(0);
     const [isPrinting, setIsPrinting] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
+    const [securityLogs, setSecurityLogs] = useState(null);
+    const [securityEventTypeFilter, setSecurityEventTypeFilter] = useState('');
+    const [securityDateFilter, setSecurityDateFilter] = useState('');
+    const [findSearchType, setFindSearchType] = useState('LOGIN_SUCCESS');
+    const [findSearchDate, setFindSearchDate] = useState('');
+    const [findSearchTime, setFindSearchTime] = useState('');
+    const [findSearchId, setFindSearchId] = useState('');
+    const [foundLog, setFoundLog] = useState(null);
+    const [showFindForm, setShowFindForm] = useState(false);
 
 
     const handlePrint = () => {
@@ -117,6 +126,15 @@ function Reports() {
                 setBillingData(data);
             } else if (activeReport === 'sold') {
                 fetchSoldPage(0);
+            } else if (activeReport === 'security') {
+                setFoundLog(null);
+                if (securityEventTypeFilter && securityDateFilter) {
+                    const logs = await getSecurityLogsByEvent(securityEventTypeFilter, securityDateFilter);
+                    setSecurityLogs(logs);
+                } else {
+                    const logs = await getAllSecurityLogs();
+                    setSecurityLogs(logs);
+                }
             }
         } catch (error) {
             console.error("Error al obtener el reporte:", error);
@@ -145,6 +163,21 @@ function Reports() {
         if (month) {
             setStartDate('');
             setEndDate('');
+        }
+    };
+
+    const handleFindSecurityLog = async (e) => {
+        e.preventDefault();
+        if (!findSearchDate || !findSearchTime || !findSearchId) return;
+        setLoading(true);
+        try {
+            const record = await findSecurityLog(findSearchType, findSearchDate, findSearchTime, findSearchId);
+            setFoundLog(record);
+        } catch (error) {
+            console.error("Error al buscar evento:", error);
+            setFoundLog(null);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -323,6 +356,131 @@ const renderReportContent = () => {
                     </div>
                 );
 
+            case 'security':
+                if (foundLog) {
+                    return (
+                        <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
+                        <div className="report-view">
+                            <h3>Evento de Seguridad</h3>
+                            <span style={{
+                                fontSize: '10px', fontFamily: 'monospace', background: '#fef3c7',
+                                color: '#92400e', padding: '2px 8px', borderRadius: '999px',
+                                border: '1px solid #fcd34d', fontWeight: 600, letterSpacing: '0.5px', marginLeft: '12px'
+                            }}>Cassandra (audit-service)</span>
+                            <table className="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Admin DNI</th>
+                                        <th>Cliente DNI</th>
+                                        <th>Detalle</th>
+                                        <th>IP</th>
+                                        <th>Sesión</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span style={{
+                                            background: foundLog.eventType === 'LOGIN_SUCCESS' ? '#d1fae5' : '#fee2e2',
+                                            color: foundLog.eventType === 'LOGIN_SUCCESS' ? '#065f46' : '#991b1b',
+                                            padding: '2px 8px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600
+                                        }}>{foundLog.eventType}</span></td>
+                                        <td>{foundLog.eventDate}</td>
+                                        <td>{foundLog.eventTime ? new Date(foundLog.eventTime).toLocaleTimeString() : '-'}</td>
+                                        <td>{foundLog.adminDni || '-'}</td>
+                                        <td>{foundLog.clientDni || '-'}</td>
+                                        <td>{foundLog.details || '-'}</td>
+                                        <td>{foundLog.ipAddress || '-'}</td>
+                                        <td style={{ fontSize: '0.75rem' }}>{foundLog.sessionId || '-'}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button onClick={() => setFoundLog(null)} className="generate-btn" style={{ marginTop: '12px', background: '#6b21a8' }}>
+                                Volver a bitácora
+                            </button>
+                        </div>
+                            <button onClick={handlePrint} className="print-btn">Imprimir</button>
+                        </div>
+                    );
+                }
+                if (!securityLogs) {
+                    return <p>Presione Generar para cargar la bitácora</p>;
+                }
+                if (securityLogs.length === 0) {
+                    return <p>No hay eventos de seguridad registrados.</p>;
+                }
+                const filteredLogs = securityLogs.filter(log => {
+                    const matchType = !securityEventTypeFilter || log.eventType === securityEventTypeFilter;
+                    const matchDate = !securityDateFilter || log.eventDate === securityDateFilter;
+                    return matchType && matchDate;
+                });
+                return (
+                    <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
+                    <div className="report-view">
+                        <h3>Bitácora de Eventos de Seguridad</h3>
+                        <span style={{
+                            fontSize: '10px',
+                            fontFamily: 'monospace',
+                            background: '#fef3c7',
+                            color: '#92400e',
+                            padding: '2px 8px',
+                            borderRadius: '999px',
+                            border: '1px solid #fcd34d',
+                            fontWeight: 600,
+                            letterSpacing: '0.5px',
+                            marginLeft: '12px'
+                        }}>
+                            Cassandra (audit-service)
+                        </span>
+                        {filteredLogs.length === 0 ? (
+                            <p>No hay eventos para el filtro seleccionado.</p>
+                        ) : (
+                        <table className="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Admin DNI</th>
+                                    <th>Cliente DNI</th>
+                                    <th>Detalle</th>
+                                    <th>IP</th>
+                                    <th>Sesión</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredLogs.map((log, i) => (
+                                    <tr key={i}>
+                                        <td><span style={{
+                                            background: log.eventType === 'LOGIN_SUCCESS' ? '#d1fae5' : '#fee2e2',
+                                            color: log.eventType === 'LOGIN_SUCCESS' ? '#065f46' : '#991b1b',
+                                            padding: '2px 8px',
+                                            borderRadius: '999px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 600
+                                        }}>{log.eventType}</span></td>
+                                        <td>{log.eventDate}</td>
+                                        <td>{log.eventTime ? new Date(log.eventTime).toLocaleTimeString() : '-'}</td>
+                                        <td>{log.adminDni || '-'}</td>
+                                        <td>{log.clientDni || '-'}</td>
+                                        <td>{log.details || '-'}</td>
+                                        <td>{log.ipAddress || '-'}</td>
+                                        <td style={{ fontSize: '0.75rem' }}>{log.sessionId || '-'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        )}
+                        <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '12px' }}>
+                            Mostrando {filteredLogs.length} de {securityLogs.length} eventos
+                        </p>
+                    </div>
+                        <button onClick={handlePrint} className="print-btn">Imprimir</button>
+                    </div>
+                );
+
             case 'memberships':
                 return <ReportsSearch />;
 
@@ -359,6 +517,13 @@ const renderReportContent = () => {
                             Resumen de Membresías
                         </button>
                     </li>
+                    <li>
+                        <button
+                            className={activeReport === 'security' ? 'active' : ''}
+                            onClick={() => { setActiveReport('security'); setSecurityLogs(null); setSecurityEventTypeFilter(''); setSecurityDateFilter(''); setFoundLog(null); setShowFindForm(false); }}>
+                            Bitácora de Seguridad
+                        </button>
+                    </li>
                 </ul>
             </div>
 
@@ -388,6 +553,101 @@ const renderReportContent = () => {
                     <button className="generate-btn" onClick={handleViewAll} disabled={loading} style={{ background: '#6b21a8' }}>
                         Ver todo
                     </button>
+                </div>
+            )}
+
+            {activeReport === 'security' && (
+                <div className="date-picker-container">
+                    <select value={securityEventTypeFilter} onChange={(e) => setSecurityEventTypeFilter(e.target.value)} style={{
+                        background: '#f5f0ff',
+                        color: '#000',
+                        border: '1px solid #d4b3ff',
+                        borderRadius: '6px',
+                        padding: '10px 14px',
+                        fontFamily: 'inherit',
+                        fontSize: '0.9rem',
+                        cursor: 'pointer',
+                        outline: 'none'
+                    }}>
+                        <option value="">Todos los tipos</option>
+                        <option value="LOGIN_SUCCESS">Exitosos</option>
+                        <option value="LOGIN_FAILURE">Fallidos</option>
+                    </select>
+                    <input type="date" value={securityDateFilter} onChange={(e) => setSecurityDateFilter(e.target.value)} />
+                    <button className="generate-btn" onClick={handleGenerate} disabled={loading}>
+                        Generar
+                    </button>
+                    <button
+                        onClick={() => setShowFindForm(!showFindForm)}
+                        style={{
+                            background: 'transparent',
+                            color: '#7c3aed',
+                            border: '1px solid #7c3aed',
+                            borderRadius: '6px',
+                            padding: '10px 16px',
+                            fontSize: '0.9rem',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {showFindForm ? 'Cerrar búsqueda' : 'Buscar evento exacto'}
+                    </button>
+                </div>
+            )}
+
+            {activeReport === 'security' && showFindForm && (
+                <div className="date-picker-container" style={{ marginTop: '-16px' }}>
+                    <form onSubmit={handleFindSecurityLog} style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+                        <select value={findSearchType} onChange={(e) => setFindSearchType(e.target.value)} style={{
+                            background: '#f5f0ff',
+                            color: '#000',
+                            border: '1px solid #d4b3ff',
+                            borderRadius: '6px',
+                            padding: '10px 14px',
+                            fontFamily: 'inherit',
+                            fontSize: '0.9rem',
+                            cursor: 'pointer',
+                            outline: 'none'
+                        }}>
+                            <option value="LOGIN_SUCCESS">Exitosos</option>
+                            <option value="LOGIN_FAILURE">Fallidos</option>
+                        </select>
+                        <input type="date" value={findSearchDate} onChange={(e) => setFindSearchDate(e.target.value)} style={{
+                            background: '#f5f0ff',
+                            color: '#000',
+                            border: '1px solid #d4b3ff',
+                            borderRadius: '6px',
+                            padding: '10px 14px',
+                            fontFamily: 'inherit',
+                            fontSize: '0.9rem',
+                            outline: 'none'
+                        }} />
+                        <input type="text" placeholder="Hora (ISO: 2026-06-30T10:00:00Z)" value={findSearchTime} onChange={(e) => setFindSearchTime(e.target.value)} style={{
+                            background: '#f5f0ff',
+                            color: '#000',
+                            border: '1px solid #d4b3ff',
+                            borderRadius: '6px',
+                            padding: '10px 14px',
+                            fontFamily: 'inherit',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            width: '220px'
+                        }} />
+                        <input type="text" placeholder="ID Evento (UUID)" value={findSearchId} onChange={(e) => setFindSearchId(e.target.value)} style={{
+                            background: '#f5f0ff',
+                            color: '#000',
+                            border: '1px solid #d4b3ff',
+                            borderRadius: '6px',
+                            padding: '10px 14px',
+                            fontFamily: 'inherit',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            width: '200px'
+                        }} />
+                        <button type="submit" className="generate-btn" disabled={loading || !findSearchDate || !findSearchTime || !findSearchId}>
+                            Buscar
+                        </button>
+                    </form>
                 </div>
             )}
 

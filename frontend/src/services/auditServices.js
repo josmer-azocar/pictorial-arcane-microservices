@@ -28,3 +28,25 @@ export async function getAllBilling() {
     return res.data;
 }
 
+export async function getAllSecurityLogs() {
+    const res = await axios.get(`${url}/security-log-by-event/all`, {
+        headers: auth()
+    });
+    return res.data;
+}
+
+export async function getSecurityLogsByEvent(eventType, eventDate) {
+    const res = await axios.get(`${url}/security-log-by-event/event/${eventType}/${eventDate}`, {
+        headers: auth()
+    });
+    return res.data;
+}
+
+export async function findSecurityLog(eventType, eventDate, eventTime, eventId) {
+    const res = await axios.get(`${url}/security-log-by-event/find`, {
+        params: { eventType, eventDate, eventTime, eventId },
+        headers: auth()
+    });
+    return res.data;
+}
+
