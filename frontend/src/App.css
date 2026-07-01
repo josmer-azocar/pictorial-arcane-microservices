@@ -4,7 +4,7 @@ body {
     padding: 0;
 }
 
-main {
+.main-content.with-header {
     padding-top: 100px;
 }
 

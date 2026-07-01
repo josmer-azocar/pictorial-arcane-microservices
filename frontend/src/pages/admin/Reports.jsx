@@ -9,16 +9,20 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   BarElement,
   Title,
   Tooltip,
   Legend
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
   BarElement,
   Title,
   Tooltip,
@@ -64,6 +68,8 @@ function Reports() {
     const [endDate, setEndDate] = useState('');
     const [selectedMonth, setSelectedMonth] = useState('');
     const [billingData, setBillingData] = useState(null);
+    const [showChart, setShowChart] = useState(false);
+    const [chartType, setChartType] = useState('line');
     const [loading, setLoading] = useState(false);
     const [soldResponse, setSoldResponse] = useState(null);
     const [soldPage, setSoldPage] = useState(0);
@@ -78,7 +84,6 @@ function Reports() {
     const [findSearchId, setFindSearchId] = useState('');
     const [foundLog, setFoundLog] = useState(null);
     const [showFindForm, setShowFindForm] = useState(false);
-
 
     const handlePrint = () => {
     setIsPrinting(true);
@@ -100,7 +105,6 @@ function Reports() {
             const paidArtList = await fetchPaidArtwork(effectiveStart, effectiveEnd, page, 10);
             setSoldResponse(paidArtList);
             setSoldPage(paidArtList.number);
-            console.log("Datos de obras pagadas:", paidArtList);
         } catch (error) {
             console.error("Error al obtener el reporte:", error);
         } finally {
@@ -124,6 +128,7 @@ function Reports() {
                 const data = transformRecords(records);
                 data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : `Periodo: ${startDate || '...'} — ${endDate || '...'}`;
                 setBillingData(data);
+                setShowChart(false);
             } else if (activeReport === 'sold') {
                 fetchSoldPage(0);
             } else if (activeReport === 'security') {
@@ -150,6 +155,7 @@ function Reports() {
             const data = transformRecords(records);
             data.filterLabel = 'Todas las facturas';
             setBillingData(data);
+            setShowChart(false);
         } catch (error) {
             console.error("Error al obtener todas las facturas:", error);
         } finally {
@@ -196,24 +202,24 @@ const renderReportContent = () => {
                 const { content, totalPages, number } = soldResponse;
                 return (
                     <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
-                    <div className="report-view">
-                        <h3>Listado de Obras Vendidas</h3>
-                        <table className="report-table">
-                            <thead>
-                                <tr>
-                                    <th>Obra</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {content.map((sale) => (
-                                    <tr key={sale.idArtWork}>
-                                        <td>{sale?.name || "sin definir"}</td>
-                                        <td>{sale.status}</td>
+                        <div className="data-table-container">
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Obra</th>
+                                        <th>Estado</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {content.map((sale) => (
+                                        <tr key={sale.idArtWork}>
+                                            <td className="artwork">{sale?.name || "sin definir"}</td>
+                                            <td><span className={`status-chip ${sale.status === 'VENDIDA' ? 'ok' : 'warning'}`}>{sale.status}</span></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                         {totalPages > 1 && (
                             <div className="pagination-controls">
                                 <button
@@ -223,7 +229,7 @@ const renderReportContent = () => {
                                 >
                                     Anterior
                                 </button>
-                                <span>Página {number + 1} de {totalPages}</span>
+                                <span className="pagination-info">Página {number + 1} de {totalPages}</span>
                                 <button
                                     onClick={() => fetchSoldPage(number + 1)}
                                     disabled={number === totalPages - 1}
@@ -233,8 +239,7 @@ const renderReportContent = () => {
                                 </button>
                             </div>
                         )}
-                        <button onClick={handlePrint} className="print-btn">Imprimir</button>
-                    </div>
+                        <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>
                     </div>
                 );
 
@@ -245,114 +250,176 @@ const renderReportContent = () => {
                 if (billingData.sales.length === 0) {
                     return <p>No hay datos para el filtro seleccionado.</p>;
                 }
+                const dates = billingData.sales.map(s => s.date).filter(Boolean);
+                const minDate = new Date(Math.min(...dates.map(d => new Date(d))));
+                const maxDate = new Date(Math.max(...dates.map(d => new Date(d))));
+                const daysDiff = (maxDate - minDate) / (1000 * 60 * 60 * 24);
+                const groupByMonth = daysDiff >= 60;
+
+                const grouped = {};
+                billingData.sales.forEach(s => {
+                    const key = groupByMonth ? s.date?.slice(0, 7) : (s.date || 'Sin fecha');
+                    grouped[key] = (grouped[key] || 0) + Number(s.totalPaid);
+                });
+                const sortedKeys = Object.keys(grouped).sort();
+                const chartLabels = sortedKeys;
+                const chartValues = sortedKeys.map(k => grouped[k]);
+
                 const chartData = {
-                    labels: ['Total Recaudado', 'Ganancia Neta Museo'],
+                    labels: chartLabels,
                     datasets: [
                         {
-                            label: 'Monto ($)',
-                            data: [billingData.totalCollected, billingData.totalMuseumProfit],
-                            backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)'],
-                            borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
-                            borderWidth: 1,
+                            label: 'Total Recaudado por Fecha',
+                            data: chartValues,
+                            borderColor: '#7c3aed',
+                            backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#7c3aed',
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            fill: true,
+                            tension: 0.3,
                         },
                     ],
                 };
 
-                const options = {
+                const top10 = [...billingData.sales]
+                    .sort((a, b) => Number(b.museumProfitAmount) - Number(a.museumProfitAmount))
+                    .slice(0, 10);
+                const top10Labels = top10.map(s => s.artworkName);
+                const top10Profits = top10.map(s => Number(s.museumProfitAmount));
+
+                const top10ChartData = {
+                    labels: top10Labels,
+                    datasets: [{
+                        label: 'Ganancia del Museo ($)',
+                        data: top10Profits,
+                        backgroundColor: 'rgba(124, 58, 237, 0.7)',
+                        borderColor: '#7c3aed',
+                        borderWidth: 1,
+                    }],
+                };
+
+                const lineOptions = {
                     responsive: true,
                     plugins: {
                         legend: { position: 'top' },
-                        title: { display: true, text: 'Resumen de Facturación' },
+                        title: { display: true, text: 'Tendencia de Ingresos' },
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Fecha' } },
+                        y: { title: { display: true, text: 'Total ($)' }, beginAtZero: true },
+                    },
+                };
+
+                const barOptions = {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Top 10 Obras - Ganancia del Museo' },
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Obra' } },
+                        y: { title: { display: true, text: 'Ganancia ($)' }, beginAtZero: true },
                     },
                 };
 
                 return (
                     <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
-                    
-                    <div className="report-view">
-                        <div className="print-header">
-                            <div className="print-header-left">
-                                <h1 className="print-report-title">REPORTE</h1>
-                                <p className="report-period">
-                                    {billingData.filterLabel || `Período: ${startDate || '...'} — ${endDate || '...'}`}
-                                </p>
+                        <div className="report-view">
+                            <div className="print-header">
+                                <div className="print-header-left">
+                                    <h1 className="print-report-title">REPORTE</h1>
+                                    <p className="report-period">
+                                        {billingData.filterLabel || `Período: ${startDate || '...'} — ${endDate || '...'}`}
+                                    </p>
+                                </div>
+                                <div className="print-header-right">
+                                    <img src="/logo.svg" alt="Pictorial Arcane" className="print-logo" />
+                                </div>
                             </div>
-                            <div className="print-header-right">
-                                <img src="/logo.svg" alt="Pictorial Arcane" className="print-logo" />
+                            <div className="card-header" style={{ marginBottom: 16 }}>
+                                <h3 className="card-title" style={{ margin: 0 }}>Resumen de Facturación</h3>
+                                <div className="card-actions">
+                                    <span className="data-source-badge">Cassandra (audit-service)</span>
+                                    {billingData.filterLabel && (
+                                        <span className="filter-label">{billingData.filterLabel}</span>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                            <h3 style={{ margin: 0 }}>Resumen de Facturación</h3>
-                            <span style={{
-                                fontSize: '10px',
-                                fontFamily: 'monospace',
-                                background: '#e0f2fe',
-                                color: '#0369a1',
-                                padding: '2px 8px',
-                                borderRadius: '999px',
-                                border: '1px solid #7dd3fc',
-                                fontWeight: 600,
-                                letterSpacing: '0.5px'
-                            }}>
-                                Cassandra (audit-service)
-                            </span>
-                            {billingData.filterLabel && (
-                                <span style={{
-                                    fontSize: '11px',
-                                    fontFamily: 'monospace',
-                                    color: '#6b21a8',
-                                    fontWeight: 500
-                                }}>
-                                    {billingData.filterLabel}
-                                </span>
+                            <div className="report-summary-footer">
+                                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                    <select
+                                        value={chartType}
+                                        onChange={(e) => setChartType(e.target.value)}
+                                        style={{
+                                            padding: '6px 12px',
+                                            borderRadius: 6,
+                                            border: '1px solid var(--border)',
+                                            fontSize: 11,
+                                            fontWeight: 600,
+                                            fontFamily: 'var(--font-sans)',
+                                            background: '#fff',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        <option value="line">Tendencia de Ingresos</option>
+                                        <option value="top10">Top 10 Obras</option>
+                                    </select>
+                                    <button className="btn btn-primary" onClick={() => setShowChart(!showChart)} style={{ margin: 0 }}>
+                                        {showChart ? 'Ocultar' : 'Generar'}
+                                    </button>
+                                </div>
+                                <div className="summary-item">
+                                    <span>Total Recaudado:</span>
+                                    <strong>${billingData.totalCollected.toLocaleString()}</strong>
+                                </div>
+                                <div className="summary-item">
+                                    <span>Ganancia Neta Museo:</span>
+                                    <strong>${billingData.totalMuseumProfit.toLocaleString()}</strong>
+                                </div>
+                            </div>
+                            {showChart && (
+                                <div className="chart-wrapper">
+                                    {chartType === 'line' ? (
+                                        <Line data={chartData} options={lineOptions} />
+                                    ) : (
+                                        <Bar data={top10ChartData} options={barOptions} />
+                                    )}
+                                </div>
                             )}
-                        </div>
-                        <p className="report-period-screen">
-                            {billingData.filterLabel || `Período: ${startDate || '...'} — ${endDate || '...'}`}
-                        </p>
-                        <table className="report-table">
-                            <thead>
-                                <tr>
-                                    <th>Código de Factura</th>
-                                    <th>Fecha</th>
-                                    <th>ID Obra</th>
-                                    <th>Obra</th>
-                                    <th>Precio ($)</th>
-                                    <th>Ganancia del Museo ($)</th>
-                                    <th>Ganancia del Museo (%)</th>
-                                    <th>Pago total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {billingData.sales.map((sale) => (
-                                    <tr key={sale.invoiceCode} className="clickable-row" onClick={() => setSelectedTicket(sale)}>
-                                        <td>{sale.invoiceCode}</td>
-                                        <td>{sale.date}</td>
-                                        <td>{sale.artworkId || '-'}</td>
-                                        <td>{sale.artworkName}</td>
-                                        <td>${Number(sale.artworkPrice).toFixed(2)}</td>
-                                        <td>${Number(sale.museumProfitAmount).toFixed(2)}</td>
-                                        <td>{Number(sale.museumProfitPercentage).toFixed(2)}%</td>
-                                        <td>${Number(sale.totalPaid).toFixed(2)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        <div className="report-summary-footer">
-                            <div className="summary-item">
-                                <span>Total Recaudado:</span>
-                                <strong>${billingData.totalCollected.toLocaleString()}</strong>
-                            </div>
-                            <div className="summary-item">
-                                <span>Ganancia Neta Museo:</span>
-                                <strong>${billingData.totalMuseumProfit.toLocaleString()}</strong>
-                            </div>
-                            <div style={{ marginTop: '2rem', width: '100%', maxWidth: '600px' }}>
-                                <Bar data={chartData} options={options} />
+                            {showChart && <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>}
+                            <div className="data-table-container">
+                                <table className="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Código de Factura</th>
+                                            <th>Fecha</th>
+                                            <th>ID Obra</th>
+                                            <th>Obra</th>
+                                            <th>Precio ($)</th>
+                                            <th>Ganancia del Museo ($)</th>
+                                            <th>Ganancia del Museo (%)</th>
+                                            <th>Pago total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {billingData.sales.map((sale) => (
+                                            <tr key={sale.invoiceCode} className="clickable-row" onClick={() => setSelectedTicket(sale)}>
+                                                <td className="mono">{sale.invoiceCode}</td>
+                                                <td>{sale.date}</td>
+                                                <td className="mono">{sale.artworkId || '-'}</td>
+                                                <td className="artwork">{sale.artworkName}</td>
+                                                <td className="price">${Number(sale.artworkPrice).toFixed(2)}</td>
+                                                <td className="price">${Number(sale.museumProfitAmount).toFixed(2)}</td>
+                                                <td>{Number(sale.museumProfitPercentage).toFixed(2)}%</td>
+                                                <td className="price">${Number(sale.totalPaid).toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    </div>
-                        <button onClick={handlePrint} className="print-btn">Imprimir</button>
                     </div>
                 );
 
@@ -360,48 +427,46 @@ const renderReportContent = () => {
                 if (foundLog) {
                     return (
                         <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
-                        <div className="report-view">
-                            <h3>Evento de Seguridad</h3>
-                            <span style={{
-                                fontSize: '10px', fontFamily: 'monospace', background: '#fef3c7',
-                                color: '#92400e', padding: '2px 8px', borderRadius: '999px',
-                                border: '1px solid #fcd34d', fontWeight: 600, letterSpacing: '0.5px', marginLeft: '12px'
-                            }}>Cassandra (audit-service)</span>
-                            <table className="report-table">
-                                <thead>
-                                    <tr>
-                                        <th>Tipo</th>
-                                        <th>Fecha</th>
-                                        <th>Hora</th>
-                                        <th>Admin DNI</th>
-                                        <th>Cliente DNI</th>
-                                        <th>Detalle</th>
-                                        <th>IP</th>
-                                        <th>Sesión</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span style={{
-                                            background: foundLog.eventType === 'LOGIN_SUCCESS' ? '#d1fae5' : '#fee2e2',
-                                            color: foundLog.eventType === 'LOGIN_SUCCESS' ? '#065f46' : '#991b1b',
-                                            padding: '2px 8px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600
-                                        }}>{foundLog.eventType}</span></td>
-                                        <td>{foundLog.eventDate}</td>
-                                        <td>{foundLog.eventTime ? new Date(foundLog.eventTime).toLocaleTimeString() : '-'}</td>
-                                        <td>{foundLog.adminDni || '-'}</td>
-                                        <td>{foundLog.clientDni || '-'}</td>
-                                        <td>{foundLog.details || '-'}</td>
-                                        <td>{foundLog.ipAddress || '-'}</td>
-                                        <td style={{ fontSize: '0.75rem' }}>{foundLog.sessionId || '-'}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <button onClick={() => setFoundLog(null)} className="generate-btn" style={{ marginTop: '12px', background: '#6b21a8' }}>
+                            <div className="data-table-container">
+                                <div className="card-header" style={{ padding: '16px 16px 0', marginBottom: 0 }}>
+                                    <h3 className="card-title" style={{ margin: 0 }}>Evento de Seguridad</h3>
+                                    <span className="data-source-badge">Cassandra (audit-service)</span>
+                                </div>
+                                <table className="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Admin DNI</th>
+                                            <th>Cliente DNI</th>
+                                            <th>Detalle</th>
+                                            <th>IP</th>
+                                            <th>Sesión</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span className={`status-chip ${foundLog.eventType === 'LOGIN_SUCCESS' ? 'ok' : 'critical'}`}>
+                                                    {foundLog.eventType}
+                                                </span>
+                                            </td>
+                                            <td>{foundLog.eventDate}</td>
+                                            <td>{foundLog.eventTime ? new Date(foundLog.eventTime).toLocaleTimeString() : '-'}</td>
+                                            <td>{foundLog.adminDni || '-'}</td>
+                                            <td>{foundLog.clientDni || '-'}</td>
+                                            <td>{foundLog.details || '-'}</td>
+                                            <td className="mono">{foundLog.ipAddress || '-'}</td>
+                                            <td className="mono">{foundLog.sessionId || '-'}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button onClick={() => setFoundLog(null)} className="btn btn-primary" style={{ marginTop: 12, background: '#6b21a8' }}>
                                 Volver a bitácora
                             </button>
-                        </div>
-                            <button onClick={handlePrint} className="print-btn">Imprimir</button>
+                            <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 12, marginLeft: 8 }}>Imprimir</button>
                         </div>
                     );
                 }
@@ -418,66 +483,50 @@ const renderReportContent = () => {
                 });
                 return (
                     <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
-                    <div className="report-view">
-                        <h3>Bitácora de Eventos de Seguridad</h3>
-                        <span style={{
-                            fontSize: '10px',
-                            fontFamily: 'monospace',
-                            background: '#fef3c7',
-                            color: '#92400e',
-                            padding: '2px 8px',
-                            borderRadius: '999px',
-                            border: '1px solid #fcd34d',
-                            fontWeight: 600,
-                            letterSpacing: '0.5px',
-                            marginLeft: '12px'
-                        }}>
-                            Cassandra (audit-service)
-                        </span>
-                        {filteredLogs.length === 0 ? (
-                            <p>No hay eventos para el filtro seleccionado.</p>
-                        ) : (
-                        <table className="report-table">
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
-                                    <th>Admin DNI</th>
-                                    <th>Cliente DNI</th>
-                                    <th>Detalle</th>
-                                    <th>IP</th>
-                                    <th>Sesión</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredLogs.map((log, i) => (
-                                    <tr key={i}>
-                                        <td><span style={{
-                                            background: log.eventType === 'LOGIN_SUCCESS' ? '#d1fae5' : '#fee2e2',
-                                            color: log.eventType === 'LOGIN_SUCCESS' ? '#065f46' : '#991b1b',
-                                            padding: '2px 8px',
-                                            borderRadius: '999px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 600
-                                        }}>{log.eventType}</span></td>
-                                        <td>{log.eventDate}</td>
-                                        <td>{log.eventTime ? new Date(log.eventTime).toLocaleTimeString() : '-'}</td>
-                                        <td>{log.adminDni || '-'}</td>
-                                        <td>{log.clientDni || '-'}</td>
-                                        <td>{log.details || '-'}</td>
-                                        <td>{log.ipAddress || '-'}</td>
-                                        <td style={{ fontSize: '0.75rem' }}>{log.sessionId || '-'}</td>
+                        <div className="data-table-container">
+                            <div className="card-header" style={{ padding: '16px 16px 0', marginBottom: 0 }}>
+                                <h3 className="card-title" style={{ margin: 0 }}>Bitácora de Eventos de Seguridad</h3>
+                                <span className="data-source-badge">Cassandra (audit-service)</span>
+                            </div>
+                            {filteredLogs.length === 0 ? (
+                                <p className="empty-state">No hay eventos para el filtro seleccionado.</p>
+                            ) : (
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Admin DNI</th>
+                                        <th>Cliente DNI</th>
+                                        <th>Detalle</th>
+                                        <th>IP</th>
+                                        <th>Sesión</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        )}
-                        <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '12px' }}>
-                            Mostrando {filteredLogs.length} de {securityLogs.length} eventos
-                        </p>
-                    </div>
-                        <button onClick={handlePrint} className="print-btn">Imprimir</button>
+                                </thead>
+                                <tbody>
+                                    {filteredLogs.map((log, i) => (
+                                        <tr key={i}>
+                                            <td>
+                                                <span className={`status-chip ${log.eventType === 'LOGIN_SUCCESS' ? 'ok' : 'critical'}`}>
+                                                    {log.eventType}
+                                                </span>
+                                            </td>
+                                            <td>{log.eventDate}</td>
+                                            <td>{log.eventTime ? new Date(log.eventTime).toLocaleTimeString() : '-'}</td>
+                                            <td>{log.adminDni || '-'}</td>
+                                            <td>{log.clientDni || '-'}</td>
+                                            <td>{log.details || '-'}</td>
+                                            <td className="mono">{log.ipAddress || '-'}</td>
+                                            <td className="mono">{log.sessionId || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            )}
+                            <p className="event-count">Mostrando {filteredLogs.length} de {securityLogs.length} eventos</p>
+                        </div>
+                        <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>
                     </div>
                 );
 
@@ -490,105 +539,78 @@ const renderReportContent = () => {
     };
 
     return (
-        <section id='reports-container'>
-            <p className="admin-eyebrow">Panel de Control</p>
-            <h2 className="admin-title">Reportes Administrativos</h2>
-
-            <div id='report-lists'>
-                <ul className="report-tabs">
-                    <li>
-                        <button 
-                            className={activeReport === 'sold' ? 'active' : ''} 
-                            onClick={() => setActiveReport('sold')}>
-                            Obras Vendidas
-                        </button>
-                    </li>
-                    <li>
-                        <button
-                            className={activeReport === 'billing' ? 'active' : ' '}
-                            onClick={() => setActiveReport('billing')}>
-                            Resumen de facturación
-                        </button>
-                    </li>
-                    <li>
-                        <button
-                            className={activeReport === 'memberships' ? 'active' : ''} 
-                            onClick={() => setActiveReport('memberships')}>
-                            Resumen de Membresías
-                        </button>
-                    </li>
-                    <li>
-                        <button
-                            className={activeReport === 'security' ? 'active' : ''}
-                            onClick={() => { setActiveReport('security'); setSecurityLogs(null); setSecurityEventTypeFilter(''); setSecurityDateFilter(''); setFoundLog(null); setShowFindForm(false); }}>
-                            Bitácora de Seguridad
-                        </button>
-                    </li>
-                </ul>
+        <div className="card">
+            <div className="card-header">
+                <div>
+                    <span className="welcome-eyebrow">Panel de Control</span>
+                    <h2 className="card-title" style={{ fontSize: 22, marginTop: 4 }}>Reportes Administrativos</h2>
+                </div>
             </div>
 
+            <ul className="tab-bar">
+                <li>
+                    <button 
+                        className={activeReport === 'sold' ? 'active' : ''} 
+                        onClick={() => setActiveReport('sold')}>
+                        Obras Vendidas
+                    </button>
+                </li>
+                <li>
+                    <button
+                        className={activeReport === 'billing' ? 'active' : ''}
+                        onClick={() => setActiveReport('billing')}>
+                        Resumen de facturación
+                    </button>
+                </li>
+                <li>
+                    <button
+                        className={activeReport === 'memberships' ? 'active' : ''} 
+                        onClick={() => setActiveReport('memberships')}>
+                        Resumen de Membresías
+                    </button>
+                </li>
+                <li>
+                    <button
+                        className={activeReport === 'security' ? 'active' : ''}
+                        onClick={() => { setActiveReport('security'); setSecurityLogs(null); setSecurityEventTypeFilter(''); setSecurityDateFilter(''); setFoundLog(null); setShowFindForm(false); }}>
+                        Bitácora de Seguridad
+                    </button>
+                </li>
+            </ul>
+
             {activeReport === 'billing' && (
-                <div className="date-picker-container">
+                <div className="filter-bar">
                     <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setSelectedMonth(''); }} />
                     <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setSelectedMonth(''); }} />
-                    <select value={selectedMonth} onChange={handleMonthSelect} style={{
-                        background: '#f5f0ff',
-                        color: '#000',
-                        border: '1px solid #d4b3ff',
-                        borderRadius: '6px',
-                        padding: '10px 14px',
-                        fontFamily: 'inherit',
-                        fontSize: '0.9rem',
-                        cursor: 'pointer',
-                        outline: 'none'
-                    }}>
+                    <select value={selectedMonth} onChange={handleMonthSelect}>
                         <option value="">Todos los meses</option>
                         {MONTH_OPTIONS.map(m => (
                             <option key={m} value={m}>{m}</option>
                         ))}
                     </select>
-                    <button className="generate-btn" onClick={handleGenerate} disabled={loading}>
+                    <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
                         Generar
                     </button>
-                    <button className="generate-btn" onClick={handleViewAll} disabled={loading} style={{ background: '#6b21a8' }}>
+                    <button className="btn btn-primary" onClick={handleViewAll} disabled={loading} style={{ background: '#6b21a8' }}>
                         Ver todo
                     </button>
                 </div>
             )}
 
             {activeReport === 'security' && (
-                <div className="date-picker-container">
-                    <select value={securityEventTypeFilter} onChange={(e) => setSecurityEventTypeFilter(e.target.value)} style={{
-                        background: '#f5f0ff',
-                        color: '#000',
-                        border: '1px solid #d4b3ff',
-                        borderRadius: '6px',
-                        padding: '10px 14px',
-                        fontFamily: 'inherit',
-                        fontSize: '0.9rem',
-                        cursor: 'pointer',
-                        outline: 'none'
-                    }}>
+                <div className="filter-bar">
+                    <select value={securityEventTypeFilter} onChange={(e) => setSecurityEventTypeFilter(e.target.value)}>
                         <option value="">Todos los tipos</option>
                         <option value="LOGIN_SUCCESS">Exitosos</option>
                         <option value="LOGIN_FAILURE">Fallidos</option>
                     </select>
                     <input type="date" value={securityDateFilter} onChange={(e) => setSecurityDateFilter(e.target.value)} />
-                    <button className="generate-btn" onClick={handleGenerate} disabled={loading}>
+                    <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
                         Generar
                     </button>
                     <button
                         onClick={() => setShowFindForm(!showFindForm)}
-                        style={{
-                            background: 'transparent',
-                            color: '#7c3aed',
-                            border: '1px solid #7c3aed',
-                            borderRadius: '6px',
-                            padding: '10px 16px',
-                            fontSize: '0.9rem',
-                            fontWeight: 600,
-                            cursor: 'pointer'
-                        }}
+                        className="btn btn-secondary"
                     >
                         {showFindForm ? 'Cerrar búsqueda' : 'Buscar evento exacto'}
                     </button>
@@ -596,55 +618,16 @@ const renderReportContent = () => {
             )}
 
             {activeReport === 'security' && showFindForm && (
-                <div className="date-picker-container" style={{ marginTop: '-16px' }}>
-                    <form onSubmit={handleFindSecurityLog} style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
-                        <select value={findSearchType} onChange={(e) => setFindSearchType(e.target.value)} style={{
-                            background: '#f5f0ff',
-                            color: '#000',
-                            border: '1px solid #d4b3ff',
-                            borderRadius: '6px',
-                            padding: '10px 14px',
-                            fontFamily: 'inherit',
-                            fontSize: '0.9rem',
-                            cursor: 'pointer',
-                            outline: 'none'
-                        }}>
+                <div className="filter-bar" style={{ marginTop: -16 }}>
+                    <form onSubmit={handleFindSecurityLog} style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+                        <select value={findSearchType} onChange={(e) => setFindSearchType(e.target.value)}>
                             <option value="LOGIN_SUCCESS">Exitosos</option>
                             <option value="LOGIN_FAILURE">Fallidos</option>
                         </select>
-                        <input type="date" value={findSearchDate} onChange={(e) => setFindSearchDate(e.target.value)} style={{
-                            background: '#f5f0ff',
-                            color: '#000',
-                            border: '1px solid #d4b3ff',
-                            borderRadius: '6px',
-                            padding: '10px 14px',
-                            fontFamily: 'inherit',
-                            fontSize: '0.9rem',
-                            outline: 'none'
-                        }} />
-                        <input type="text" placeholder="Hora (ISO: 2026-06-30T10:00:00Z)" value={findSearchTime} onChange={(e) => setFindSearchTime(e.target.value)} style={{
-                            background: '#f5f0ff',
-                            color: '#000',
-                            border: '1px solid #d4b3ff',
-                            borderRadius: '6px',
-                            padding: '10px 14px',
-                            fontFamily: 'inherit',
-                            fontSize: '0.9rem',
-                            outline: 'none',
-                            width: '220px'
-                        }} />
-                        <input type="text" placeholder="ID Evento (UUID)" value={findSearchId} onChange={(e) => setFindSearchId(e.target.value)} style={{
-                            background: '#f5f0ff',
-                            color: '#000',
-                            border: '1px solid #d4b3ff',
-                            borderRadius: '6px',
-                            padding: '10px 14px',
-                            fontFamily: 'inherit',
-                            fontSize: '0.9rem',
-                            outline: 'none',
-                            width: '200px'
-                        }} />
-                        <button type="submit" className="generate-btn" disabled={loading || !findSearchDate || !findSearchTime || !findSearchId}>
+                        <input type="date" value={findSearchDate} onChange={(e) => setFindSearchDate(e.target.value)} />
+                        <input type="text" placeholder="Hora (ISO)" value={findSearchTime} onChange={(e) => setFindSearchTime(e.target.value)} style={{ width: 180 }} />
+                        <input type="text" placeholder="ID Evento (UUID)" value={findSearchId} onChange={(e) => setFindSearchId(e.target.value)} style={{ width: 180 }} />
+                        <button type="submit" className="btn btn-primary" disabled={loading || !findSearchDate || !findSearchTime || !findSearchId}>
                             Buscar
                         </button>
                     </form>
@@ -652,23 +635,23 @@ const renderReportContent = () => {
             )}
 
             {activeReport === 'sold' && (
-                <div className="date-picker-container">
+                <div className="filter-bar">
                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    <button className="generate-btn" onClick={handleGenerate} disabled={loading}>
+                    <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
                         Generar
                     </button>
                 </div>
             )}
 
-            <div id="report-display-area">
+            <div id="report-display-area" style={{ marginTop: 20 }}>
                 {renderReportContent()}
             </div>
 
             {selectedTicket && (
                 <TicketInvoice sale={selectedTicket} onClose={() => setSelectedTicket(null)} />
             )}
-        </section>
+        </div>
     );
 }
 
