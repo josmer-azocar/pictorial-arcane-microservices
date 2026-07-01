@@ -78,15 +78,15 @@ export default function App() {
           style={{ transform: `translateY(-${currentSlide * 100}vh)` }}
         >
           <div id="hero" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><Hero onNavigate={goToSlide} /></div>
-          <div id="team" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><Team /></div>
-          <div id="architecture" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><ArchitectureDiagram onNodeHover={handleEngineHighlight} /></div>
-          <div id="cap" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><CapTheorem onEngineSelect={handleEngineHighlight} /></div>
-          <div id="dictionary" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><PolyglotDictionary onEngineSelect={handleEngineHighlight} /></div>
-          <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><Neo4jGraphs /></div>
-          <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><ApiDocumentation /></div>
-          <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><About /></div>
-          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><LiveDemo onStepChange={handleStepChange} onNavigateFrontend={() => window.open('http://localhost:5173', '_blank')} /></div>
-          <div id="closing" className="h-screen w-full flex-shrink-0 overflow-y-auto"><ClosingSlide /><Footer /></div>
+          <div id="team" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><Team /></div>
+          <div id="architecture" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><ArchitectureDiagram onNodeHover={handleEngineHighlight} /></div>
+          <div id="cap" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><CapTheorem onEngineSelect={handleEngineHighlight} /></div>
+          <div id="dictionary" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><PolyglotDictionary onEngineSelect={handleEngineHighlight} /></div>
+          <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><Neo4jGraphs /></div>
+          <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><ApiDocumentation /></div>
+          <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><About /></div>
+          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><LiveDemo onStepChange={handleStepChange} onNavigateFrontend={() => window.open('http://localhost:5173', '_blank')} /></div>
+          <div id="closing" className="h-screen w-full flex-shrink-0 overflow-y-auto bg-arcane-purple-dark/20"><ClosingSlide /><Footer /></div>
         </div>
 
         {/* Navigation arrows */}

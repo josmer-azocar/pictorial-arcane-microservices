@@ -5,7 +5,7 @@ export default function About() {
   return (
     <section 
       id="about" 
-      className="pt-14 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white relative overflow-hidden"
+      className="pt-14 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 w-80 h-80 bg-arcane-purple/[0.03] rounded-full blur-[120px]" />
       

@@ -416,7 +416,7 @@ export default function Neo4jGraphs() {
   return (
     <section 
       id="neo4j-graphs" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 bg-white"
+      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
     >
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
         
