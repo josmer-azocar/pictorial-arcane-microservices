@@ -75,75 +75,34 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   // Carga la obra por ID cuando el componente monta
 useEffect(() => {
   if (id) {
-    // MOCK — descomentar en produccion
-    // getSpecificArtworkById(id)
-    //   .then(data => {
-    //     console.log('ESTRUCTURA RECIBIDA:', JSON.stringify(data));
-    //     setArtwork(data);
-    //   })
-    //   .catch((err) => {
-    //     const status = err.response?.status;
-    //     if (status === 404) {
-    //       setArtworkError("Esta obra no existe o fue eliminada.");
-    //     } else {
-    //       setArtworkError("Error cargando los detalles de la obra.");
-    //     }
-    //     toast.error("Error cargando los detalles de la obra");
-    //   });
-
-    const mockDetail = {
-      artWorkResponse: {
-        idArtWork: Number(id),
-        name: 'Susurros del Viento',
-        imageUrl: 'https://picsum.photos/seed/art1/800/900',
-        price: 1200.00,
-        creation_date: '2024-03-15',
-        status: 'AVAILABLE',
-        idArtist: 1,
-      },
-      paintingResponse: {
-        technique: 'Óleo sobre lienzo',
-        holder: 'Lienzo',
-        style: 'Contemporáneo',
-        framed: true,
-        height: 80,
-        width: 60,
-      },
-    };
-    const mockDetails = [
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 1, name: 'Susurros del Viento', price: 1200.00, imageUrl: 'https://picsum.photos/seed/art1/800/900' } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 2, name: 'Raíces Olvidadas', price: 850.00, imageUrl: 'https://picsum.photos/seed/art2/800/900' }, paintingResponse: undefined, sculptureResponse: { material: 'Bronce', weight: 12.5, length: 40, width: 30, depth: 30 } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 3, name: 'Luz de Medianoche', price: 2100.00, imageUrl: 'https://picsum.photos/seed/art3/800/900' }, paintingResponse: undefined, photographyResponse: { print_type: 'Giclée', resolution: '300dpi', color: 'color', edition_number: '3/10', camera: 'Leica M6' } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 4, name: 'El Último Café', price: 620.00, imageUrl: 'https://picsum.photos/seed/art4/800/900' }, paintingResponse: { technique: 'Acrílico', holder: 'Cartón', style: 'Impresionista', framed: false, height: 50, width: 40 } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 5, name: 'Resplandor Terrenal', price: 1500.00, imageUrl: 'https://picsum.photos/seed/art5/800/900' }, paintingResponse: undefined, ceramicResponse: { material_type: 'Gres', technique: 'Torno', finish: 'Mate', firing_temperature: 1200, weight: 3.2, height: 25, width: 20 } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 6, name: 'Ecos del Ayer', price: 980.00, imageUrl: 'https://picsum.photos/seed/art6/800/900' } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 7, name: 'Fragmentos de Luna', price: 1750.00, imageUrl: 'https://picsum.photos/seed/art7/800/900' }, paintingResponse: undefined, sculptureResponse: { material: 'Mármol', weight: 45, length: 60, width: 25, depth: 25 } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 8, name: 'Silencio Profundo', price: 440.00, imageUrl: 'https://picsum.photos/seed/art8/800/900' }, paintingResponse: undefined, photographyResponse: { print_type: 'Digital', resolution: '600dpi', color: 'bn', edition_number: '1/5', camera: 'Nikon D850' } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 9, name: 'Amanecer en Bronce', price: 3200.00, imageUrl: 'https://picsum.photos/seed/art9/800/900' }, paintingResponse: undefined, sculptureResponse: { material: 'Bronce', weight: 85, length: 90, width: 40, depth: 35 } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 10, name: 'Mareas del Tiempo', price: 1100.00, imageUrl: 'https://picsum.photos/seed/art10/800/900' } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 11, name: 'Reflejos Dorados', price: 2050.00, imageUrl: 'https://picsum.photos/seed/art11/800/900' }, paintingResponse: undefined, goldsmithResponse: { main_material: 'Oro 18k', gemstones: 'Diamantes', weight: 0.15 } },
-      { ...mockDetail, artWorkResponse: { ...mockDetail.artWorkResponse, idArtWork: 12, name: 'Tierra y Fuego', price: 780.00, imageUrl: 'https://picsum.photos/seed/art12/800/900' }, paintingResponse: undefined, ceramicResponse: { material_type: 'Porcelana', technique: 'Modelado', finish: 'Brillante', firing_temperature: 1300, weight: 1.8, height: 30, width: 15 } },
-    ];
-    const found = mockDetails.find(d => d.artWorkResponse.idArtWork === Number(id));
-    setTimeout(() => {
-      if (found) {
-        setArtwork(found);
-      } else {
-        setArtworkError("Esta obra no existe o fue eliminada.");
+    getSpecificArtworkById(id)
+      .then(data => {
+        setArtwork(data);
+      })
+      .catch((err) => {
+        const status = err.response?.status;
+        if (status === 404) {
+          setArtworkError("Esta obra no existe o fue eliminada.");
+        } else {
+          setArtworkError("Error cargando los detalles de la obra.");
+        }
         toast.error("Error cargando los detalles de la obra");
-      }
-    }, 300);
+      });
   }
 }, [id]);
   // ── EFECTO: GET artista por idArtist ────────────────────
   // Se ejecuta cuando ya tenemos la obra y necesitamos el nombre del artista
   useEffect(() => {
-    if (artwork?.artWorkResponse?.idArtist || artwork?.artworkResponse?.idArtist) {
-      const artistId = artwork?.artWorkResponse?.idArtist || artwork?.artworkResponse?.idArtist;
-      getArtistById(artistId).then(data => {
-        setArtistName(`${data.name} ${data.lastName}`);
-        if (data.commissionRate) setArtistCommissionRate(data.commissionRate);
-      });
+    const artistId = artwork?.artworkResponse?.artistId;
+    if (artistId) {
+      getArtistById(artistId)
+        .then(data => {
+          setArtistName(`${data.name} ${data.lastName}`);
+          if (data.commissionRate) setArtistCommissionRate(data.commissionRate);
+        })
+        .catch(() => {
+          setArtistName("Artista");
+        });
     }
   }, [artwork]);
 
@@ -176,23 +135,18 @@ useEffect(() => {
     </div>
   );
 
-if (!artwork || (!artwork.artWorkResponse && !artwork.artworkResponse)) return <Loading />;
-const generalInfo = artwork.artWorkResponse || artwork.artworkResponse;
-const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
+if (!artwork || !artwork.artworkResponse) return <Loading />;
+const generalInfo = artwork.artworkResponse;
+const { artworkId, name, imageUrl, price, status } = generalInfo;
 
   // ── HANDLER: POST /sale/reserve ──────────────────────────
   // Reserva la obra usando el código de seguridad del usuario
   const handleReservar = async () => {
-    console.log("Datos enviados:");
-    console.log("   idArtWork:", idArtWork);
-    console.log("   securityCode:", securityCode);
-    console.log("   token:", token);
     try {
-      await reserveArtwork(idArtWork, price, artistCommissionRate, securityCode, token);
+      await reserveArtwork(artworkId, price, artistCommissionRate, securityCode, token);
       toast.success("¡Obra reservada exitosamente!");
       setShowModal(false);
     } catch (err) {
-      console.log("Error completo:", err.response?.data);
       if (err.response?.status === 400) toast.error("Código de seguridad incorrecto.");
       else if (err.response?.status === 409) toast.error("La obra ya no está disponible.");
       else toast.error("Error al procesar la reserva.");
@@ -250,11 +204,11 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
       return (
         <div className="specific-details">
           <h3>Detalles de la pintura</h3>
-          <p><strong>Technique:</strong> {d.technique || 'Not specified'}</p>
-          <p><strong>Support:</strong> {d.holder || 'Not specified'}</p>
-          <p><strong>Style:</strong> {d.style || 'Not specified'}</p>
-          <p><strong>Framed:</strong> {d.framed === "1" || d.framed === true ? 'Yes' : 'No'}</p>
-          <p><strong>Dimensions:</strong> {d.height && d.width ? `${d.height} × ${d.width} cm` : 'Not specified'}</p>
+          <p><strong>Técnica:</strong> {d.technique || 'No especificado'}</p>
+          <p><strong>Soporte:</strong> {d.holder || 'No especificado'}</p>
+          <p><strong>Estilo:</strong> {d.style || 'No especificado'}</p>
+          <p><strong>Enmarcado:</strong> {d.framed === "1" || d.framed === true ? 'Sí' : 'No'}</p>
+          <p><strong>Dimensiones:</strong> {d.height && d.width ? `${d.height} × ${d.width} cm` : 'No especificado'}</p>
         </div>
       );
     }
@@ -263,9 +217,9 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
       return (
         <div className="specific-details">
           <h3>Detalles de la escultura</h3>
-          <p><strong>Material:</strong> {d.material || 'Not specified'}</p>
-          <p><strong>Weight:</strong> {d.weight ? `${d.weight} kg` : 'Not specified'}</p>
-          <p><strong>Dimensions:</strong> {d.length && d.width && d.depth ? `${d.length} × ${d.width} × ${d.depth} cm` : 'Not specified'}</p>
+          <p><strong>Material:</strong> {d.material || 'No especificado'}</p>
+          <p><strong>Peso:</strong> {d.weight ? `${d.weight} kg` : 'No especificado'}</p>
+          <p><strong>Dimensiones:</strong> {d.length && d.width && d.depth ? `${d.length} × ${d.width} × ${d.depth} cm` : 'No especificado'}</p>
         </div>
       );
     }
@@ -274,11 +228,11 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
       return (
         <div className="specific-details">
           <h3>Detalles de la fotografía</h3>
-          <p><strong>Print type:</strong> {d.print_type || 'Not specified'}</p>
-          <p><strong>Resolution:</strong> {d.resolution || 'Not specified'}</p>
-          <p><strong>Color:</strong> {d.color === 'color' ? 'In color' : d.color === 'bn' ? 'Black and white' : 'Not specified'}</p>
-          <p><strong>Edition number:</strong> {d.edition_number || 'Not specified'}</p>
-          <p><strong>Camera:</strong> {d.camera || 'Not specified'}</p>
+          <p><strong>Tipo de impresión:</strong> {d.printType || 'No especificado'}</p>
+          <p><strong>Resolución:</strong> {d.resolution || 'No especificado'}</p>
+          <p><strong>Color:</strong> {d.color === 'color' ? 'A color' : d.color === 'bn' ? 'Blanco y negro' : d.color || 'No especificado'}</p>
+          <p><strong>Número de serie:</strong> {d.serialNumber || 'No especificado'}</p>
+          <p><strong>Cámara:</strong> {d.camera || 'No especificado'}</p>
         </div>
       );
     }
@@ -287,12 +241,12 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
       return (
         <div className="specific-details">
           <h3>Detalles de la cerámica</h3>
-          <p><strong>Material type:</strong> {d.material_type || 'Not specified'}</p>
-          <p><strong>Technique:</strong> {d.technique || 'Not specified'}</p>
-          <p><strong>Finish:</strong> {d.finish || 'Not specified'}</p>
-          <p><strong>Firing temperature:</strong> {d.firing_temperature ? `${d.firing_temperature} °C` : 'Not specified'}</p>
-          <p><strong>Weight:</strong> {d.weight ? `${d.weight} kg` : 'Not specified'}</p>
-          <p><strong>Dimensions:</strong> {d.height && d.width ? `${d.height} × ${d.width} cm` : 'Not specified'}</p>
+          <p><strong>Tipo de material:</strong> {d.materialType || 'No especificado'}</p>
+          <p><strong>Técnica:</strong> {d.technique || 'No especificado'}</p>
+          <p><strong>Acabado:</strong> {d.finish || 'No especificado'}</p>
+          <p><strong>Temperatura de cocción:</strong> {d.firingTemperature ? `${d.firingTemperature} °C` : 'No especificado'}</p>
+          <p><strong>Peso:</strong> {d.weight ? `${d.weight} kg` : 'No especificado'}</p>
+          <p><strong>Dimensiones:</strong> {d.height && d.width ? `${d.height} × ${d.width} cm` : 'No especificado'}</p>
         </div>
       );
     }
@@ -301,9 +255,9 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
       return (
         <div className="specific-details">
           <h3>Detalles de orfebrería</h3>
-          <p><strong>Main material:</strong> {d.main_material || 'Not specified'}</p>
-          <p><strong>Gemstones:</strong> {d.gemstones || 'None'}</p>
-          <p><strong>Weight:</strong> {d.weight ? `${d.weight} kg` : 'Not specified'}</p>
+          <p><strong>Material principal:</strong> {d.mainMaterial || 'No especificado'}</p>
+          <p><strong>Piedras preciosas:</strong> {d.gemstones || 'Ninguna'}</p>
+          <p><strong>Peso:</strong> {d.weight ? `${d.weight} kg` : 'No especificado'}</p>
         </div>
       );
     }
@@ -352,16 +306,12 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
             <h1 className="artwork-title">{name}</h1>
             <div className="specs-container">
               <p><strong>Género:</strong> {getGenreString()}</p>
-              <strong>Fecha de creación:</strong>{' '}
-              {creation_date
-                ? new Date(creation_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
-                : 'No especificada'}
 
               {/* Link al perfil del artista */}
               <div className="artist-attribution">
                 Artista:
                 <Link
-                  to={`/artist/${generalInfo.idArtist}`}
+                  to={`/artist/${generalInfo.artistId}`}
                   className="artist-link-bold"
                 >
                   {artistName || "Ver artista"}

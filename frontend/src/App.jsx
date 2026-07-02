@@ -81,7 +81,7 @@ return (
           <Route path="/login" element={<MainAuth />} />
           <Route path='/auth/*' element={<MainAuth/>} />
           <Route path="/completar-registro" element={<CompleteRegistration />} />
-          <Route path='/artwork/*' element={<Artwork/>}/>
+          <Route path='/artwork' element={<Artwork/>}/>
           <Route path='/artwork/:id' element={<ArtworkDetail />} />
         
          <Route 
