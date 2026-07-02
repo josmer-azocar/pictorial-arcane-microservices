@@ -148,13 +148,13 @@ function Reports() {
                 let records;
                 if (selectedMonth) {
                     records = await getBillingByMonth(selectedMonth);
+                } else if (startDate && endDate) {
+                    records = await getBillingByPeriod(startDate, endDate);
                 } else {
-                    const effectiveStart = startDate || '1900-01-01';
-                    const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
-                    records = await getBillingByPeriod(effectiveStart, effectiveEnd);
+                    records = await getAllBilling();
                 }
                 const data = transformRecords(records);
-                data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : `Periodo: ${startDate || '...'} — ${endDate || '...'}`;
+                data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : (startDate && endDate ? `Periodo: ${startDate} — ${endDate}` : 'Todas las facturas');
                 setBillingData(data);
                 setShowChart(false);
             } else if (activeReport === 'security') {
@@ -174,21 +174,6 @@ function Reports() {
         }
     };
 
-    const handleViewAll = async () => {
-        setLoading(true);
-        try {
-            const records = await getAllBilling();
-            const data = transformRecords(records);
-            data.filterLabel = 'Todas las facturas';
-            setBillingData(data);
-            setShowChart(false);
-        } catch (error) {
-            console.error("Error al obtener todas las facturas:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleMonthSelect = (e) => {
         const month = e.target.value;
         setSelectedMonth(month);
@@ -199,7 +184,6 @@ function Reports() {
     };
 
     const handleStatusHistory = async (id, oldFilter, newFilter) => {
-        if (!id && !oldFilter && !newFilter) return;
         setLoading(true);
         try {
             let data;
@@ -211,19 +195,6 @@ function Reports() {
             setStatusHistory(data);
         } catch (error) {
             console.error("Error al obtener historial:", error);
-            setStatusHistory([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleAllStatusHistory = async () => {
-        setLoading(true);
-        try {
-            const data = await getAllStatusHistory();
-            setStatusHistory(data);
-        } catch (error) {
-            console.error("Error al obtener historial completo:", error);
             setStatusHistory([]);
         } finally {
             setLoading(false);
@@ -252,7 +223,7 @@ const renderReportContent = () => {
         switch (activeReport) {
             case 'billing':
                 if(!billingData){
-                    return <p>Seleccione un filtro y presione Generar</p>;           
+                    return <p>Seleccione un filtro y presione Buscar</p>;           
                 }
                 if (billingData.sales.length === 0) {
                     return <p>No hay datos para el filtro seleccionado.</p>;
@@ -425,7 +396,7 @@ const renderReportContent = () => {
                                         <option value="profitVsTotal">Ganancia Museo vs Total Cobrado</option>
                                     </select>
                                     <button className="btn btn-primary" onClick={() => setShowChart(!showChart)} style={{ margin: 0 }}>
-                                        {showChart ? 'Ocultar' : 'Generar'}
+                                        {showChart ? 'Ocultar' : 'Buscar'}
                                     </button>
                                 </div>
                                 <div className="summary-item">
@@ -533,7 +504,7 @@ const renderReportContent = () => {
                     );
                 }
                 if (!securityLogs) {
-                    return <p>Presione Generar para cargar la bitácora</p>;
+                    return <p>Presione Buscar para cargar la bitácora</p>;
                 }
                 if (securityLogs.length === 0) {
                     return <p>No hay eventos de seguridad registrados.</p>;
@@ -597,7 +568,7 @@ const renderReportContent = () => {
 
             case 'statusHistory':
                 if (!statusHistory) {
-                    return <p>Presione "Ver todo" o ingrese un ID de obra y presione Consultar</p>;
+                    return <p>Presione Buscar para ver los registros</p>;
                 }
                 if (statusHistory.length === 0) {
                     return <p>No hay cambios de estado registrados.</p>;
@@ -709,10 +680,7 @@ const renderReportContent = () => {
                         ))}
                     </select>
                     <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
-                        Generar
-                    </button>
-                    <button className="btn btn-primary" onClick={handleViewAll} disabled={loading} style={{ background: '#6b21a8' }}>
-                        Ver todo
+                        Buscar
                     </button>
                     <input
                         type="text"
@@ -738,7 +706,7 @@ const renderReportContent = () => {
                         onChange={(e) => setSecurityDniFilter(e.target.value)}
                     />
                     <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
-                        Generar
+                        Buscar
                     </button>
                 </div>
             )}
@@ -765,11 +733,8 @@ const renderReportContent = () => {
                         <option value="SOLD">Vendida</option>
                         <option value="CANCELLED">Cancelada</option>
                     </select>
-                    <button className="btn btn-primary" onClick={() => handleStatusHistory(statusSearchId, statusOldFilter, statusNewFilter)} disabled={loading || (!statusSearchId && !statusOldFilter && !statusNewFilter)}>
-                        Consultar
-                    </button>
-                    <button className="btn btn-primary" onClick={handleAllStatusHistory} disabled={loading} style={{ background: '#6b21a8' }}>
-                        Ver todo
+                    <button className="btn btn-primary" onClick={() => handleStatusHistory(statusSearchId, statusOldFilter, statusNewFilter)} disabled={loading}>
+                        Buscar
                     </button>
                 </div>
             )}

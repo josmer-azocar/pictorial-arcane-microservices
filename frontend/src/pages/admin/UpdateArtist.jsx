@@ -227,15 +227,16 @@ useEffect(() => {
   return (
     <div className="admin-section">
       <ToastContainer />
-      <h1 className="section-title">Actualizar Artista</h1>
-      <div className="admin-line"></div>
+      <div className="card-header">
+        <h3 className="card-title">Actualizar Artista</h3>
+      </div>
 
       {/* Tabla de artistas */}
       {loading ? (
         <div className="empty-state">Cargando artistas...</div>
       ) : (
-        <div className="table-wrapper">
-          <table className="admin-table">
+        <div className="data-table-container" style={{ marginTop: '20px' }}>
+          <table className="data-table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -249,13 +250,13 @@ useEffect(() => {
             <tbody>
               {artists.map(a => (
                 <tr key={a.idArtist}>
-                  <td className="td-id">#{a.idArtist}</td>
+                  <td className="mono">#{a.idArtist}</td>
                   <td>{a.name}</td>
                   <td>{a.lastName}</td>
                   <td>{a.nationality}</td>
                   <td>{(a.commissionRate * 100).toFixed(0)}%</td>
                   <td>
-                    <button className="btn-primary" onClick={() => handleSelectArtist(a)}>
+                    <button className="btn btn-primary" onClick={() => handleSelectArtist(a)}>
                       Editar
                     </button>
                   </td>
@@ -455,8 +456,8 @@ useEffect(() => {
               </div>
             </div>
             <div className="modal-actions">
-              <button type="button" className="btn-primary" onClick={handleSubmit}>Guardar Cambios</button>
-              <button type="button" className="btn-cancel" onClick={handleCancel}>Cancelar</button>
+              <button type="button" className="btn btn-primary" onClick={handleSubmit}>Guardar Cambios</button>
+              <button type="button" className="btn btn-primary" onClick={handleCancel} style={{ background: '#6b21a8' }}>Cancelar</button>
             </div>
           </div>
           </div>
