@@ -12,7 +12,7 @@ import "./Admin.css";
 import CreateArtist from "./CreateArtist.jsx";
 import DeleteArtist from './DeleteArtist.jsx';
 import UpdateArtwork from './UpdateArtwork.jsx';
-import { getGenres } from '../../services/fetchArtwork.js';
+import { getGenres, getAllArtworks, getArtists } from '../../services/fetchArtwork.js';
 import { useAuth } from '../../services/AuthContext';
 import { getPendingSales } from '../../services/fetchSales';
 import AddSculpture from './AddSculpture.jsx';
@@ -35,6 +35,8 @@ function Admin() {
   const [isArtistsMenuOpen, setArtistsMenuOpen] = useState(false);
   const [isGenresMenuOpen, setGenresMenuOpen] = useState(false);
   const [genres, setGenres] = useState([]);
+  const [artworksCount, setArtworksCount] = useState(null);
+  const [artistsCount, setArtistsCount] = useState(null);
 
   const [notifications, setNotifications] = useState([]);
   const [bellOpen, setBellOpen] = useState(false);
@@ -59,6 +61,19 @@ function Admin() {
       }
     };
     loadGenres();
+  }, []);
+
+  useEffect(() => {
+    const loadCounts = async () => {
+      try {
+        const [artworks, artists] = await Promise.all([getAllArtworks(), getArtists()]);
+        setArtworksCount(artworks.length);
+        setArtistsCount(artists.length);
+      } catch (error) {
+        console.error("Error al cargar conteos del dashboard:", error);
+      }
+    };
+    loadCounts();
   }, []);
 
   const handleActionSuccess = () => {
@@ -192,7 +207,7 @@ function Admin() {
                   <Palette />
                 </div>
                 <div className="stat-card-body">
-                  <span className="stat-card-value">—</span>
+                  <span className="stat-card-value">{artworksCount ?? '—'}</span>
                   <span className="stat-card-label">Obras activas</span>
                 </div>
               </div>
@@ -201,7 +216,7 @@ function Admin() {
                   <Users />
                 </div>
                 <div className="stat-card-body">
-                  <span className="stat-card-value">—</span>
+                  <span className="stat-card-value">{artistsCount ?? '—'}</span>
                   <span className="stat-card-label">Artistas</span>
                 </div>
               </div>

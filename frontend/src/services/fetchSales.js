@@ -5,7 +5,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 // GET /admin/getAllPendingSales
 // Requiere rol ADMIN
 export async function getPendingSales(token) {
-  const response = await axios.get(`${API_BASE_URL}/admin/getAllPendingSales`, {
+  const response = await axios.get(`${API_BASE_URL}/core/admin/getAllPendingSales`, {
     headers: { Authorization: `Bearer ${token}` }
     
   });
@@ -16,7 +16,7 @@ export async function getPendingSales(token) {
 // Requiere rol ADMIN
 export async function confirmPendingSale(saleId, paymentData, token) {
   const response = await axios.post(
-    `${API_BASE_URL}/admin/confirmSale/${saleId}`,
+    `${API_BASE_URL}/core/admin/confirmSale/${saleId}`,
     paymentData,
     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
   );
@@ -27,7 +27,7 @@ export async function confirmPendingSale(saleId, paymentData, token) {
 // Requiere rol ADMIN
 export async function rejectPendingSale(saleId, token) {
   const response = await axios.put(
-    `${API_BASE_URL}/admin/rejectPendingSale/${saleId}`,
+    `${API_BASE_URL}/core/admin/rejectPendingSale/${saleId}`,
     null,
     { headers: { Authorization: `Bearer ${token}` } }
   );

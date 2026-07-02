@@ -1,6 +1,5 @@
 import './Reports.css'
 import { useState } from 'react';
-import { fetchPaidArtwork } from '../../services/fetchSoldArtwork';
 import { getBillingByPeriod, getBillingByMonth, getAllBilling, getAllSecurityLogs, getSecurityLogsByEvent, findSecurityLog, getArtworkStatusHistory, getAllStatusHistory } from '../../services/auditServices';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
@@ -72,8 +71,6 @@ function Reports() {
     const [showChart, setShowChart] = useState(false);
     const [chartType, setChartType] = useState('line');
     const [loading, setLoading] = useState(false);
-    const [soldResponse, setSoldResponse] = useState(null);
-    const [soldPage, setSoldPage] = useState(0);
     const [isPrinting, setIsPrinting] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [securityLogs, setSecurityLogs] = useState(null);
@@ -87,6 +84,8 @@ function Reports() {
     const [showFindForm, setShowFindForm] = useState(false);
     const [statusHistory, setStatusHistory] = useState(null);
     const [statusSearchId, setStatusSearchId] = useState('');
+    const [statusOldFilter, setStatusOldFilter] = useState('');
+    const [statusNewFilter, setStatusNewFilter] = useState('');
     const [securityDniFilter, setSecurityDniFilter] = useState('');
     const [billingSearchFilter, setBillingSearchFilter] = useState('');
 
@@ -141,21 +140,6 @@ function Reports() {
     }, 100);
     };
 
-    const fetchSoldPage = async (page = 0) => {
-        const effectiveStart = startDate || '1900-01-01';
-        const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
-        setLoading(true);
-        try {
-            const paidArtList = await fetchPaidArtwork(effectiveStart, effectiveEnd, page, 10);
-            setSoldResponse(paidArtList);
-            setSoldPage(paidArtList.number);
-        } catch (error) {
-            console.error("Error al obtener el reporte:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleGenerate = async (e) => {
         if (e) e.preventDefault();
         setLoading(true);
@@ -173,8 +157,6 @@ function Reports() {
                 data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : `Periodo: ${startDate || '...'} — ${endDate || '...'}`;
                 setBillingData(data);
                 setShowChart(false);
-            } else if (activeReport === 'sold') {
-                fetchSoldPage(0);
             } else if (activeReport === 'security') {
                 setFoundLog(null);
                 if (securityEventTypeFilter && securityDateFilter) {
@@ -216,11 +198,16 @@ function Reports() {
         }
     };
 
-    const handleStatusHistory = async (id) => {
-        if (!id) return;
+    const handleStatusHistory = async (id, oldFilter, newFilter) => {
+        if (!id && !oldFilter && !newFilter) return;
         setLoading(true);
         try {
-            const data = await getArtworkStatusHistory(id);
+            let data;
+            if (id) {
+                data = await getArtworkStatusHistory(id);
+            } else {
+                data = await getAllStatusHistory();
+            }
             setStatusHistory(data);
         } catch (error) {
             console.error("Error al obtener historial:", error);
@@ -263,57 +250,6 @@ const renderReportContent = () => {
         if (!activeReport) return <p className="select-prompt">Selecciona un tipo de reporte para comenzar.</p>;
 
         switch (activeReport) {
-            case 'sold':
-                if(!soldResponse){
-                    return <p>Seleccione un periodo</p>;           
-                }
-                if (soldResponse.content.length === 0) {
-                    return <p>No hay datos para el periodo seleccionado.</p>;
-                }
-                const { content, totalPages, number } = soldResponse;
-                return (
-                    <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
-                        <div className="data-table-container">
-                            <table className="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Obra</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {content.map((sale) => (
-                                        <tr key={sale.idArtWork}>
-                                            <td className="artwork">{sale?.name || "sin definir"}</td>
-                                            <td><span className={`status-chip ${sale.status === 'VENDIDA' ? 'ok' : 'warning'}`}>{sale.status}</span></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        {totalPages > 1 && (
-                            <div className="pagination-controls">
-                                <button
-                                    onClick={() => fetchSoldPage(number - 1)}
-                                    disabled={number === 0}
-                                    className="pagination-btn"
-                                >
-                                    Anterior
-                                </button>
-                                <span className="pagination-info">Página {number + 1} de {totalPages}</span>
-                                <button
-                                    onClick={() => fetchSoldPage(number + 1)}
-                                    disabled={number === totalPages - 1}
-                                    className="pagination-btn"
-                                >
-                                    Siguiente
-                                </button>
-                            </div>
-                        )}
-                        <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>
-                    </div>
-                );
-
             case 'billing':
                 if(!billingData){
                     return <p>Seleccione un filtro y presione Generar</p>;           
@@ -661,11 +597,16 @@ const renderReportContent = () => {
 
             case 'statusHistory':
                 if (!statusHistory) {
-                    return <p>Ingrese un ID de obra y presione Consultar</p>;
+                    return <p>Presione "Ver todo" o ingrese un ID de obra y presione Consultar</p>;
                 }
                 if (statusHistory.length === 0) {
-                    return <p>No hay cambios de estado registrados para esta obra.</p>;
+                    return <p>No hay cambios de estado registrados.</p>;
                 }
+                const filteredStatusHistory = [...statusHistory].sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt)).filter(h => {
+                    const matchOld = !statusOldFilter || h.oldStatus === statusOldFilter;
+                    const matchNew = !statusNewFilter || h.newStatus === statusNewFilter;
+                    return matchOld && matchNew;
+                });
                 return (
                     <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
                         <div className="data-table-container">
@@ -673,6 +614,9 @@ const renderReportContent = () => {
                                 <h3 className="card-title" style={{ margin: 0 }}>Historial de Estado de Obra</h3>
                                 <span className="data-source-badge">Cassandra (audit-service)</span>
                             </div>
+                            {filteredStatusHistory.length === 0 ? (
+                                <p className="empty-state">No hay registros para el filtro seleccionado.</p>
+                            ) : (
                             <table className="data-table">
                                 <thead>
                                     <tr>
@@ -686,7 +630,7 @@ const renderReportContent = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {[...statusHistory].sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt)).map((h, i) => (
+                                    {filteredStatusHistory.map((h, i) => (
                                         <tr key={i}>
                                             <td className="mono">{h.artworkId}</td>
                                             <td className="artwork">{h.artworkName || '-'}</td>
@@ -699,6 +643,8 @@ const renderReportContent = () => {
                                     ))}
                                 </tbody>
                             </table>
+                            )}
+                            <p className="event-count">Mostrando {filteredStatusHistory.length} de {statusHistory.length} registros</p>
                         </div>
                         <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>
                     </div>
@@ -723,13 +669,6 @@ const renderReportContent = () => {
 
             <ul className="tab-bar">
                 <li>
-                    <button 
-                        className={activeReport === 'sold' ? 'active' : ''} 
-                        onClick={() => setActiveReport('sold')}>
-                        Obras Vendidas
-                    </button>
-                </li>
-                <li>
                     <button
                         className={activeReport === 'billing' ? 'active' : ''}
                         onClick={() => setActiveReport('billing')}>
@@ -753,7 +692,7 @@ const renderReportContent = () => {
                 <li>
                     <button
                         className={activeReport === 'statusHistory' ? 'active' : ''}
-                        onClick={() => { setActiveReport('statusHistory'); setStatusHistory(null); setStatusSearchId(''); }}>
+                        onClick={() => { setActiveReport('statusHistory'); setStatusHistory(null); setStatusSearchId(''); setStatusOldFilter(''); setStatusNewFilter(''); }}>
                         Historial de Obras
                     </button>
                 </li>
@@ -804,16 +743,6 @@ const renderReportContent = () => {
                 </div>
             )}
 
-            {activeReport === 'sold' && (
-                <div className="filter-bar">
-                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
-                        Generar
-                    </button>
-                </div>
-            )}
-
             {activeReport === 'statusHistory' && (
                 <div className="filter-bar">
                     <input
@@ -822,7 +751,21 @@ const renderReportContent = () => {
                         value={statusSearchId}
                         onChange={(e) => setStatusSearchId(e.target.value)}
                     />
-                    <button className="btn btn-primary" onClick={() => handleStatusHistory(statusSearchId)} disabled={loading || !statusSearchId}>
+                    <select value={statusOldFilter} onChange={(e) => setStatusOldFilter(e.target.value)}>
+                        <option value="">Estado Anterior (todos)</option>
+                        <option value="AVAILABLE">Disponible</option>
+                        <option value="RESERVED">Reservada</option>
+                        <option value="SOLD">Vendida</option>
+                        <option value="CANCELLED">Cancelada</option>
+                    </select>
+                    <select value={statusNewFilter} onChange={(e) => setStatusNewFilter(e.target.value)}>
+                        <option value="">Estado Nuevo (todos)</option>
+                        <option value="AVAILABLE">Disponible</option>
+                        <option value="RESERVED">Reservada</option>
+                        <option value="SOLD">Vendida</option>
+                        <option value="CANCELLED">Cancelada</option>
+                    </select>
+                    <button className="btn btn-primary" onClick={() => handleStatusHistory(statusSearchId, statusOldFilter, statusNewFilter)} disabled={loading || (!statusSearchId && !statusOldFilter && !statusNewFilter)}>
                         Consultar
                     </button>
                     <button className="btn btn-primary" onClick={handleAllStatusHistory} disabled={loading} style={{ background: '#6b21a8' }}>

@@ -68,7 +68,7 @@ function PendingReservations() {
     if (!window.confirm('¿Cancelar esta reserva?')) return;
     try {
       await axios.put(
-        `${ API_BASE_URL}/admin/rejectPendingSale/${saleId}`,
+        `${ API_BASE_URL}/core/admin/rejectPendingSale/${saleId}`,
         null,
         { headers: { Authorization: `Bearer ${token}` } }
       );
