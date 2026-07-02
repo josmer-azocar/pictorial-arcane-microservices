@@ -38,7 +38,7 @@ function InvoiceModal({ reservation, onClose, onSuccess }) {
   setError('');
   try {
     await axios.put(
-      `${API_BASE_URL}/admin/confirmSale/${reservation.idSale}?description=${encodeURIComponent(formData.description)}&direction=${encodeURIComponent(formData.direction)}`,
+      `${API_BASE_URL}/core/admin/confirmSale/${reservation.idSale}?description=${encodeURIComponent(formData.description)}&direction=${encodeURIComponent(formData.direction)}`,
       {
         amount: parseFloat(formData.amount),
         paymentDate: formData.paymentDate,

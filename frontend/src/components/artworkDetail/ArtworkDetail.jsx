@@ -64,6 +64,7 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   const [assignedQuestions, setAssignedQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [artistName, setArtistName] = useState("");
+  const [artistCommissionRate, setArtistCommissionRate] = useState(0.08);
 
   // ── ESTADOS: MODAL ACTUALIZAR RESPUESTAS ────────────────
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -141,6 +142,7 @@ useEffect(() => {
       const artistId = artwork?.artWorkResponse?.idArtist || artwork?.artworkResponse?.idArtist;
       getArtistById(artistId).then(data => {
         setArtistName(`${data.name} ${data.lastName}`);
+        if (data.commissionRate) setArtistCommissionRate(data.commissionRate);
       });
     }
   }, [artwork]);
@@ -186,7 +188,7 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
     console.log("   securityCode:", securityCode);
     console.log("   token:", token);
     try {
-      await reserveArtwork(idArtWork, securityCode, token);
+      await reserveArtwork(idArtWork, price, artistCommissionRate, securityCode, token);
       toast.success("¡Obra reservada exitosamente!");
       setShowModal(false);
     } catch (err) {
