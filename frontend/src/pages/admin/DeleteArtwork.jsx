@@ -135,44 +135,39 @@ const DeleteArtwork = () => {
   };
 
   return (
-    <div className="admin-section">
+    <div className="card">
       <ToastContainer position="top-center" theme="dark" />
-      <h1 className="section-title">Borrar Obra</h1>
-      <div className="admin-line"></div>
+      <div className="card-header">
+        <h3 className="card-title">Borrar Obra</h3>
+      </div>
       <p className="admin-subtitle">
         Busca y elimina obras del sistema permanentemente.
       </p>
 
-      {/* Barra de Filtros (Reutilizada de UpdateArtwork) */}
-      <form className="admin-form" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: '15px', maxWidth: '100%', marginTop: '20px', marginBottom: '30px' }} onSubmit={handleSearch}>
-        <div style={{ flex: 1, minWidth: '150px' }}>
-          <input type="number" name="id" placeholder="Buscar por ID" value={filters.id} onChange={handleFilterChange} style={{ margin: 0 }} />
-        </div>
-        <div style={{ flex: 1, minWidth: '200px' }}>
-          <select name="artistId" value={filters.artistId} onChange={handleFilterChange} style={{ margin: 0 }}>
-            <option value="">Filtrar por Artista</option>
-            {artists.map(artist => (
-              <option key={artist.idArtist} value={artist.idArtist}>{artist.name} {artist.lastName}</option>
-            ))}
-          </select>
-        </div>
-        <div style={{ flex: 1, minWidth: '200px' }}>
-          <select name="genre" value={filters.genre} onChange={handleFilterChange} style={{ margin: 0 }}>
-            <option value="">Filtrar por Género</option>
-            {genres.map(genre => (
-              <option key={genre.idGenre} value={genre.idGenre}>{genre.name}</option>
-            ))}
-          </select>
-        </div>
-        <button type="submit" className="btn-primary" style={{ height: '50px', marginTop: '0' }} disabled={loading}>Buscar</button>
-        <button type="button" className="btn-secondary" onClick={handleClear} style={{ height: '50px', marginTop: '0' }} disabled={loading}>Limpiar</button>
+      {/* Barra de Filtros */}
+      <form className="filter-bar" onSubmit={handleSearch}>
+        <input type="number" name="id" placeholder="Buscar por ID" value={filters.id} onChange={handleFilterChange} />
+        <select name="artistId" value={filters.artistId} onChange={handleFilterChange}>
+          <option value="">Filtrar por Artista</option>
+          {artists.map(artist => (
+            <option key={artist.idArtist} value={artist.idArtist}>{artist.name} {artist.lastName}</option>
+          ))}
+        </select>
+        <select name="genre" value={filters.genre} onChange={handleFilterChange}>
+          <option value="">Filtrar por Género</option>
+          {genres.map(genre => (
+            <option key={genre.idGenre} value={genre.idGenre}>{genre.name}</option>
+          ))}
+        </select>
+        <button type="submit" className="btn btn-primary" disabled={loading}>Buscar</button>
+        <button type="button" className="btn btn-primary" onClick={handleClear} style={{ background: '#6b21a8' }} disabled={loading}>Limpiar</button>
       </form>
 
       {loading ? (
         <div className="empty-state">Cargando obras...</div>
       ) : (
-        <div className="table-wrapper" style={{ marginTop: '40px' }}>
-          <table className="admin-table">
+        <div className="data-table-container" style={{ marginTop: '20px' }}>
+          <table className="data-table">
             <thead>
               <tr><th>ID</th><th>Obra</th><th>Artista</th><th>Género</th><th>Precio</th><th>Acciones</th></tr>
             </thead>
@@ -182,14 +177,14 @@ const DeleteArtwork = () => {
                 const artist = artists.find(a => a.idArtist === art.idArtist);
                 return (
                   <tr key={art.idArtWork}>
-                    <td className="td-id">#{art.idArtWork}</td>
-                    <td className="td-artwork">{art.name}</td>
+                    <td className="mono">#{art.idArtWork}</td>
+                    <td className="artwork">{art.name}</td>
                     <td>{artist ? artist.name : art.idArtist}</td>
                     <td>{genre ? genre.name : art.idGenre}</td>
-                    <td className="td-price">${art.price?.toLocaleString()}</td>
+                    <td className="price">${art.price?.toLocaleString()}</td>
                     <td>
                       <div className="action-buttons">
-                        <button className="btn-cancel" onClick={() => handleDelete(art.idArtWork, art.name)}>Eliminar</button>
+                        <button className="btn btn-primary" onClick={() => handleDelete(art.idArtWork, art.name)}>Eliminar</button>
                       </div>
                     </td>
                   </tr>

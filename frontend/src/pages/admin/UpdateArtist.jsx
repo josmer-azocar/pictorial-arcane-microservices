@@ -225,7 +225,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="admin-section">
+    <div className="card">
       <ToastContainer />
       <div className="card-header">
         <h3 className="card-title">Actualizar Artista</h3>

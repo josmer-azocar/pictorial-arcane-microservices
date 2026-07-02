@@ -95,7 +95,7 @@ const UpdateArtwork = ({ onEditSelect }) => {
   };
 
   return (
-    <div className="admin-section">
+    <div className="card">
       <ToastContainer position="top-center" theme="dark" />
       <div className="card-header">
         <h3 className="card-title">Actualizar Obra</h3>

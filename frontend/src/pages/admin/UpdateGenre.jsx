@@ -81,7 +81,7 @@ const UpdateGenre = () => {
   };
 
   return (
-    <div className="admin-section">
+    <div className="card">
       <ToastContainer position="top-center" theme="dark" />
       <div className="card-header">
         <h3 className="card-title">Actualizar Género</h3>
@@ -120,10 +120,10 @@ const UpdateGenre = () => {
       )}
 
       {selectedGenre && (
-        <div className="admin-form-container" style={{ marginTop: '40px', maxWidth: '100%' }}>
-          <h2 className="section-title" style={{ fontSize: '24px' }}>
-            Editando: {selectedGenre.name}
-          </h2>
+        <div className="card" style={{ marginTop: '20px' }}>
+          <div className="card-header">
+            <h3 className="card-title">Editando: {selectedGenre.name}</h3>
+          </div>
           <form onSubmit={handleSave} className="admin-form" style={{ marginTop: '20px' }}>
             <div className="form-group">
               <label className="form-label">Nombre</label>
@@ -148,10 +148,10 @@ const UpdateGenre = () => {
               />
             </div>
             <div className="modal-actions" style={{ justifyContent: 'flex-start' }}>
-              <button type="submit" className="btn-primary" disabled={isEditing}>
+              <button type="submit" className="btn btn-primary" disabled={isEditing}>
                 {isEditing ? 'Guardando...' : 'Guardar Cambios'}
               </button>
-              <button type="button" className="btn-secondary" onClick={handleCancel} disabled={isEditing}>
+              <button type="button" className="btn btn-primary" onClick={handleCancel} style={{ background: '#6b21a8' }} disabled={isEditing}>
                 Cancelar
               </button>
             </div>
