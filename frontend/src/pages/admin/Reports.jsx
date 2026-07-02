@@ -1,7 +1,7 @@
 import './Reports.css'
 import { useState } from 'react';
 import { fetchPaidArtwork } from '../../services/fetchSoldArtwork';
-import { getBillingByPeriod, getBillingByMonth, getAllBilling, getAllSecurityLogs, getSecurityLogsByEvent, findSecurityLog } from '../../services/auditServices';
+import { getBillingByPeriod, getBillingByMonth, getAllBilling, getAllSecurityLogs, getSecurityLogsByEvent, findSecurityLog, getArtworkStatusHistory, getAllStatusHistory } from '../../services/auditServices';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
 import TicketInvoice from './TicketInvoice';
@@ -84,6 +84,8 @@ function Reports() {
     const [findSearchId, setFindSearchId] = useState('');
     const [foundLog, setFoundLog] = useState(null);
     const [showFindForm, setShowFindForm] = useState(false);
+    const [statusHistory, setStatusHistory] = useState(null);
+    const [statusSearchId, setStatusSearchId] = useState('');
 
     const handlePrint = () => {
     setIsPrinting(true);
@@ -169,6 +171,33 @@ function Reports() {
         if (month) {
             setStartDate('');
             setEndDate('');
+        }
+    };
+
+    const handleStatusHistory = async (id) => {
+        if (!id) return;
+        setLoading(true);
+        try {
+            const data = await getArtworkStatusHistory(id);
+            setStatusHistory(data);
+        } catch (error) {
+            console.error("Error al obtener historial:", error);
+            setStatusHistory([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAllStatusHistory = async () => {
+        setLoading(true);
+        try {
+            const data = await getAllStatusHistory();
+            setStatusHistory(data);
+        } catch (error) {
+            console.error("Error al obtener historial completo:", error);
+            setStatusHistory([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -530,6 +559,51 @@ const renderReportContent = () => {
                     </div>
                 );
 
+            case 'statusHistory':
+                if (!statusHistory) {
+                    return <p>Ingrese un ID de obra y presione Consultar</p>;
+                }
+                if (statusHistory.length === 0) {
+                    return <p>No hay cambios de estado registrados para esta obra.</p>;
+                }
+                return (
+                    <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
+                        <div className="data-table-container">
+                            <div className="card-header" style={{ padding: '16px 16px 0', marginBottom: 0 }}>
+                                <h3 className="card-title" style={{ margin: 0 }}>Historial de Estado de Obra</h3>
+                                <span className="data-source-badge">Cassandra (audit-service)</span>
+                            </div>
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Obra</th>
+                                        <th>Obra</th>
+                                        <th>Estado Anterior</th>
+                                        <th>Estado Nuevo</th>
+                                        <th>Fecha</th>
+                                        <th>Admin DNI</th>
+                                        <th>Razón</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {statusHistory.map((h, i) => (
+                                        <tr key={i}>
+                                            <td className="mono">{h.artworkId}</td>
+                                            <td className="artwork">{h.artworkName || '-'}</td>
+                                            <td><span className="status-chip warning">{h.oldStatus || '-'}</span></td>
+                                            <td><span className={`status-chip ${h.newStatus === 'VENDIDA' || h.newStatus === 'ACTIVE' ? 'ok' : 'warning'}`}>{h.newStatus}</span></td>
+                                            <td>{h.changedAt ? new Date(h.changedAt).toLocaleString() : '-'}</td>
+                                            <td>{h.changedBy || '-'}</td>
+                                            <td>{h.reason || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>
+                    </div>
+                );
+
             case 'memberships':
                 return <ReportsSearch />;
 
@@ -574,6 +648,13 @@ const renderReportContent = () => {
                         className={activeReport === 'security' ? 'active' : ''}
                         onClick={() => { setActiveReport('security'); setSecurityLogs(null); setSecurityEventTypeFilter(''); setSecurityDateFilter(''); setFoundLog(null); setShowFindForm(false); }}>
                         Bitácora de Seguridad
+                    </button>
+                </li>
+                <li>
+                    <button
+                        className={activeReport === 'statusHistory' ? 'active' : ''}
+                        onClick={() => { setActiveReport('statusHistory'); setStatusHistory(null); setStatusSearchId(''); }}>
+                        Historial de Obras
                     </button>
                 </li>
             </ul>
@@ -640,6 +721,24 @@ const renderReportContent = () => {
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
                         Generar
+                    </button>
+                </div>
+            )}
+
+            {activeReport === 'statusHistory' && (
+                <div className="filter-bar">
+                    <input
+                        type="number"
+                        placeholder="ID de la obra"
+                        value={statusSearchId}
+                        onChange={(e) => setStatusSearchId(e.target.value)}
+                        style={{ width: 180 }}
+                    />
+                    <button className="btn btn-primary" onClick={() => handleStatusHistory(statusSearchId)} disabled={loading || !statusSearchId}>
+                        Consultar
+                    </button>
+                    <button className="btn btn-primary" onClick={handleAllStatusHistory} disabled={loading} style={{ background: '#6b21a8' }}>
+                        Ver todo
                     </button>
                 </div>
             )}
