@@ -87,6 +87,45 @@ function Reports() {
     const [statusHistory, setStatusHistory] = useState(null);
     const [statusSearchId, setStatusSearchId] = useState('');
 
+    const formatDateTime = (iso) => {
+        if (!iso) return '-';
+        const d = new Date(iso);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        const hh = String(d.getHours() % 12 || 12).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
+        return `${dd}/${mm}/${yyyy} ${hh}:${min} ${ampm}`;
+    };
+
+    const statusColor = (status) => {
+        const s = (status || '').toUpperCase();
+        const map = {
+            'AVAILABLE': { bg: '#dcfce7', color: '#166534' },
+            'ACTIVE': { bg: '#dcfce7', color: '#166534' },
+            'SOLD': { bg: '#dbeafe', color: '#1e40af' },
+            'VENDIDA': { bg: '#dbeafe', color: '#1e40af' },
+            'RESERVED': { bg: '#fef3c7', color: '#92400e' },
+            'INACTIVE': { bg: '#fce4ec', color: '#c62828' },
+            'CANCELLED': { bg: '#fce4ec', color: '#c62828' },
+        };
+        return map[s] || { bg: '#f3f4f6', color: '#374151' };
+    };
+
+    const statusLabel = (status) => {
+        const map = {
+            'AVAILABLE': 'Disponible',
+            'ACTIVE': 'Disponible',
+            'SOLD': 'Vendida',
+            'VENDIDA': 'Vendida',
+            'RESERVED': 'Reservada',
+            'INACTIVE': 'Cancelada',
+            'CANCELLED': 'Cancelada',
+        };
+        return map[status?.toUpperCase()] || status || '-';
+    };
+
     const handlePrint = () => {
     setIsPrinting(true);
     setTimeout(() => {
@@ -586,13 +625,13 @@ const renderReportContent = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {statusHistory.map((h, i) => (
+                                    {[...statusHistory].sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt)).map((h, i) => (
                                         <tr key={i}>
                                             <td className="mono">{h.artworkId}</td>
                                             <td className="artwork">{h.artworkName || '-'}</td>
-                                            <td><span className="status-chip warning">{h.oldStatus || '-'}</span></td>
-                                            <td><span className={`status-chip ${h.newStatus === 'VENDIDA' || h.newStatus === 'ACTIVE' ? 'ok' : 'warning'}`}>{h.newStatus}</span></td>
-                                            <td>{h.changedAt ? new Date(h.changedAt).toLocaleString() : '-'}</td>
+                                            <td><span className="status-chip" style={{ background: statusColor(h.oldStatus).bg, color: statusColor(h.oldStatus).color, fontWeight: 600 }}>{statusLabel(h.oldStatus)}</span></td>
+                                            <td><span className="status-chip" style={{ background: statusColor(h.newStatus).bg, color: statusColor(h.newStatus).color, fontWeight: 600 }}>{statusLabel(h.newStatus)}</span></td>
+                                            <td>{formatDateTime(h.changedAt)}</td>
                                             <td>{h.changedBy || '-'}</td>
                                             <td>{h.reason || '-'}</td>
                                         </tr>
