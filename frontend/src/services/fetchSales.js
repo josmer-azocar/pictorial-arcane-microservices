@@ -67,7 +67,7 @@ export async function reserveArtwork(artworkId, price, commissionRate, securityC
   console.log("   Authorization header:", `Bearer ${token}`);
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/sale/reserve`,
+      `${API_BASE_URL}/core/sale/reserve`,
       null,
       {
         params: {

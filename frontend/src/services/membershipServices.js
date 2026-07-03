@@ -113,3 +113,14 @@ export async function createSecurityCode (){
         throw error;
     }
 }
+
+// DEBUG — BORRAR DESPUES: genera un hash BCrypt para un código dado y lo muestra en consola
+export async function debugGenerateHash(code = "123456") {
+    const bcryptjs = await import('bcryptjs');
+    const hash = bcryptjs.hashSync(code, 10);
+    console.log("%c--- DEBUG CÓDIGO DE SEGURIDAD ---", "font-size:16px; font-weight:bold");
+    console.log("Código:", code);
+    console.log("Hash:", hash);
+    console.log("UPDATE SQL: UPDATE clients SET security_code = '" + hash + "' WHERE email = 'tu@correo.com';");
+    return hash;
+}
