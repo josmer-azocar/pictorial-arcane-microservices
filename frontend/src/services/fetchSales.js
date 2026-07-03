@@ -57,9 +57,11 @@ export async function rejectPendingSale(saleId, token) {
     throw error;
   }
 }*/
-export async function reserveArtwork(artworkId, securityCode, token) {
+export async function reserveArtwork(artworkId, price, commissionRate, securityCode, token) {
   console.log("🚀 Enviando reserva:");
   console.log("   artworkId:", artworkId);
+  console.log("   price:", price);
+  console.log("   commissionRate:", commissionRate);
   console.log("   securityCode:", securityCode);
   console.log("   token:", token ? "✅ Token presente" : "❌ Token AUSENTE");
   console.log("   Authorization header:", `Bearer ${token}`);
@@ -70,6 +72,8 @@ export async function reserveArtwork(artworkId, securityCode, token) {
       {
         params: {
           id_obra: artworkId,
+          price: price,
+          commission_rate: commissionRate,
           security_code: securityCode
         },
         headers: {
