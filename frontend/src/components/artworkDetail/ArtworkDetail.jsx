@@ -182,11 +182,11 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
   // Reserva la obra usando el código de seguridad del usuario
   const handleReservar = async () => {
     const generalInfoInner = artwork?.artWorkResponse || artwork?.artworkResponse;
-    const artworkIdToReserve = generalInfoInner?.idArtWork;
+    const artworkIdToReserve = generalInfoInner?.artworkId;
     const artworkPrice = generalInfoInner?.price;
 
     console.log("Datos enviados:");
-    console.log("   idArtWork:", artworkIdToReserve);
+    console.log("   artworkId:", artworkIdToReserve);
     console.log("   price:", artworkPrice);
     console.log("   commissionRate (default):", 0.1);
     console.log("   securityCode:", securityCode);
