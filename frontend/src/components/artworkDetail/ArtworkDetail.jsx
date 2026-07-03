@@ -181,14 +181,24 @@ const { idArtWork, name, imageUrl, price, creation_date, status } = generalInfo;
   // ── HANDLER: POST /sale/reserve ──────────────────────────
   // Reserva la obra usando el código de seguridad del usuario
   const handleReservar = async () => {
+    const generalInfoInner = artwork?.artWorkResponse || artwork?.artworkResponse;
+    const artworkIdToReserve = generalInfoInner?.idArtWork;
+    const artworkPrice = generalInfoInner?.price;
+
     console.log("Datos enviados:");
-    console.log("   idArtWork:", idArtWork);
-    console.log("   price:", price);
+    console.log("   idArtWork:", artworkIdToReserve);
+    console.log("   price:", artworkPrice);
     console.log("   commissionRate (default):", 0.1);
     console.log("   securityCode:", securityCode);
     console.log("   token:", token);
+
+    if (!artworkIdToReserve) {
+      toast.error("No se pudo obtener el ID de la obra. Intenta recargar la página.");
+      return;
+    }
+
     try {
-      await reserveArtwork(idArtWork, price, 0.1, securityCode, token);
+      await reserveArtwork(artworkIdToReserve, artworkPrice, 0.1, securityCode, token);
       toast.success("¡Obra reservada exitosamente!");
       setShowModal(false);
     } catch (err) {
