@@ -1,7 +1,6 @@
 import './Reports.css'
 import { useState } from 'react';
-import { fetchPaidArtwork } from '../../services/fetchSoldArtwork';
-import { getBillingByPeriod, getBillingByMonth, getAllBilling, getAllSecurityLogs, getSecurityLogsByEvent, findSecurityLog } from '../../services/auditServices';
+import { getBillingByPeriod, getBillingByMonth, getAllBilling, getAllSecurityLogs, getSecurityLogsByEvent, findSecurityLog, getArtworkStatusHistory, getAllStatusHistory } from '../../services/auditServices';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
 import TicketInvoice from './TicketInvoice';
@@ -52,7 +51,8 @@ function transformRecords(records) {
         museumProfitPercentage: r.profitPercentage,
         totalPaid: r.totalPaid,
         saleStatus: r.saleStatus,
-        yearMonth: r.yearMonth
+        yearMonth: r.yearMonth,
+        clientDni: r.clientDni
     }));
     return {
         totalCollected: sales.reduce((sum, s) => sum + (s.totalPaid || 0), 0),
@@ -71,8 +71,6 @@ function Reports() {
     const [showChart, setShowChart] = useState(false);
     const [chartType, setChartType] = useState('line');
     const [loading, setLoading] = useState(false);
-    const [soldResponse, setSoldResponse] = useState(null);
-    const [soldPage, setSoldPage] = useState(0);
     const [isPrinting, setIsPrinting] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [securityLogs, setSecurityLogs] = useState(null);
@@ -84,6 +82,51 @@ function Reports() {
     const [findSearchId, setFindSearchId] = useState('');
     const [foundLog, setFoundLog] = useState(null);
     const [showFindForm, setShowFindForm] = useState(false);
+    const [statusHistory, setStatusHistory] = useState(null);
+    const [statusSearchId, setStatusSearchId] = useState('');
+    const [statusOldFilter, setStatusOldFilter] = useState('');
+    const [statusNewFilter, setStatusNewFilter] = useState('');
+    const [securityDniFilter, setSecurityDniFilter] = useState('');
+    const [billingSearchFilter, setBillingSearchFilter] = useState('');
+
+    const formatDateTime = (iso) => {
+        if (!iso) return '-';
+        const d = new Date(iso);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        const hh = String(d.getHours() % 12 || 12).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
+        return `${dd}/${mm}/${yyyy} ${hh}:${min} ${ampm}`;
+    };
+
+    const statusColor = (status) => {
+        const s = (status || '').toUpperCase();
+        const map = {
+            'AVAILABLE': { bg: '#dcfce7', color: '#166534' },
+            'ACTIVE': { bg: '#dcfce7', color: '#166534' },
+            'SOLD': { bg: '#dbeafe', color: '#1e40af' },
+            'VENDIDA': { bg: '#dbeafe', color: '#1e40af' },
+            'RESERVED': { bg: '#fef3c7', color: '#92400e' },
+            'INACTIVE': { bg: '#fce4ec', color: '#c62828' },
+            'CANCELLED': { bg: '#fce4ec', color: '#c62828' },
+        };
+        return map[s] || { bg: '#f3f4f6', color: '#374151' };
+    };
+
+    const statusLabel = (status) => {
+        const map = {
+            'AVAILABLE': 'Disponible',
+            'ACTIVE': 'Disponible',
+            'SOLD': 'Vendida',
+            'VENDIDA': 'Vendida',
+            'RESERVED': 'Reservada',
+            'INACTIVE': 'Cancelada',
+            'CANCELLED': 'Cancelada',
+        };
+        return map[status?.toUpperCase()] || status || '-';
+    };
 
     const handlePrint = () => {
     setIsPrinting(true);
@@ -97,21 +140,6 @@ function Reports() {
     }, 100);
     };
 
-    const fetchSoldPage = async (page = 0) => {
-        const effectiveStart = startDate || '1900-01-01';
-        const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
-        setLoading(true);
-        try {
-            const paidArtList = await fetchPaidArtwork(effectiveStart, effectiveEnd, page, 10);
-            setSoldResponse(paidArtList);
-            setSoldPage(paidArtList.number);
-        } catch (error) {
-            console.error("Error al obtener el reporte:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleGenerate = async (e) => {
         if (e) e.preventDefault();
         setLoading(true);
@@ -120,17 +148,15 @@ function Reports() {
                 let records;
                 if (selectedMonth) {
                     records = await getBillingByMonth(selectedMonth);
+                } else if (startDate && endDate) {
+                    records = await getBillingByPeriod(startDate, endDate);
                 } else {
-                    const effectiveStart = startDate || '1900-01-01';
-                    const effectiveEnd = endDate || new Date().toISOString().split('T')[0];
-                    records = await getBillingByPeriod(effectiveStart, effectiveEnd);
+                    records = await getAllBilling();
                 }
                 const data = transformRecords(records);
-                data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : `Periodo: ${startDate || '...'} — ${endDate || '...'}`;
+                data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : (startDate && endDate ? `Periodo: ${startDate} — ${endDate}` : 'Todas las facturas');
                 setBillingData(data);
                 setShowChart(false);
-            } else if (activeReport === 'sold') {
-                fetchSoldPage(0);
             } else if (activeReport === 'security') {
                 setFoundLog(null);
                 if (securityEventTypeFilter && securityDateFilter) {
@@ -148,27 +174,30 @@ function Reports() {
         }
     };
 
-    const handleViewAll = async () => {
-        setLoading(true);
-        try {
-            const records = await getAllBilling();
-            const data = transformRecords(records);
-            data.filterLabel = 'Todas las facturas';
-            setBillingData(data);
-            setShowChart(false);
-        } catch (error) {
-            console.error("Error al obtener todas las facturas:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleMonthSelect = (e) => {
         const month = e.target.value;
         setSelectedMonth(month);
         if (month) {
             setStartDate('');
             setEndDate('');
+        }
+    };
+
+    const handleStatusHistory = async (id, oldFilter, newFilter) => {
+        setLoading(true);
+        try {
+            let data;
+            if (id) {
+                data = await getArtworkStatusHistory(id);
+            } else {
+                data = await getAllStatusHistory();
+            }
+            setStatusHistory(data);
+        } catch (error) {
+            console.error("Error al obtener historial:", error);
+            setStatusHistory([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -192,72 +221,31 @@ const renderReportContent = () => {
         if (!activeReport) return <p className="select-prompt">Selecciona un tipo de reporte para comenzar.</p>;
 
         switch (activeReport) {
-            case 'sold':
-                if(!soldResponse){
-                    return <p>Seleccione un periodo</p>;           
-                }
-                if (soldResponse.content.length === 0) {
-                    return <p>No hay datos para el periodo seleccionado.</p>;
-                }
-                const { content, totalPages, number } = soldResponse;
-                return (
-                    <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
-                        <div className="data-table-container">
-                            <table className="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Obra</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {content.map((sale) => (
-                                        <tr key={sale.idArtWork}>
-                                            <td className="artwork">{sale?.name || "sin definir"}</td>
-                                            <td><span className={`status-chip ${sale.status === 'VENDIDA' ? 'ok' : 'warning'}`}>{sale.status}</span></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        {totalPages > 1 && (
-                            <div className="pagination-controls">
-                                <button
-                                    onClick={() => fetchSoldPage(number - 1)}
-                                    disabled={number === 0}
-                                    className="pagination-btn"
-                                >
-                                    Anterior
-                                </button>
-                                <span className="pagination-info">Página {number + 1} de {totalPages}</span>
-                                <button
-                                    onClick={() => fetchSoldPage(number + 1)}
-                                    disabled={number === totalPages - 1}
-                                    className="pagination-btn"
-                                >
-                                    Siguiente
-                                </button>
-                            </div>
-                        )}
-                        <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>
-                    </div>
-                );
-
             case 'billing':
                 if(!billingData){
-                    return <p>Seleccione un filtro y presione Generar</p>;           
+                    return <p>Seleccione un filtro y presione Buscar</p>;           
                 }
                 if (billingData.sales.length === 0) {
                     return <p>No hay datos para el filtro seleccionado.</p>;
                 }
-                const dates = billingData.sales.map(s => s.date).filter(Boolean);
+                const filteredSales = billingData.sales.filter(s => {
+                    if (!billingSearchFilter) return true;
+                    const q = billingSearchFilter.trim();
+                    return s.invoiceCode === q || String(s.clientDni || '').includes(q);
+                });
+                const displayData = billingSearchFilter ? {
+                    sales: filteredSales,
+                    totalCollected: filteredSales.reduce((sum, s) => sum + (s.totalPaid || 0), 0),
+                    totalMuseumProfit: filteredSales.reduce((sum, s) => sum + (s.museumProfitAmount || 0), 0),
+                } : billingData;
+                const dates = displayData.sales.map(s => s.date).filter(Boolean);
                 const minDate = new Date(Math.min(...dates.map(d => new Date(d))));
                 const maxDate = new Date(Math.max(...dates.map(d => new Date(d))));
                 const daysDiff = (maxDate - minDate) / (1000 * 60 * 60 * 24);
                 const groupByMonth = daysDiff >= 60;
 
                 const grouped = {};
-                billingData.sales.forEach(s => {
+                displayData.sales.forEach(s => {
                     const key = groupByMonth ? s.date?.slice(0, 7) : (s.date || 'Sin fecha');
                     grouped[key] = (grouped[key] || 0) + Number(s.totalPaid);
                 });
@@ -283,7 +271,7 @@ const renderReportContent = () => {
                     ],
                 };
 
-                const top10 = [...billingData.sales]
+                const top10 = [...displayData.sales]
                     .sort((a, b) => Number(b.museumProfitAmount) - Number(a.museumProfitAmount))
                     .slice(0, 10);
                 const top10Labels = top10.map(s => s.artworkName);
@@ -298,6 +286,34 @@ const renderReportContent = () => {
                         borderColor: '#7c3aed',
                         borderWidth: 1,
                     }],
+                };
+
+                const profitGroups = {};
+                displayData.sales.forEach(s => {
+                    const key = s.yearMonth || s.date?.slice(0, 7) || 'Sin fecha';
+                    if (!profitGroups[key]) profitGroups[key] = { totalPaid: 0, profit: 0 };
+                    profitGroups[key].totalPaid += Number(s.totalPaid) || 0;
+                    profitGroups[key].profit += Number(s.museumProfitAmount) || 0;
+                });
+                const profitKeys = Object.keys(profitGroups).sort();
+                const profitVsTotalChartData = {
+                    labels: profitKeys,
+                    datasets: [
+                        {
+                            label: 'Total Cobrado ($)',
+                            data: profitKeys.map(k => profitGroups[k].totalPaid),
+                            backgroundColor: 'rgba(124, 58, 237, 0.7)',
+                            borderColor: '#7c3aed',
+                            borderWidth: 1,
+                        },
+                        {
+                            label: 'Ganancia del Museo ($)',
+                            data: profitKeys.map(k => profitGroups[k].profit),
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: '#10b981',
+                            borderWidth: 1,
+                        },
+                    ],
                 };
 
                 const lineOptions = {
@@ -321,6 +337,18 @@ const renderReportContent = () => {
                     scales: {
                         x: { title: { display: true, text: 'Obra' } },
                         y: { title: { display: true, text: 'Ganancia ($)' }, beginAtZero: true },
+                    },
+                };
+
+                const profitBarOptions = {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Ganancia del Museo vs Total Cobrado por Mes' },
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Mes' } },
+                        y: { title: { display: true, text: 'Monto ($)' }, beginAtZero: true },
                     },
                 };
 
@@ -365,26 +393,29 @@ const renderReportContent = () => {
                                     >
                                         <option value="line">Tendencia de Ingresos</option>
                                         <option value="top10">Top 10 Obras</option>
+                                        <option value="profitVsTotal">Ganancia Museo vs Total Cobrado</option>
                                     </select>
                                     <button className="btn btn-primary" onClick={() => setShowChart(!showChart)} style={{ margin: 0 }}>
-                                        {showChart ? 'Ocultar' : 'Generar'}
+                                        {showChart ? 'Ocultar' : 'Buscar'}
                                     </button>
                                 </div>
                                 <div className="summary-item">
                                     <span>Total Recaudado:</span>
-                                    <strong>${billingData.totalCollected.toLocaleString()}</strong>
+                                    <strong>${displayData.totalCollected.toLocaleString()}</strong>
                                 </div>
                                 <div className="summary-item">
                                     <span>Ganancia Neta Museo:</span>
-                                    <strong>${billingData.totalMuseumProfit.toLocaleString()}</strong>
+                                    <strong>${displayData.totalMuseumProfit.toLocaleString()}</strong>
                                 </div>
                             </div>
                             {showChart && (
                                 <div className="chart-wrapper">
                                     {chartType === 'line' ? (
                                         <Line data={chartData} options={lineOptions} />
-                                    ) : (
+                                    ) : chartType === 'top10' ? (
                                         <Bar data={top10ChartData} options={barOptions} />
+                                    ) : (
+                                        <Bar data={profitVsTotalChartData} options={profitBarOptions} />
                                     )}
                                 </div>
                             )}
@@ -394,6 +425,7 @@ const renderReportContent = () => {
                                     <thead>
                                         <tr>
                                             <th>Código de Factura</th>
+                                            <th>Cédula Cliente</th>
                                             <th>Fecha</th>
                                             <th>ID Obra</th>
                                             <th>Obra</th>
@@ -404,9 +436,10 @@ const renderReportContent = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {billingData.sales.map((sale) => (
+                                        {displayData.sales.map((sale) => (
                                             <tr key={sale.invoiceCode} className="clickable-row" onClick={() => setSelectedTicket(sale)}>
                                                 <td className="mono">{sale.invoiceCode}</td>
+                                                <td className="mono">{sale.clientDni || '-'}</td>
                                                 <td>{sale.date}</td>
                                                 <td className="mono">{sale.artworkId || '-'}</td>
                                                 <td className="artwork">{sale.artworkName}</td>
@@ -471,7 +504,7 @@ const renderReportContent = () => {
                     );
                 }
                 if (!securityLogs) {
-                    return <p>Presione Generar para cargar la bitácora</p>;
+                    return <p>Presione Buscar para cargar la bitácora</p>;
                 }
                 if (securityLogs.length === 0) {
                     return <p>No hay eventos de seguridad registrados.</p>;
@@ -479,7 +512,10 @@ const renderReportContent = () => {
                 const filteredLogs = securityLogs.filter(log => {
                     const matchType = !securityEventTypeFilter || log.eventType === securityEventTypeFilter;
                     const matchDate = !securityDateFilter || log.eventDate === securityDateFilter;
-                    return matchType && matchDate;
+                    const matchDni = !securityDniFilter ||
+                        String(log.adminDni || '').includes(securityDniFilter) ||
+                        String(log.clientDni || '').includes(securityDniFilter);
+                    return matchType && matchDate && matchDni;
                 });
                 return (
                     <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
@@ -530,6 +566,61 @@ const renderReportContent = () => {
                     </div>
                 );
 
+            case 'statusHistory':
+                if (!statusHistory) {
+                    return <p>Presione Buscar para ver los registros</p>;
+                }
+                if (statusHistory.length === 0) {
+                    return <p>No hay cambios de estado registrados.</p>;
+                }
+                const filteredStatusHistory = [...statusHistory].sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt)).filter(h => {
+                    const matchOld = !statusOldFilter || h.oldStatus === statusOldFilter;
+                    const matchNew = !statusNewFilter || h.newStatus === statusNewFilter;
+                    return matchOld && matchNew;
+                });
+                return (
+                    <div className={`report-view ${isPrinting ? 'printable' : ''}`}>
+                        <div className="data-table-container">
+                            <div className="card-header" style={{ padding: '16px 16px 0', marginBottom: 0 }}>
+                                <h3 className="card-title" style={{ margin: 0 }}>Historial de Estado de Obra</h3>
+                                <span className="data-source-badge">Cassandra (audit-service)</span>
+                            </div>
+                            {filteredStatusHistory.length === 0 ? (
+                                <p className="empty-state">No hay registros para el filtro seleccionado.</p>
+                            ) : (
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Obra</th>
+                                        <th>Obra</th>
+                                        <th>Estado Anterior</th>
+                                        <th>Estado Nuevo</th>
+                                        <th>Fecha</th>
+                                        <th>Admin DNI</th>
+                                        <th>Razón</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredStatusHistory.map((h, i) => (
+                                        <tr key={i}>
+                                            <td className="mono">{h.artworkId}</td>
+                                            <td className="artwork">{h.artworkName || '-'}</td>
+                                            <td><span className="status-chip" style={{ background: statusColor(h.oldStatus).bg, color: statusColor(h.oldStatus).color, fontWeight: 600 }}>{statusLabel(h.oldStatus)}</span></td>
+                                            <td><span className="status-chip" style={{ background: statusColor(h.newStatus).bg, color: statusColor(h.newStatus).color, fontWeight: 600 }}>{statusLabel(h.newStatus)}</span></td>
+                                            <td>{formatDateTime(h.changedAt)}</td>
+                                            <td>{h.changedBy || '-'}</td>
+                                            <td>{h.reason || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            )}
+                            <p className="event-count">Mostrando {filteredStatusHistory.length} de {statusHistory.length} registros</p>
+                        </div>
+                        <button onClick={handlePrint} className="btn btn-primary" style={{ marginTop: 16 }}>Imprimir</button>
+                    </div>
+                );
+
             case 'memberships':
                 return <ReportsSearch />;
 
@@ -549,13 +640,6 @@ const renderReportContent = () => {
 
             <ul className="tab-bar">
                 <li>
-                    <button 
-                        className={activeReport === 'sold' ? 'active' : ''} 
-                        onClick={() => setActiveReport('sold')}>
-                        Obras Vendidas
-                    </button>
-                </li>
-                <li>
                     <button
                         className={activeReport === 'billing' ? 'active' : ''}
                         onClick={() => setActiveReport('billing')}>
@@ -572,8 +656,15 @@ const renderReportContent = () => {
                 <li>
                     <button
                         className={activeReport === 'security' ? 'active' : ''}
-                        onClick={() => { setActiveReport('security'); setSecurityLogs(null); setSecurityEventTypeFilter(''); setSecurityDateFilter(''); setFoundLog(null); setShowFindForm(false); }}>
+                        onClick={() => { setActiveReport('security'); setSecurityLogs(null); setSecurityEventTypeFilter(''); setSecurityDateFilter(''); setFoundLog(null); setShowFindForm(false); setSecurityDniFilter(''); }}>
                         Bitácora de Seguridad
+                    </button>
+                </li>
+                <li>
+                    <button
+                        className={activeReport === 'statusHistory' ? 'active' : ''}
+                        onClick={() => { setActiveReport('statusHistory'); setStatusHistory(null); setStatusSearchId(''); setStatusOldFilter(''); setStatusNewFilter(''); }}>
+                        Historial de Obras
                     </button>
                 </li>
             </ul>
@@ -589,11 +680,14 @@ const renderReportContent = () => {
                         ))}
                     </select>
                     <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
-                        Generar
+                        Buscar
                     </button>
-                    <button className="btn btn-primary" onClick={handleViewAll} disabled={loading} style={{ background: '#6b21a8' }}>
-                        Ver todo
-                    </button>
+                    <input
+                        type="text"
+                        placeholder="Buscar por cédula o factura"
+                        value={billingSearchFilter}
+                        onChange={(e) => setBillingSearchFilter(e.target.value)}
+                    />
                 </div>
             )}
 
@@ -605,41 +699,42 @@ const renderReportContent = () => {
                         <option value="LOGIN_FAILURE">Fallidos</option>
                     </select>
                     <input type="date" value={securityDateFilter} onChange={(e) => setSecurityDateFilter(e.target.value)} />
+                    <input
+                        type="text"
+                        placeholder="Buscar por DNI (cliente o admin)"
+                        value={securityDniFilter}
+                        onChange={(e) => setSecurityDniFilter(e.target.value)}
+                    />
                     <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
-                        Generar
-                    </button>
-                    <button
-                        onClick={() => setShowFindForm(!showFindForm)}
-                        className="btn btn-secondary"
-                    >
-                        {showFindForm ? 'Cerrar búsqueda' : 'Buscar evento exacto'}
+                        Buscar
                     </button>
                 </div>
             )}
 
-            {activeReport === 'security' && showFindForm && (
-                <div className="filter-bar" style={{ marginTop: -16 }}>
-                    <form onSubmit={handleFindSecurityLog} style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
-                        <select value={findSearchType} onChange={(e) => setFindSearchType(e.target.value)}>
-                            <option value="LOGIN_SUCCESS">Exitosos</option>
-                            <option value="LOGIN_FAILURE">Fallidos</option>
-                        </select>
-                        <input type="date" value={findSearchDate} onChange={(e) => setFindSearchDate(e.target.value)} />
-                        <input type="text" placeholder="Hora (ISO)" value={findSearchTime} onChange={(e) => setFindSearchTime(e.target.value)} style={{ width: 180 }} />
-                        <input type="text" placeholder="ID Evento (UUID)" value={findSearchId} onChange={(e) => setFindSearchId(e.target.value)} style={{ width: 180 }} />
-                        <button type="submit" className="btn btn-primary" disabled={loading || !findSearchDate || !findSearchTime || !findSearchId}>
-                            Buscar
-                        </button>
-                    </form>
-                </div>
-            )}
-
-            {activeReport === 'sold' && (
+            {activeReport === 'statusHistory' && (
                 <div className="filter-bar">
-                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    <button className="btn btn-primary" onClick={handleGenerate} disabled={loading}>
-                        Generar
+                    <input
+                        type="number"
+                        placeholder="ID de la obra"
+                        value={statusSearchId}
+                        onChange={(e) => setStatusSearchId(e.target.value)}
+                    />
+                    <select value={statusOldFilter} onChange={(e) => setStatusOldFilter(e.target.value)}>
+                        <option value="">Estado Anterior (todos)</option>
+                        <option value="AVAILABLE">Disponible</option>
+                        <option value="RESERVED">Reservada</option>
+                        <option value="SOLD">Vendida</option>
+                        <option value="CANCELLED">Cancelada</option>
+                    </select>
+                    <select value={statusNewFilter} onChange={(e) => setStatusNewFilter(e.target.value)}>
+                        <option value="">Estado Nuevo (todos)</option>
+                        <option value="AVAILABLE">Disponible</option>
+                        <option value="RESERVED">Reservada</option>
+                        <option value="SOLD">Vendida</option>
+                        <option value="CANCELLED">Cancelada</option>
+                    </select>
+                    <button className="btn btn-primary" onClick={() => handleStatusHistory(statusSearchId, statusOldFilter, statusNewFilter)} disabled={loading}>
+                        Buscar
                     </button>
                 </div>
             )}

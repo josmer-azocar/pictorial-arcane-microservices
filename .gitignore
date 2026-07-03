@@ -1,2 +1,5 @@
 # Distribution / packaging
 .idea/
+
+# Vite cache
+.vite/

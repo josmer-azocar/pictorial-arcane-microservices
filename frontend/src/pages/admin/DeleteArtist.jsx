@@ -126,16 +126,17 @@ function DeleteArtist() {
 };
 
   return (
-    <div className="admin-section">
+    <div className="card">
       <ToastContainer />
-      <h1 className="section-title">Borrar Artista</h1>
-      <div className="admin-line"></div>
+      <div className="card-header">
+        <h3 className="card-title">Borrar Artista</h3>
+      </div>
 
       {loading ? (
         <div className="empty-state">Cargando artistas...</div>
       ) : (
-        <div className="table-wrapper">
-          <table className="admin-table">
+        <div className="data-table-container" style={{ marginTop: '20px' }}>
+          <table className="data-table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -149,13 +150,13 @@ function DeleteArtist() {
             <tbody>
               {artists.map(a => (
                 <tr key={a.idArtist}>
-                  <td className="td-id">#{a.idArtist}</td>
-                  <td className="td-artwork">{a.name}</td>
-                  <td className="td-artwork">{a.lastName}</td>
+                  <td className="mono">#{a.idArtist}</td>
+                  <td className="artwork">{a.name}</td>
+                  <td className="artwork">{a.lastName}</td>
                   <td>{a.nationality}</td>
                   <td>
                     <button
-                      className="btn-secondary"
+                      className="btn btn-primary"
                       title="Ver detalles"
                       onClick={() => setSelectedArtist(
                         selectedArtist?.idArtist === a.idArtist ? null : a
@@ -174,8 +175,7 @@ function DeleteArtist() {
                     </button>
                   </td>
                   <td>
-                    <button className="btn-cancel"
-                      style={{ color: '#f87171', borderColor: '#7f1d1d' }}
+                    <button className="btn btn-primary"
                       onClick={() => handleDelete(a.idArtist, `${a.name} ${a.lastName}`)}>
                       Eliminar
                     </button>
@@ -294,7 +294,7 @@ function DeleteArtist() {
             </div>
           </div>
           <div className="modal-actions">
-            <button className="btn-cancel" onClick={() => setSelectedArtist(null)}>
+            <button className="btn btn-primary" onClick={() => setSelectedArtist(null)}>
               Cerrar
             </button>
           </div>

@@ -42,6 +42,17 @@ export const AuthProvider = ({children}) => {
         const initializeUser = async () => {
             const savedToken = localStorage.getItem("token");
             if (savedToken) {
+                try {
+                    const decoded = jwtDecode(savedToken);
+                    const now = Date.now() / 1000;
+                    if (decoded.exp < now) {
+                        logout();
+                        return;
+                    }
+                } catch {
+                    logout();
+                    return;
+                }
                 await fetchAndSetUser(savedToken);
             }
             setLoading(false);

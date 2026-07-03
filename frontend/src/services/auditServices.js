@@ -50,3 +50,17 @@ export async function findSecurityLog(eventType, eventDate, eventTime, eventId) 
     return res.data;
 }
 
+export async function getArtworkStatusHistory(artworkId) {
+    const res = await axios.get(`${url}/artwork-status-history/artwork/${artworkId}`, {
+        headers: auth()
+    });
+    return res.data;
+}
+
+export async function getAllStatusHistory() {
+    const res = await axios.get(`${url}/artwork-status-history/all`, {
+        headers: auth()
+    });
+    return res.data;
+}
+

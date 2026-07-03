@@ -13,6 +13,24 @@ function ReportsSearch() {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
 
+    const statusColor = (status) => {
+        const map = {
+            'ACTIVE': { bg: '#dcfce7', color: '#166534' },
+            'EXPIRED': { bg: '#fef3c7', color: '#92400e' },
+            'CANCELLED': { bg: '#fce4ec', color: '#c62828' },
+        };
+        return map[status] || { bg: '#f3f4f6', color: '#374151' };
+    };
+
+    const statusLabel = (status) => {
+        const map = {
+            'ACTIVE': 'Activa',
+            'EXPIRED': 'Expirada',
+            'CANCELLED': 'Cancelada',
+        };
+        return map[status] || status || '-';
+    };
+
     const handleSearch = async (e, targetPage) => {
         e?.preventDefault();
         setLoading(true);
@@ -57,8 +75,7 @@ function ReportsSearch() {
 
     return (
         <div className="reports-search">
-            <h3>Gestión de Membresías</h3>
-            <form onSubmit={handleSearch} className="date-picker-container">
+            <form onSubmit={handleSearch} className="filter-bar">
                 <input
                     type="date"
                     value={searchParams.startDate}
@@ -78,39 +95,49 @@ function ReportsSearch() {
                     <option value="EXPIRED">Expirada</option>
                     <option value="CANCELLED">Cancelada</option>
                 </select>
-                <button type="submit" disabled={loading} className='generate-btn'>Buscar</button>
+                <button type="submit" disabled={loading} className="btn btn-primary">Buscar</button>
             </form>
 
             {loading && <Loading />}
             {results && (
                 <>
-                    <table className="report-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Usuario</th>
-                                <th>Fecha inicio</th>
-                                <th>Fecha fin</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {results.content?.map(m => (
-                                <tr key={m.idMembership}>
-                                    <td>{m.idMembership}</td>
-                                    <td>{m.clientId}</td>
-                                    <td>{m.paymentDate}</td>
-                                    <td>{m.expiryDate}</td>
-                                    <td>{m.status}</td>
-                                    <td>
-                                        {m.status === "ACTIVE" && <button className="generate-btn" 
-                                        onClick={() => handleCancel(m.idMembership)}>Cancelar</button>}
-                                    </td>
+                    <div className="data-table-container">
+                        <div className="card-header" style={{ padding: '16px 16px 0', marginBottom: 0 }}>
+                            <h3 className="card-title" style={{ margin: 0 }}>Gestión de Membresías</h3>
+                            <span className="data-source-badge">PostgreSQL (core-service)</span>
+                        </div>
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Fecha inicio</th>
+                                    <th>Fecha fin</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {results.content?.map(m => (
+                                    <tr key={m.idMembership}>
+                                        <td className="mono">{m.idMembership}</td>
+                                        <td>{m.clientId}</td>
+                                        <td>{m.paymentDate}</td>
+                                        <td>{m.expiryDate}</td>
+                                        <td>
+                                            <span className="status-chip" style={{ background: statusColor(m.status).bg, color: statusColor(m.status).color, fontWeight: 600 }}>
+                                                {statusLabel(m.status)}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {m.status === "ACTIVE" && <button className="btn btn-primary" style={{ padding: '6px 14px', fontSize: 12 }}
+                                            onClick={() => handleCancel(m.idMembership)}>Cancelar</button>}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
                                         {/* Pagination controls */}
                     {results.totalPages > 1 && (
@@ -118,15 +145,17 @@ function ReportsSearch() {
                             <button 
                                 onClick={() => goToPage(page - 1)} 
                                 disabled={page === 0}
-                                className="generate-btn"
+                                className="btn btn-primary"
+                                style={{ padding: '6px 18px', fontSize: 13 }}
                             >
                                 Anterior
                             </button>
-                            <span>Página {page + 1} de {results.totalPages}</span>
+                            <span className="pagination-info">Página {page + 1} de {results.totalPages}</span>
                             <button 
                                 onClick={() => goToPage(page + 1)} 
                                 disabled={page === results.totalPages - 1}
-                                className="generate-btn"
+                                className="btn btn-primary"
+                                style={{ padding: '6px 18px', fontSize: 13 }}
                             >
                                 Siguiente
                             </button>

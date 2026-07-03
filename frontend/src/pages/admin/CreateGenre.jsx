@@ -54,10 +54,11 @@ const CreateGenre = () => {
     };
 
     return (
-        <div className="admin-section">
+        <div className="card">
             <ToastContainer position="top-center" theme="dark" />
-            <h1 className="section-title">Crear Nuevo Género</h1>
-            <div className="admin-line"></div>
+            <div className="card-header">
+                <h3 className="card-title">Crear Nuevo Género</h3>
+            </div>
             <p className="admin-subtitle">Agrega nuevas categorías para clasificar las obras de arte.</p>
 
             <form className="admin-form" onSubmit={handleSubmit}>
@@ -85,7 +86,7 @@ const CreateGenre = () => {
                     />
                 </div>
 
-                <button type="submit" className="btn-primary" disabled={isLoading}>
+                <button type="submit" className="btn btn-primary" disabled={isLoading}>
                     {isLoading ? 'Creando...' : 'Crear Género'}
                 </button>
             </form>

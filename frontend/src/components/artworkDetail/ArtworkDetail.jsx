@@ -142,12 +142,19 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
   // ── HANDLER: POST /sale/reserve ──────────────────────────
   // Reserva la obra usando el código de seguridad del usuario
   const handleReservar = async () => {
+    console.log("Datos enviados:");
+    console.log("   idArtWork:", idArtWork);
+    console.log("   price:", price);
+    console.log("   commissionRate (default):", 0.1);
+    console.log("   securityCode:", securityCode);
+    console.log("   token:", token);
     try {
-      await reserveArtwork(artworkId, price, artistCommissionRate, securityCode, token);
+      await reserveArtwork(idArtWork, price, 0.1, securityCode, token);
       toast.success("¡Obra reservada exitosamente!");
       setShowModal(false);
     } catch (err) {
-      if (err.response?.status === 400) toast.error("Código de seguridad incorrecto.");
+      console.log("Error completo:", err.response?.data);
+      if (err.response?.status === 400) toast.error("Código de seguridad incorrecto u otros parámetros inválidos.");
       else if (err.response?.status === 409) toast.error("La obra ya no está disponible.");
       else toast.error("Error al procesar la reserva.");
     }

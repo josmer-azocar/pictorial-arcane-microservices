@@ -81,29 +81,30 @@ const UpdateGenre = () => {
   };
 
   return (
-    <div className="admin-section">
+    <div className="card">
       <ToastContainer position="top-center" theme="dark" />
-      <h1 className="section-title">Actualizar Género</h1>
-      <div className="admin-line"></div>
+      <div className="card-header">
+        <h3 className="card-title">Actualizar Género</h3>
+      </div>
       <p className="admin-subtitle">Selecciona un género para modificar su nombre y descripción.</p>
 
       {loading ? (
         <div className="empty-state">Cargando géneros...</div>
       ) : (
-        <div className="table-wrapper" style={{ marginTop: '40px' }}>
-          <table className="admin-table">
+        <div className="data-table-container" style={{ marginTop: '20px' }}>
+          <table className="data-table">
             <thead>
               <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr>
             </thead>
             <tbody>
               {genres.map(genre => (
                 <tr key={genre.idGenre}>
-                  <td className="td-id">#{genre.idGenre}</td>
+                  <td className="mono">#{genre.idGenre}</td>
                   <td>{genre.name}</td>
                   <td>{genre.description}</td>
                   <td>
                     <div className="action-buttons">
-                      <button className="btn-invoice" onClick={() => handleEditClick(genre)}>
+                      <button className="btn btn-primary" onClick={() => handleEditClick(genre)}>
                         Editar
                       </button>
                     </div>
@@ -119,10 +120,10 @@ const UpdateGenre = () => {
       )}
 
       {selectedGenre && (
-        <div className="admin-form-container" style={{ marginTop: '40px', maxWidth: '100%' }}>
-          <h2 className="section-title" style={{ fontSize: '24px' }}>
-            Editando: {selectedGenre.name}
-          </h2>
+        <div className="card" style={{ marginTop: '20px' }}>
+          <div className="card-header">
+            <h3 className="card-title">Editando: {selectedGenre.name}</h3>
+          </div>
           <form onSubmit={handleSave} className="admin-form" style={{ marginTop: '20px' }}>
             <div className="form-group">
               <label className="form-label">Nombre</label>
@@ -147,10 +148,10 @@ const UpdateGenre = () => {
               />
             </div>
             <div className="modal-actions" style={{ justifyContent: 'flex-start' }}>
-              <button type="submit" className="btn-primary" disabled={isEditing}>
+              <button type="submit" className="btn btn-primary" disabled={isEditing}>
                 {isEditing ? 'Guardando...' : 'Guardar Cambios'}
               </button>
-              <button type="button" className="btn-secondary" onClick={handleCancel} disabled={isEditing}>
+              <button type="button" className="btn btn-primary" onClick={handleCancel} style={{ background: '#6b21a8' }} disabled={isEditing}>
                 Cancelar
               </button>
             </div>

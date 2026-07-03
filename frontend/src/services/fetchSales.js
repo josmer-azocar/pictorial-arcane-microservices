@@ -72,7 +72,7 @@ export async function reserveArtwork(artworkId, price, commissionRate, securityC
       {
         params: {
           id_obra: artworkId,
-          price,
+          price: price,
           commission_rate: commissionRate,
           security_code: securityCode
         },
