@@ -21,7 +21,8 @@ public class PurchaseHistoryMapper {
                 projection.obra(),
                 projection.artista(),
                 projection.genero(),
-                fecha != null ? fecha.toString() : null
+                fecha != null ? fecha.toString() : null,
+                projection.imageUrl()
         );
     }
 

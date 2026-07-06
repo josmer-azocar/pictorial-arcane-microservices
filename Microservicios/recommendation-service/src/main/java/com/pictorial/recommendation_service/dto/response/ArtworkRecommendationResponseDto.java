@@ -7,5 +7,6 @@ public record ArtworkRecommendationResponseDto(
         Long artworkId,
         String name,
         String genreName,
-        Double price
+        Double price,
+        String imageUrl
 ) {}

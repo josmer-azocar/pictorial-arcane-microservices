@@ -16,7 +16,8 @@ public class TopArtworkMapper {
         return new TopArtworkResponseDto(
                 projection.id(),
                 projection.obra(),
-                projection.vecesComprada()
+                projection.vecesComprada(),
+                projection.imageUrl()
         );
     }
 

@@ -17,7 +17,8 @@ public class ArtworkRecommendationMapper {
                 projection.artworkId(),
                 projection.obra(),
                 projection.genero(),
-                projection.precio()
+                projection.precio(),
+                projection.imageUrl()
         );
     }
 

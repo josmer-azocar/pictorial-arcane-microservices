@@ -6,5 +6,6 @@ package com.pictorial.recommendation_service.dto.response;
 public record TopArtworkResponseDto(
         Long artworkId,
         String name,
-        Long timesComprada
+        Long timesComprada,
+        String imageUrl
 ) {}

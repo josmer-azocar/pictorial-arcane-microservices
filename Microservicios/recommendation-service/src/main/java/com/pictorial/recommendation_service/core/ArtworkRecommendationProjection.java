@@ -11,5 +11,6 @@ public record ArtworkRecommendationProjection(
         Long artworkId,
         String obra,
         String genero,
-        Double precio
+        Double precio,
+        String imageUrl
 ) {}
