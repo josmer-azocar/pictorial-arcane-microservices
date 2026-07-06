@@ -164,9 +164,14 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
       setShowModal(false);
     } catch (err) {
       console.log("Error completo:", err.response?.data);
-      if (err.response?.status === 400) toast.error("Código de seguridad incorrecto u otros parámetros inválidos.");
-      else if (err.response?.status === 409) toast.error("La obra ya no está disponible.");
-      else toast.error("Error al procesar la reserva.");
+      const backendMessage = err.response?.data?.message || "";
+      if (err.response?.status === 400 || backendMessage.toLowerCase().includes("security code")) {
+        toast.error("Código de seguridad incorrecto u otros parámetros inválidos.");
+      } else if (err.response?.status === 409) {
+        toast.error("La obra ya no está disponible.");
+      } else {
+        toast.error("Error al procesar la reserva.");
+      }
     }
   };
 
