@@ -62,7 +62,7 @@ public class SaleRepository {
         sale.setIdArtwork(idArtwork);
         sale.setClient(client);
         sale.setAdmin(null);
-        sale.setDate(null);
+        sale.setDate(LocalDate.now());
         sale.setDescription(null);
         sale.setPrice(price);
 
