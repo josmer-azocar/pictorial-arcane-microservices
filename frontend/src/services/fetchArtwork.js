@@ -611,3 +611,18 @@ export async function getSpecificArtworkById(id) {
     throw error;
   }
 }
+
+// Recomienda obras del mismo género que la obra dada.
+// Endpoint público (no requiere token), pensado para usuarios no registrados.
+// GET /api/v1/recommendations/artwork/{artworkId}/recommendations
+export async function getArtworkRecommendations(artworkId) {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/artwork/${artworkId}/recommendations`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener recomendaciones de la obra:", error);
+    throw error;
+  }
+}

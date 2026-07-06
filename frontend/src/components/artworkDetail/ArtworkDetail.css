@@ -264,6 +264,104 @@ body {
   color: var(--purple);
 }
 
+/* OBRAS RECOMENDADAS (mismo género) */
+.recommendations-section {
+  grid-column: 1 / -1;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border);
+}
+
+.recommendations-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.recommendations-carousel {
+  position: relative;
+}
+
+.recommendations-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+}
+
+.recommendations-track::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge */
+}
+
+.recommendation-card {
+  display: block;
+  flex: 0 0 calc((100% - 4 * 16px) / 5);
+  min-width: 160px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-dark);
+  background: #fff;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-dark);
+}
+
+.carousel-arrow:hover {
+  background: #fff;
+}
+
+.carousel-arrow-left {
+  left: -18px;
+}
+
+.carousel-arrow-right {
+  right: -18px;
+}
+
+.recommendation-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.recommendation-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.recommendation-genre {
+  font-size: 13px;
+  color: var(--text-gray);
+  margin-bottom: 8px;
+}
+
+.recommendation-price {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--purple);
+}
+
 /* RESPONSIVE */
 @media (max-width: 968px) {
   .product-layout {
