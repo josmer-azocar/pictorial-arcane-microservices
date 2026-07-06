@@ -169,7 +169,7 @@ function Artwork() {
               >
                 <option value="">Todos los Artistas</option>
                 {availableArtists.map(artist => (
-                  <option key={artist.idArtist} value={artist.idArtist}>
+                  <option key={artist.id} value={artist.id}>
                     {artist.name}
                   </option>
                 ))}

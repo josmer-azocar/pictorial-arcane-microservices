@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../services/AuthContext.jsx';
-import { getSpecificArtworkById, getArtistById, getArtworkRecommendations } from '../../services/fetchArtwork.js';
+import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks } from '../../services/fetchArtwork.js';
 import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
@@ -89,6 +89,7 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   // Carga la obra por ID cuando el componente monta
 useEffect(() => {
   if (id) {
+    window.scrollTo({ top: 0, behavior: 'instant' });
     getSpecificArtworkById(id)
       .then(data => {
         setArtwork(data);
@@ -127,7 +128,30 @@ useEffect(() => {
     const artworkId = artwork?.artworkResponse?.artworkId;
     if (artworkId) {
       getArtworkRecommendations(artworkId)
-        .then(data => setRecommendations(Array.isArray(data) ? data : []))
+        .then(async (data) => {
+          const list = Array.isArray(data) ? data : [];
+          // El DTO de recomendaciones no trae imageUrl ni el _id de Mongo
+          // (usa artworkId, la clave de negocio Long); se completan cruzando
+          // por artworkId contra el catálogo de artwork-service.
+          try {
+            const catalog = await getAllArtworks();
+            const catalogByArtworkId = new Map(
+              catalog.map((a) => [String(a.artworkId), a])
+            );
+            setRecommendations(
+              list.map((rec) => {
+                const match = catalogByArtworkId.get(String(rec.artworkId));
+                return {
+                  ...rec,
+                  imageUrl: match?.imageUrl,
+                  mongoId: match?.id,
+                };
+              })
+            );
+          } catch {
+            setRecommendations(list);
+          }
+        })
         .catch(() => setRecommendations([]));
     }
   }, [artwork]);
@@ -421,10 +445,19 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
               <div className="recommendations-track" ref={recommendationsTrackRef}>
                 {recommendations.map((rec) => (
                   <Link
-                    to={`/artwork/${rec.artworkId}`}
+                    to={`/artwork/${rec.mongoId || rec.artworkId}`}
                     key={rec.artworkId}
                     className="recommendation-card"
                   >
+                    <div className="recommendation-image-frame">
+                      {rec.imageUrl && (
+                        <img
+                          src={rec.imageUrl}
+                          alt={rec.name}
+                          className="recommendation-image"
+                        />
+                      )}
+                    </div>
                     <h3 className="recommendation-name">{rec.name}</h3>
                     <p className="recommendation-genre">{rec.genreName}</p>
                     <p className="recommendation-price">${rec.price?.toLocaleString()}</p>

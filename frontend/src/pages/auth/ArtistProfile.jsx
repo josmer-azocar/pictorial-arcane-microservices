@@ -106,7 +106,7 @@ useEffect(() => {
     <h2 className="artp-section-title">Obras del Artista</h2>
     <div className="artp-genres-row">
       {artworksByGenre.map((work) => (
-        <div key={work.idArtWork} className="artp-work-mini-card" onClick={() => navigate(`/artwork/${work.idArtWork}`)} style={{ cursor: 'pointer' }}>
+        <div key={work.id} className="artp-work-mini-card" onClick={() => navigate(`/artwork/${work.id}`)} style={{ cursor: 'pointer' }}>
           <img src={work.imageUrl} alt={work.name} className="artp-genre-cover" />
           <p className="artp-work-name">{work.name}</p>
           <span className="artp-work-price">${work.price}</span>
