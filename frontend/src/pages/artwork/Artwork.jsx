@@ -197,24 +197,46 @@ function Artwork() {
             <section id="art-grid">
                 {(works.content || []).map((artPiece) => (
                     <div className="art-piece" key={artPiece.id}>
-  <Link to={`/artwork/${artPiece.id}`}>
-    <img src={artPiece.image} alt={artPiece.name} />
-  </Link>
-  <div className="text-art-piece">
-    <p className="precio-display">${artPiece.precio}</p>
-    <p>{artPiece.name}</p>
-    <p><Link to={`/artist/${artPiece.artistId}`}>{artPiece.artistName}</Link></p>
-  </div>
-</div>
+                      <Link to={`/artwork/${artPiece.id}`}>
+                        <img src={artPiece.image} alt={artPiece.name} />
+                        <div className="pin-overlay"></div>
+                        <span className="pin-save-btn">${artPiece.precio}</span>
+                      </Link>
+                      <div className="pin-actions">
+                        <button className="pin-actions-btn" title="Más opciones">⋯</button>
+                      </div>
+                      <div className="text-art-piece">
+                        <h3>{artPiece.name}</h3>
+                        <p><Link to={`/artist/${artPiece.artistId}`}>{artPiece.artistName}</Link></p>
+                      </div>
+                    </div>
                 ))}
             </section>
             <section className="pagination">
-                {[...Array(works.totalPages || 0)].map((unused, index) => ( //el spread... se hace para forzar a que se lea el array y que map pueda ver los valores como undefined
-                    <button key={index} onClick={ () => getArt(index)} 
-                        className={works.number === index ? "active-page" : ""}>
-                        {index + 1}
-                    </button>
-                ))}
+                <button className="prev" onClick={() => getArt(works.number - 1)} disabled={works.number === 0} />
+                {(() => {
+                    const total = works.totalPages || 0;
+                    const current = works.number;
+                    if (total <= 7) {
+                        return [...Array(total)].map((_, i) => (
+                            <button key={i} onClick={() => getArt(i)} className={current === i ? "active-page" : ""}>{i + 1}</button>
+                        ));
+                    }
+                    const pages = [];
+                    pages.push(0);
+                    const start = Math.max(1, current - 2);
+                    const end = Math.min(total - 2, current + 2);
+                    if (start > 1) pages.push('...');
+                    for (let i = start; i <= end; i++) pages.push(i);
+                    if (end < total - 2) pages.push('...');
+                    pages.push(total - 1);
+                    return pages.map((p, idx) =>
+                        p === '...' ? <span key={`e${idx}`} className="pagination-ellipsis">...</span> : (
+                            <button key={p} onClick={() => getArt(p)} className={current === p ? "active-page" : ""}>{p + 1}</button>
+                        )
+                    );
+                })()}
+                <button className="next" onClick={() => getArt(works.number + 1)} disabled={works.number === works.totalPages - 1} />
             </section>
             
 
