@@ -7,5 +7,6 @@ package com.pictorial.recommendation_service.core;
 public record TopArtworkProjection(
         Long id,
         String obra,
-        Long vecesComprada
+        Long vecesComprada,
+        String imageUrl
 ) {}

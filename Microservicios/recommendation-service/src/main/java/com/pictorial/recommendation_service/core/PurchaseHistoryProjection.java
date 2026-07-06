@@ -15,5 +15,6 @@ public record PurchaseHistoryProjection(
         String obra,
         String artista,
         String genero,
-        ZonedDateTime fechaCompra
+        ZonedDateTime fechaCompra,
+        String imageUrl
 ) {}

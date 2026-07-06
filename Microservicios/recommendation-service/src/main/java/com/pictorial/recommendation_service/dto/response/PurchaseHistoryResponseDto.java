@@ -8,5 +8,6 @@ public record PurchaseHistoryResponseDto(
         String artworkName,
         String artistName,
         String genreName,
-        String purchaseDate
+        String purchaseDate,
+        String imageUrl
 ) {}

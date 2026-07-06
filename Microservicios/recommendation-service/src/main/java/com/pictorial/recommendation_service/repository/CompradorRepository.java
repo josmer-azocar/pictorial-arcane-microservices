@@ -22,14 +22,15 @@ public interface CompradorRepository extends Neo4jRepository<CompradorNode, Stri
             "MATCH (gen)<-[:HAS_GENRE]-(recomendada: Artwork) " +
             "WHERE NOT recomendada IN compradas AND recomendada.status = 'AVAILABLE' " +
             "RETURN DISTINCT recomendada.artworkId AS artworkId, recomendada.name AS obra, " +
-            "       gen.name AS genero, toFloat(recomendada.price) AS precio " +
+            "       gen.name AS genero, toFloat(recomendada.price) AS precio, recomendada.imageUrl AS imageUrl " +
             "ORDER BY precio DESC LIMIT $limit")
     List<ArtworkRecommendationProjection> getRecommendationsBasedOnPurchases(@Param("compradorId") String compradorId, @Param("limit") int limit);
 
     // 7.3 Historial de compras de un usuario con detalles de artista y género (Proyección tabular)
     @Query("MATCH (u: Comprador {id: $compradorId})-[c:BOUGHT]->(aw: Artwork)<-[:CREATED]-(a: Artist) " +
             "OPTIONAL MATCH (aw)-[:HAS_GENRE]->(g:Genre) " +
-            "RETURN u.name AS comprador, aw.name AS obra, (a.name + ' ' + a.lastName) AS artista, g.name AS genero, c.fecha AS fechaCompra")
+            "RETURN u.name AS comprador, aw.name AS obra, (a.name + ' ' + a.lastName) AS artista, " +
+            "       g.name AS genero, c.fecha AS fechaCompra, aw.imageUrl AS imageUrl")
     List<PurchaseHistoryProjection> getPurchaseHistoryDetails(@Param("compradorId") String compradorId);
 
     // 7.6 Recomendaciones basadas en todas las obras vistas (SAW)
@@ -40,7 +41,7 @@ public interface CompradorRepository extends Neo4jRepository<CompradorNode, Stri
             "OPTIONAL MATCH (u)-[b:BOUGHT]->(recomendada) " +
             "WHERE NOT recomendada IN vistas AND recomendada.status = 'AVAILABLE' AND b IS NULL " +
             "RETURN DISTINCT recomendada.artworkId AS artworkId, recomendada.name AS obra, " +
-            "       gen.name AS genero, toFloat(recomendada.price) AS precio " +
+            "       gen.name AS genero, toFloat(recomendada.price) AS precio, recomendada.imageUrl AS imageUrl " +
             "ORDER BY precio DESC LIMIT $limit")
     List<ArtworkRecommendationProjection> getRecommendationsBasedOnViews(@Param("compradorId") String compradorId, @Param("limit") int limit);
 
@@ -51,7 +52,7 @@ public interface CompradorRepository extends Neo4jRepository<CompradorNode, Stri
             "OPTIONAL MATCH (u)-[b:BOUGHT]->(recomendada) " +
             "WHERE recomendada.artworkId <> ultima.artworkId AND recomendada.status = 'AVAILABLE' AND b IS NULL " +
             "RETURN recomendada.artworkId AS artworkId, recomendada.name AS obra, " +
-            "       g.name AS genero, toFloat(recomendada.price) AS precio " +
+            "       g.name AS genero, toFloat(recomendada.price) AS precio, recomendada.imageUrl AS imageUrl " +
             "ORDER BY precio DESC LIMIT $limit")
     List<ArtworkRecommendationProjection> getRecommendationsBasedOnLastViewed(@Param("compradorId") String compradorId, @Param("limit") int limit);
 
