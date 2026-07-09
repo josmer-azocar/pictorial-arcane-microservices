@@ -12,6 +12,7 @@ import com.pictorialarcane.core_service.domain.dto.response.BillingSaleItemRespo
 import com.pictorialarcane.core_service.domain.dto.response.BillingSummaryResponseDto;
 import com.pictorialarcane.core_service.domain.dto.response.PurchaseResponseDto;
 import com.pictorialarcane.core_service.domain.dto.response.SaleResponseDto;
+import com.pictorialarcane.core_service.domain.exception.SaleDoesNotExistsException;
 import com.pictorialarcane.core_service.domain.exception.SaleException;
 import com.pictorialarcane.core_service.persistence.crud_repository.CrudPaymentRepository;
 import com.pictorialarcane.core_service.persistence.crud_repository.CrudSaleRepositoy;
@@ -93,6 +94,9 @@ public class SaleRepository {
 
     public void rejectPendingSale(Long saleId, Long adminId) {
         SaleEntity sale = this.crudSaleRepository.findByIdSale(saleId);
+        if (sale == null) {
+            throw new SaleDoesNotExistsException(saleId);
+        }
         if (!SaleStatus.PENDING.name().equals(sale.getSaleStatus())) {
             throw new SaleException(saleId, sale.getSaleStatus());
         }
@@ -129,6 +133,9 @@ public class SaleRepository {
 
     public SaleResponseDto confirmSale(Long saleId, String email, PaymentRequestDto paymentRequestDto, String description, String direction) {
         SaleEntity saleEntity = crudSaleRepository.findByIdSale(saleId);
+        if (saleEntity == null) {
+            throw new SaleDoesNotExistsException(saleId);
+        }
         UserEntity admin = crudUserRepository.findFirstByEmail(email);
 
         if (!saleEntity.getSaleStatus().equals(SaleStatus.PENDING.name())) throw new SaleException(saleId);

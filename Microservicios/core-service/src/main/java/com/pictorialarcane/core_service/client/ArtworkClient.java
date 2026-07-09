@@ -50,11 +50,12 @@ public class ArtworkClient {
         }
     }
 
-    /** RESERVED -> SOLD. Best-effort. */
+    /** RESERVED -> SOLD. Best-effort. changedBy null = acción automática del sistema. */
     public void markSold(Long artworkId, Long changedBy) {
+        long actor = changedBy != null ? changedBy : SYSTEM_ACTOR;
         try {
             restClient.post()
-                    .uri(baseUrl() + "/artwork/sell/{id}?changedBy={cb}&reason={r}", artworkId, changedBy, "Venta confirmada")
+                    .uri(baseUrl() + "/artwork/sell/{id}?changedBy={cb}&reason={r}", artworkId, actor, "Venta confirmada")
                     .retrieve()
                     .toBodilessEntity();
         } catch (Exception e) {
