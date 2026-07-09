@@ -14,16 +14,16 @@ export async function showArtwork(idGenre = null,
     direction = 'ASC', ){
     try {
         const searchParams = {
-            idGenre: idGenre, 
+            idGenre: idGenre,
             idArtist: idArtist,
-            title: title || '',
+            name: title || '',
             page: page,
             size: size,
             sortBy: sortBy,
             direction: direction,
         };
-        if (minPrice != null) searchParams.min = minPrice;
-        if (maxPrice != null) searchParams.max = maxPrice;
+        if (minPrice != null) searchParams.minPrice = minPrice;
+        if (maxPrice != null) searchParams.maxPrice = maxPrice;
         const response = await axios.get(`${url}/artwork/search`, {
             params: searchParams
         });

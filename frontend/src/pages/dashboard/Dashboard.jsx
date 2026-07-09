@@ -5,9 +5,9 @@ import { useState } from 'react';
 import HistorialCompras from './HistorialCompras';
 import InfoUsuario from './InfoUsuario';
 import Loading from '../../components/Loading.jsx';
-import { obtainOrRenewMembership, fetchMembershipStatus, createSecurityCode, debugGenerateHash } from '../../services/membershipServices.js';
+import { obtainOrRenewMembership, fetchMembershipStatus, createSecurityCode } from '../../services/membershipServices.js';
 import { useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 function Dashboard() {
     const { user, logout } = useAuth();
@@ -121,13 +121,6 @@ function Dashboard() {
                         <button onClick={() => setActiveSection('membership')}>Estado de membresía</button>
                     </li>
                     <li><button onClick={logout}>Salir</button></li>
-                    {/* DEBUG — BORRAR DESPUES: genera hash BCrypt para pruebas */}
-                    <li><button onClick={async () => {
-                        const h = await debugGenerateHash("123456");
-                        toast.success(`Código: 123456 | Hash: ${h.substring(0, 30)}...`, { autoClose: 15000 });
-                    }} style={{ background: '#ff9800', color: '#fff', fontWeight: 'bold' }}>
-                        🔧 DEBUG: Hash 123456
-                    </button></li>
                 </ul>
             </div>
             </div>

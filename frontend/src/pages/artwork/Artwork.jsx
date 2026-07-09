@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { showArtwork, showArtist } from '../../services/fetchArtwork.js'
+import { showArtwork, showArtist, getGenres } from '../../services/fetchArtwork.js'
 import Loading from "../../components/Loading";
 import { Link } from "react-router-dom";
 import './Artwork.css'
@@ -20,16 +20,8 @@ function Artwork() {
     useEffect(() => {
     const fetchGenres = async () => {
         try {
-            // MOCK — descomentar en produccion
-            // const data = await getGenres();
-            // setGenreList(data);
-            setGenreList([
-              { idGenre: 1, name: 'Pintura' },
-              { idGenre: 2, name: 'Escultura' },
-              { idGenre: 3, name: 'Fotografía' },
-              { idGenre: 4, name: 'Cerámica' },
-              { idGenre: 5, name: 'Orfebrería' },
-            ]);
+            const data = await getGenres();
+            setGenreList(data);
         } catch (err) {
             console.error("Error al cargar géneros", err);
         }
@@ -85,14 +77,16 @@ function Artwork() {
                 sortBy,
                 direction);
             const artistData = await showArtist();
-            const formattedArt = (response.content || []).map(art => ({
-                ...art,
-                id: art.id,
-                artistName: art.artistName || "Desconocido",
-                precio: art.price,
-                image: art.imageUrl,
-                genre: art.genreName || "General"
-            }));
+            const formattedArt = (response.content || [])
+                .filter(art => art.status === 'AVAILABLE')
+                .map(art => ({
+                    ...art,
+                    id: art.id,
+                    artistName: art.artistName || "Desconocido",
+                    precio: art.price,
+                    image: art.imageUrl,
+                    genre: art.genreName || "General"
+                }));
             setWork({
                 ...response,
                 content: formattedArt
@@ -146,17 +140,19 @@ function Artwork() {
             <div className="filter-container">
               <input
                 type="number"
-                placeholder="Precio mín"
+                placeholder="Min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
                 className="price-input"
                 min="0"
               />
               <input
                 type="number"
-                placeholder="Precio máx"
+                placeholder="Max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
                 className="price-input"
                 min="0"
               />
@@ -178,16 +174,17 @@ function Artwork() {
                 value={sortConfig.idGenre || ""}
                 onChange={(e) => {
                   const val = e.target.value;
-                  getArt(0, val === "" ? null : Number(val), sortConfig.idArtist);
+                  getArt(0, val === "" ? null : val, sortConfig.idArtist);
                 }}
               >
                 <option value="">Todos los Géneros</option>
                 {genreList.map((genre) => (
-                  <option key={genre.idGenre} value={genre.idGenre}>
+                  <option key={genre.id} value={genre.id}>
                     {genre.name}
                   </option>
                 ))}
               </select>
+              <button onClick={() => getArt(0)}>Buscar</button>
               <button onClick={() => {
                 setMinPrice('');
                 setMaxPrice('');
