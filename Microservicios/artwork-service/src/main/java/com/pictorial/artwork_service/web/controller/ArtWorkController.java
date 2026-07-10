@@ -32,8 +32,12 @@ public class ArtWorkController {
     // Público: cualquiera puede consultar las obras.
     @PreAuthorize("permitAll()")
     @GetMapping("/all")
-    public ResponseEntity<List<ArtWorkResponseDto>> getAll() {
-        return ResponseEntity.ok(artWorkService.getAll());
+    public ResponseEntity<Page<ArtWorkResponseDto>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
+        return ResponseEntity.ok(artWorkService.getAll(page, size, sortBy, direction));
     }
 
     @PreAuthorize("permitAll()")
