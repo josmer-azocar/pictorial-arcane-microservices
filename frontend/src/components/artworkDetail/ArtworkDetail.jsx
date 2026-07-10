@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../services/AuthContext.jsx';
-import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks } from '../../services/fetchArtwork.js';
+import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations } from '../../services/fetchArtwork.js';
 import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
@@ -47,7 +47,7 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
 
   // ── HOOKS: RUTA Y AUTENTICACIÓN ──────────────────────────
   const { id } = useParams();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   // ── ESTADOS: OBRA Y ZOOM DE IMAGEN ──────────────────────
   const [artwork, setArtwork] = useState(artworkProp || null);
@@ -78,6 +78,19 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   // Desplaza el carrusel de recomendaciones un "grupo" (5 tarjetas) a la vez
   const scrollRecommendations = (direction) => {
     const track = recommendationsTrackRef.current;
+    if (!track) return;
+    const cardWidth = track.firstChild?.getBoundingClientRect().width || 0;
+    const gap = 16;
+    const amount = (cardWidth + gap) * 5 * direction;
+    track.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  // ── ESTADOS: RECOMENDACIONES BASADAS EN COMPRAS ─────────
+  const [purchaseRecommendations, setPurchaseRecommendations] = useState([]);
+  const purchaseRecTrackRef = useRef(null);
+
+  const scrollPurchaseRecommendations = (direction) => {
+    const track = purchaseRecTrackRef.current;
     if (!track) return;
     const cardWidth = track.firstChild?.getBoundingClientRect().width || 0;
     const gap = 16;
@@ -155,6 +168,37 @@ useEffect(() => {
         .catch(() => setRecommendations([]));
     }
   }, [artwork]);
+
+  // ── EFECTO: GET /api/v1/recommendations/user/{id}/recommendations ──
+  // Carga recomendaciones basadas en compras anteriores del usuario
+  // Solo se ejecuta si el usuario está autenticado
+  useEffect(() => {
+    if (!token || !user?.dniUser) return;
+
+    getUserPurchaseRecommendations(user.dniUser, token)
+      .then(async (data) => {
+        const list = Array.isArray(data) ? data : [];
+        try {
+          const catalog = await getAllArtworks();
+          const catalogByArtworkId = new Map(
+            catalog.map((a) => [String(a.artworkId), a])
+          );
+          setPurchaseRecommendations(
+            list.map((rec) => {
+              const match = catalogByArtworkId.get(String(rec.artworkId));
+              return {
+                ...rec,
+                imageUrl: match?.imageUrl,
+                mongoId: match?.id,
+              };
+            })
+          );
+        } catch {
+          setPurchaseRecommendations(list);
+        }
+      })
+      .catch(() => setPurchaseRecommendations([]));
+  }, [token, user?.dniUser]);
 
   // ── EFECTO: GET /questions/getAssignedQuestions ──────────
   // Carga las preguntas de seguridad cuando se abre el modal de recuperación
@@ -470,6 +514,59 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
                   type="button"
                   className="carousel-arrow carousel-arrow-right"
                   onClick={() => scrollRecommendations(1)}
+                  aria-label="Ver más recomendaciones"
+                >
+                  ›
+                </button>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ── RECOMENDACIONES BASADAS EN COMPRAS DEL USUARIO ── */}
+        {purchaseRecommendations.length > 0 && (
+          <section className="recommendations-section">
+            <h2 className="recommendations-title">En base a tus compras pasadas</h2>
+            <div className="recommendations-carousel">
+              {purchaseRecommendations.length > 5 && (
+                <button
+                  type="button"
+                  className="carousel-arrow carousel-arrow-left"
+                  onClick={() => scrollPurchaseRecommendations(-1)}
+                  aria-label="Ver recomendaciones anteriores"
+                >
+                  ‹
+                </button>
+              )}
+
+              <div className="recommendations-track" ref={purchaseRecTrackRef}>
+                {purchaseRecommendations.map((rec) => (
+                  <Link
+                    to={`/artwork/${rec.mongoId || rec.artworkId}`}
+                    key={rec.artworkId}
+                    className="recommendation-card"
+                  >
+                    <div className="recommendation-image-frame">
+                      {rec.imageUrl && (
+                        <img
+                          src={rec.imageUrl}
+                          alt={rec.name}
+                          className="recommendation-image"
+                        />
+                      )}
+                    </div>
+                    <h3 className="recommendation-name">{rec.name}</h3>
+                    <p className="recommendation-genre">{rec.genreName}</p>
+                    <p className="recommendation-price">${rec.price?.toLocaleString()}</p>
+                  </Link>
+                ))}
+              </div>
+
+              {purchaseRecommendations.length > 5 && (
+                <button
+                  type="button"
+                  className="carousel-arrow carousel-arrow-right"
+                  onClick={() => scrollPurchaseRecommendations(1)}
                   aria-label="Ver más recomendaciones"
                 >
                   ›

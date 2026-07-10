@@ -17,6 +17,7 @@ export const AuthProvider = ({children}) => {
             const profile = await getUserData(token);
             setIsLoggedIn(true);
             setUser({
+                dniUser: profile.user.dniUser,
                 firstName: profile.user.firstName || "Usuario",
                 lastName: profile.user.lastName || "",
                 role: profile.user.role,

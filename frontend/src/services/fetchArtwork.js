@@ -615,6 +615,19 @@ export async function getSpecificArtworkById(id) {
 // Recomienda obras del mismo género que la obra dada.
 // Endpoint público (no requiere token), pensado para usuarios no registrados.
 // GET /api/v1/recommendations/artwork/{artworkId}/recommendations
+export async function getUserPurchaseRecommendations(userId, token) {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/user/${userId}/recommendations`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener recomendaciones por compras:", error);
+    throw error;
+  }
+}
+
 export async function getArtworkRecommendations(artworkId) {
   try {
     const response = await axios.get(
