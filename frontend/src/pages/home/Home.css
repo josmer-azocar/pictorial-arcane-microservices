@@ -231,6 +231,11 @@
   to   { opacity: 1; }
 }
 
+/* ── CARRUSELES DE RECOMENDACIONES EN HOME ── */
+.home-container .recommendations-section {
+  padding: 40px 5%;
+}
+
 /* 🚧 ACCESO ADMIN — SOLO VISIBLE EN DESARROLLO */
 .dev-access-section {
   position: fixed;

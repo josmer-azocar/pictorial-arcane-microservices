@@ -628,6 +628,32 @@ export async function getUserPurchaseRecommendations(userId, token) {
   }
 }
 
+export async function getUserRecommendationsByViews(userId, token) {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/user/${userId}/recommendations/by-views`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener recomendaciones por vistas:", error);
+    throw error;
+  }
+}
+
+export async function getUserRecommendationsByLastViewed(userId, token) {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/user/${userId}/recommendations/last-viewed`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener recomendaciones por última vista:", error);
+    throw error;
+  }
+}
+
 export async function getArtworkRecommendations(artworkId) {
   try {
     const response = await axios.get(

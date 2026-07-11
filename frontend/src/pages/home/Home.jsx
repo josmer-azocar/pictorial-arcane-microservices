@@ -1,12 +1,15 @@
 import React from 'react'
 import './Home.css';
-import { useState, useEffect } from 'react';
+import '../../components/artworkDetail/ArtworkDetail.css';
+import { useState, useEffect, useRef } from 'react';
 import image1 from '../../assets/home-bg.jpg';
 import image2 from '../../assets/home-bg2.jpg';
 import image3 from '../../assets/home-bg3.jpg';
 import image4 from '../../assets/home-bg4.jpg';
 const homeImages = [image1, image2, image3, image4];
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../services/AuthContext.jsx';
+import { getUserRecommendationsByViews, getUserRecommendationsByLastViewed, getAllArtworks } from '../../services/fetchArtwork.js';
 
 const FAQS = [
   {
@@ -23,6 +26,58 @@ const Home = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedFaq, setSelectedFaq] = useState(null);
   const [capibaraOpen, setCapibaraOpen] = useState(false);
+  const { token, user } = useAuth();
+
+  const [viewsRecommendations, setViewsRecommendations] = useState([]);
+  const [lastViewedRecommendations, setLastViewedRecommendations] = useState([]);
+  const viewsRecTrackRef = useRef(null);
+  const lastViewedRecTrackRef = useRef(null);
+
+  const scrollCarousel = (ref, direction) => {
+    const track = ref.current;
+    if (!track) return;
+    const cardWidth = track.firstChild?.getBoundingClientRect().width || 0;
+    const gap = 16;
+    const amount = (cardWidth + gap) * 5 * direction;
+    track.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  const enrichWithCatalog = async (list) => {
+    try {
+      const catalog = await getAllArtworks();
+      const catalogByArtworkId = new Map(
+        catalog.map((a) => [String(a.artworkId), a])
+      );
+      return list.map((rec) => {
+        const match = catalogByArtworkId.get(String(rec.artworkId));
+        return { ...rec, imageUrl: match?.imageUrl, mongoId: match?.id };
+      });
+    } catch {
+      return list;
+    }
+  };
+
+  useEffect(() => {
+    if (!token || !user?.dniUser) return;
+    getUserRecommendationsByViews(user.dniUser, token)
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        return enrichWithCatalog(list);
+      })
+      .then(setViewsRecommendations)
+      .catch(() => setViewsRecommendations([]));
+  }, [token, user?.dniUser]);
+
+  useEffect(() => {
+    if (!token || !user?.dniUser) return;
+    getUserRecommendationsByLastViewed(user.dniUser, token)
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        return enrichWithCatalog(list);
+      })
+      .then(setLastViewedRecommendations)
+      .catch(() => setLastViewedRecommendations([]));
+  }, [token, user?.dniUser]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -109,6 +164,112 @@ const Home = () => {
           />
         </div>
       </section>
+
+      {/* ── RECOMENDACIONES BASADAS EN VISTAS ── */}
+      {viewsRecommendations.length > 0 && (
+        <section className="recommendations-section">
+          <h2 className="recommendations-title">En base a lo que has visto</h2>
+          <div className="recommendations-carousel">
+            {viewsRecommendations.length > 5 && (
+              <button
+                type="button"
+                className="carousel-arrow carousel-arrow-left"
+                onClick={() => scrollCarousel(viewsRecTrackRef, -1)}
+                aria-label="Ver recomendaciones anteriores"
+              >
+                ‹
+              </button>
+            )}
+
+            <div className="recommendations-track" ref={viewsRecTrackRef}>
+              {viewsRecommendations.map((rec) => (
+                <Link
+                  to={`/artwork/${rec.mongoId || rec.artworkId}`}
+                  key={rec.artworkId}
+                  className="recommendation-card"
+                >
+                  <div className="recommendation-image-frame">
+                    {rec.imageUrl && (
+                      <img
+                        src={rec.imageUrl}
+                        alt={rec.name}
+                        className="recommendation-image"
+                      />
+                    )}
+                  </div>
+                  <h3 className="recommendation-name">{rec.name}</h3>
+                  <p className="recommendation-genre">{rec.genreName}</p>
+                  <p className="recommendation-price">${rec.price?.toLocaleString()}</p>
+                </Link>
+              ))}
+            </div>
+
+            {viewsRecommendations.length > 5 && (
+              <button
+                type="button"
+                className="carousel-arrow carousel-arrow-right"
+                onClick={() => scrollCarousel(viewsRecTrackRef, 1)}
+                aria-label="Ver más recomendaciones"
+              >
+                ›
+              </button>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── RECOMENDACIONES BASADAS EN ACTIVIDAD RECIENTE ── */}
+      {lastViewedRecommendations.length > 0 && (
+        <section className="recommendations-section">
+          <h2 className="recommendations-title">En base a tu actividad más reciente</h2>
+          <div className="recommendations-carousel">
+            {lastViewedRecommendations.length > 5 && (
+              <button
+                type="button"
+                className="carousel-arrow carousel-arrow-left"
+                onClick={() => scrollCarousel(lastViewedRecTrackRef, -1)}
+                aria-label="Ver recomendaciones anteriores"
+              >
+                ‹
+              </button>
+            )}
+
+            <div className="recommendations-track" ref={lastViewedRecTrackRef}>
+              {lastViewedRecommendations.map((rec) => (
+                <Link
+                  to={`/artwork/${rec.mongoId || rec.artworkId}`}
+                  key={rec.artworkId}
+                  className="recommendation-card"
+                >
+                  <div className="recommendation-image-frame">
+                    {rec.imageUrl && (
+                      <img
+                        src={rec.imageUrl}
+                        alt={rec.name}
+                        className="recommendation-image"
+                      />
+                    )}
+                  </div>
+                  <h3 className="recommendation-name">{rec.name}</h3>
+                  <p className="recommendation-genre">{rec.genreName}</p>
+                  <p className="recommendation-price">${rec.price?.toLocaleString()}</p>
+                </Link>
+              ))}
+            </div>
+
+            {lastViewedRecommendations.length > 5 && (
+              <button
+                type="button"
+                className="carousel-arrow carousel-arrow-right"
+                onClick={() => scrollCarousel(lastViewedRecTrackRef, 1)}
+                aria-label="Ver más recomendaciones"
+              >
+                ›
+              </button>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* 🚀 ACCESO DIRECTO AL ADMIN — SOLO EN DESARROLLO */}
       {import.meta.env.DEV && (
