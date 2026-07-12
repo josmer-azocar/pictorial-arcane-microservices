@@ -1,5 +1,6 @@
 package com.pictorialarcane.core_service.client;
 
+import com.pictorialarcane.core_service.domain.exception.ArtworkNotAvailableException;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +13,13 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -88,5 +91,46 @@ class ArtworkClientTest {
         assertTrue(request.startsWith("/artwork/release/7"), "Path inesperado: " + request);
         assertTrue(request.contains("changedBy=0"),
                 "changedBy nulo debe enviarse como 0 (actor sistema), pero fue: " + request);
+    }
+
+    // ------------------------------------------------------------------
+    // reserve() debe capturar el nombre de la obra desde el body de la respuesta
+    // de artwork-service, sin necesidad de una llamada HTTP adicional.
+    // ------------------------------------------------------------------
+
+    @Test
+    void reserveDevuelveElNombreDeLaObraIncluidoEnLaRespuesta() throws Exception {
+        server.createContext("/artwork/reserve/42", exchange -> {
+            requests.add(exchange.getRequestURI().toString());
+            String body = "{\"id\":\"665f1a2b3c4d5e6f7a8b9c0d\",\"artworkId\":42,"
+                    + "\"name\":\"La noche estrellada\",\"status\":\"RESERVED\",\"price\":1500.0,"
+                    + "\"artistId\":\"a1\",\"artistName\":\"Van Gogh\",\"genreId\":\"g1\","
+                    + "\"genreName\":\"Post-impresionismo\",\"imageUrl\":\"http://img/1.jpg\"}";
+            byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, bytes.length);
+            exchange.getResponseBody().write(bytes);
+            exchange.close();
+        });
+
+        String artworkName = artworkClient.reserve(42L, 20000002L);
+
+        assertEquals("La noche estrellada", artworkName);
+        assertEquals(1, requests.size());
+        assertTrue(requests.get(0).startsWith("/artwork/reserve/42"), "Path inesperado: " + requests.get(0));
+        assertTrue(requests.get(0).contains("changedBy=20000002"), "changedBy inesperado: " + requests.get(0));
+    }
+
+    @Test
+    void reserveConObraNoDisponibleLanzaArtworkNotAvailableException() {
+        server.createContext("/artwork/reserve/99", exchange -> {
+            requests.add(exchange.getRequestURI().toString());
+            byte[] bytes = "{\"error\":\"ARTWORK_NOT_AVAILABLE\"}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(409, bytes.length);
+            exchange.getResponseBody().write(bytes);
+            exchange.close();
+        });
+
+        assertThrows(ArtworkNotAvailableException.class, () -> artworkClient.reserve(99L, 20000002L));
     }
 }

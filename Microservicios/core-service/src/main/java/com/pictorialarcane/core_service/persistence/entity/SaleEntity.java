@@ -29,6 +29,12 @@ public class SaleEntity extends AuditableEntity {
     @Column(name = "id_artwork", nullable = false)
     private Long idArtwork;
 
+    // Nombre de la obra al momento de la reserva, desnormalizado desde artwork-service para
+    // evitar una llamada por cada venta al listar el historial de compras del cliente.
+    // Nullable: ventas creadas antes de esta desnormalización no lo tienen.
+    @Column(name = "artwork_name")
+    private String artworkName;
+
     @ManyToOne(optional = false, targetEntity = ClientEntity.class)
     @JoinColumn(name = "dni_client", nullable = false)
     private ClientEntity client;

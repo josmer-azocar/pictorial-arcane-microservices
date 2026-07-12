@@ -8,6 +8,7 @@ import java.time.LocalDate;
 public record PurchaseResponseDto(
         Long idSale,
         Long artworkId,
+        String artworkName,
         LocalDate date,
         String description,
         Double price,
