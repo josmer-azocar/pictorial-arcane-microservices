@@ -177,10 +177,6 @@ function Dashboard() {
                                 </div>
                                 <div className="profile-stat-label">Membresía</div>
                             </div>
-                            <div className="profile-stat-item">
-                                <div className="profile-stat-value">VIP</div>
-                                <div className="profile-stat-label">Nivel</div>
-                            </div>
                         </div>
 
                         {/* ACCIONES DEL PERFIL */}
