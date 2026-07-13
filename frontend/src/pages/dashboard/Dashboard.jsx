@@ -9,8 +9,8 @@ import { obtainOrRenewMembership, fetchMembershipStatus, createSecurityCode } fr
 import { fetchPurchases } from '../../services/fetchPurchases';
 import { showArtwork } from '../../services/fetchArtwork.js';
 import { ToastContainer } from 'react-toastify';
-import kawaiiBanner from '../../assets/profile_banner_kawaii.png';
-import cuteAvatar from '../../assets/profile_avatar_cute.png';
+const kawaiiBanner = '/K.png';
+const cuteAvatar = '/K.png';
 
 function SpotifyWidget() {
     const [isPlaying, setIsPlaying] = useState(true);
@@ -187,6 +187,8 @@ function Dashboard() {
         switch (activeSection) {
             case 'history':
                 return <div className='historic-sales'><HistorialCompras/></div>;
+            case 'info':
+                return <InfoUsuario/>;
             case 'membership':
                 return (
                     <div className="membership-view">
