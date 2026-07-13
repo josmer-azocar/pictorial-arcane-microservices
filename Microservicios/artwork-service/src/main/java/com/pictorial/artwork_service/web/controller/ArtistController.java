@@ -9,17 +9,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.pictorial.artwork_service.service.AzureBlobService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/artist")
 public class ArtistController {
 
     private final ArtistService artistService;
+    private final AzureBlobService azureBlobService;
 
-    public ArtistController(ArtistService artistService) {
+    public ArtistController(ArtistService artistService, AzureBlobService azureBlobService) {
         this.artistService = artistService;
+        this.azureBlobService = azureBlobService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -52,5 +57,28 @@ public class ArtistController {
     public ResponseEntity<Void> delete(@PathVariable String id) {
         artistService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/artistImage")
+    public ResponseEntity<?> uploadArtistImage(@PathVariable String id,
+                                               @RequestParam("file") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(this.azureBlobService.uploadArtistImage(id, file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error al subir la imagen: " + e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}/artistImage")
+    public ResponseEntity<?> deleteArtistImage(@PathVariable String id) {
+        try {
+            return this.azureBlobService.deleteArtistImage(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of("error", "Error al procesar la solicitud: " + e.getMessage()));
+        }
     }
 }

@@ -58,9 +58,10 @@ public class SaleRepository {
         return this.saleMapper.toResponseDto(this.crudSaleRepository.findByIdSale(saleId));
     }
 
-    public SaleEntity createReservedSale(Long idArtwork, Double price, Double commissionRate, ClientEntity client) {
+    public SaleEntity createReservedSale(Long idArtwork, String artworkName, Double price, Double commissionRate, ClientEntity client) {
         SaleEntity sale = new SaleEntity();
         sale.setIdArtwork(idArtwork);
+        sale.setArtworkName(artworkName);
         sale.setClient(client);
         sale.setAdmin(null);
         sale.setDate(LocalDate.now());
@@ -114,6 +115,7 @@ public class SaleRepository {
                 .map(sale -> new PurchaseResponseDto(
                         sale.getIdSale(),
                         sale.getIdArtwork(),
+                        sale.getArtworkName(),
                         sale.getDate(),
                         sale.getDescription(),
                         sale.getPrice(),

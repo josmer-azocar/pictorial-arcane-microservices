@@ -1,5 +1,6 @@
 package com.pictorialarcane.core_service.client;
 
+import com.pictorialarcane.core_service.client.dto.ArtworkReservationResponse;
 import com.pictorialarcane.core_service.domain.exception.ArtworkNotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +38,18 @@ public class ArtworkClient {
         return instance.getUri().toString();
     }
 
-    /** AVAILABLE -> RESERVED. Lanza ArtworkNotAvailableException si no es posible. */
-    public void reserve(Long artworkId, Long changedBy) {
+    /**
+     * AVAILABLE -> RESERVED. Lanza ArtworkNotAvailableException si no es posible.
+     * Devuelve el nombre de la obra tomado de la respuesta de artwork-service, que ya lo
+     * incluye en el body: evita una llamada adicional solo para obtenerlo.
+     */
+    public String reserve(Long artworkId, Long changedBy) {
         try {
-            restClient.post()
+            ArtworkReservationResponse response = restClient.post()
                     .uri(baseUrl() + "/artwork/reserve/{id}?changedBy={cb}&reason={r}", artworkId, changedBy, "Reserva de venta")
                     .retrieve()
-                    .toBodilessEntity();
+                    .body(ArtworkReservationResponse.class);
+            return response != null ? response.name() : null;
         } catch (Exception e) {
             throw new ArtworkNotAvailableException(
                     "No se pudo reservar la obra " + artworkId + " en artwork-service: " + e.getMessage());
