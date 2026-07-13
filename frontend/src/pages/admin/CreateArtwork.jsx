@@ -18,14 +18,6 @@ const artworkTypes = [
     { id: 'PAINTING', label: 'Pintura' }
 ];
 
-const genreNameMap = {
-    'SCULPTURE': 'Escultura',
-    'PHOTOGRAPHY': 'Fotografía',
-    'CERAMIC': 'Cerámica',
-    'GOLDSMITH': 'Orfebrería',
-    'PAINTING': 'Pintura'
-};
-
 const initialSpecificData = {
     'SCULPTURE': { material: '', weight: '', length: '', width: '', depth: '' },
     'PAINTING': { technique: '', holder: '', style: '', framed: 'false', width: '', height: '' },
@@ -70,10 +62,6 @@ const CreateArtwork = ({ onCreationSuccess }) => {
         setSelectedType(type);
         setSpecificData(initialSpecificData[type] || {});
         setError('');
-
-        const genreName = genreNameMap[type];
-        const genre = genres.find(g => g.name === genreName);
-        setIdGenre(genre ? genre.idGenre : '');
     };
 
     const handleCommonChange = (e) => {
@@ -82,6 +70,7 @@ const CreateArtwork = ({ onCreationSuccess }) => {
         else if (name === 'price') setPrice(value);
         else if (name === 'status') setStatus(value);
         else if (name === 'idArtist') setIdArtist(value);
+        else if (name === 'idGenre') setIdGenre(value);
         setError('');
     };
 
@@ -174,6 +163,13 @@ const CreateArtwork = ({ onCreationSuccess }) => {
             return;
         }
 
+        if (!idGenre) {
+            const msg = "Por favor, selecciona un género.";
+            setError(msg);
+            toast.error(msg);
+            return;
+        }
+
         if (!selectedType) {
             const msg = "Por favor, selecciona el tipo de obra.";
             setError(msg);
@@ -189,8 +185,8 @@ const CreateArtwork = ({ onCreationSuccess }) => {
                 name,
                 status,
                 price: parseFloat(price),
-                idArtist: parseInt(idArtist),
-                idGenre: parseInt(idGenre)
+                idArtist,
+                idGenre
             };
 
             const typeRequest = buildTypeRequest();
@@ -200,23 +196,23 @@ const CreateArtwork = ({ onCreationSuccess }) => {
             switch (selectedType) {
                 case 'SCULPTURE':
                     response = await createSculpture(requestData, token);
-                    newArtworkId = response?.artworkResponse?.idArtWork;
+                    newArtworkId = response?.artworkResponse?.id;
                     break;
                 case 'PAINTING':
                     response = await createPainting(requestData, token);
-                    newArtworkId = response?.artWorkResponse?.idArtWork;
+                    newArtworkId = response?.artworkResponse?.id;
                     break;
                 case 'PHOTOGRAPHY':
                     response = await createPhotography(requestData, token);
-                    newArtworkId = response?.artworkResponse?.idArtWork;
+                    newArtworkId = response?.artworkResponse?.id;
                     break;
                 case 'CERAMIC':
                     response = await createCeramic(requestData, token);
-                    newArtworkId = response?.artworkResponse?.idArtWork;
+                    newArtworkId = response?.artworkResponse?.id;
                     break;
                 case 'GOLDSMITH':
                     response = await createGoldsmith(requestData, token);
-                    newArtworkId = response?.artworkResponse?.idArtWork;
+                    newArtworkId = response?.artworkResponse?.id;
                     break;
                 default:
                     throw new Error("Tipo de obra no válido.");
@@ -257,7 +253,14 @@ const CreateArtwork = ({ onCreationSuccess }) => {
 
             if (newArtworkId) {
                 finalErrorMessage = `La operación se realizó (ID: ${newArtworkId}), pero falló la subida de la imagen. Error: ${serverMessage}`;
-                toast.warning('Datos guardados, pero hubo un error con la imagen.');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                toast.warning('Datos guardados, pero hubo un error con la imagen.', {
+                    onClose: () => {
+                        if (onCreationSuccess) {
+                            onCreationSuccess();
+                        }
+                    }
+                });
             } else {
                 if (serverMessage.includes('duplicate key value') || serverMessage.includes('already exists')) {
                     finalErrorMessage = 'Ya existe una obra con ese nombre. Por favor, elige un nombre diferente.';
@@ -484,8 +487,20 @@ const CreateArtwork = ({ onCreationSuccess }) => {
                     <select name="idArtist" value={idArtist} onChange={handleCommonChange} required>
                         <option value="">Selecciona un artista</option>
                         {artists.map(artist => (
-                            <option key={artist.idArtist} value={artist.idArtist}>
+                            <option key={artist.id} value={artist.id}>
                                 {artist.name} {artist.lastName}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="form-group">
+                    <label className="form-label">Género</label>
+                    <select name="idGenre" value={idGenre} onChange={handleCommonChange} required>
+                        <option value="">Selecciona un género</option>
+                        {genres.map(genre => (
+                            <option key={genre.id} value={genre.id}>
+                                {genre.name}
                             </option>
                         ))}
                     </select>
