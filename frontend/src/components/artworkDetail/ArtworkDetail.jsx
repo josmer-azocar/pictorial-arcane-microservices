@@ -367,7 +367,6 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
             onMouseLeave={() => setShowZoom(false)}
           >
             <img src={imageUrl} alt={name} className="main-artwork-img" />
-            <div className={`status-badge ${status.toLowerCase()}`}>{status}</div>
 
             {/* Lupa de zoom que aparece al lado de la imagen */}
             {showZoom && (
@@ -387,7 +386,7 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
 
         {/* ── COLUMNA 2: FICHA TÉCNICA ── */}
         <section className="detailed-info-grid">
-          <div className="info-card">
+          <div className="info-card card-detalles-obra">
             <h1 className="artwork-title">{name}</h1>
             <div className="specs-container">
               <p><strong>Género:</strong> {getGenreString()}</p>
