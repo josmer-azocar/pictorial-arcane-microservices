@@ -48,10 +48,13 @@ const Home = () => {
       const catalogByArtworkId = new Map(
         catalog.map((a) => [String(a.artworkId), a])
       );
-      return list.map((rec) => {
+      return list.reduce((acc, rec) => {
         const match = catalogByArtworkId.get(String(rec.artworkId));
-        return { ...rec, imageUrl: match?.imageUrl, mongoId: match?.id };
-      });
+        if (match) {
+          acc.push({ ...rec, imageUrl: match.imageUrl, mongoId: match.id });
+        }
+        return acc;
+      }, []);
     } catch {
       return list;
     }

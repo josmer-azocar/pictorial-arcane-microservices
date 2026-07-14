@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../services/AuthContext.jsx';
-import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations } from '../../services/fetchArtwork.js';
+import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations, syncArtworkView } from '../../services/fetchArtwork.js';
 import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
@@ -87,8 +87,9 @@ useEffect(() => {
       });
   }
 }, [id]);
-  // ── EFECTO: GET artista por idArtist ────────────────────
-  // Se ejecuta cuando ya tenemos la obra y necesitamos el nombre del artista
+  // ── EFECTO: GET artista por idArtist + sync vista ──────
+  // Se ejecuta cuando ya tenemos la obra: carga el nombre del artista
+  // y, si el usuario está logueado, registra la vista en Neo4j.
   useEffect(() => {
     const artistId = artwork?.artworkResponse?.artistId;
     if (artistId) {
@@ -100,6 +101,10 @@ useEffect(() => {
         .catch(() => {
           setArtistName("Artista");
         });
+    }
+    const artworkId = artwork?.artworkResponse?.artworkId;
+    if (artworkId && token && user?.dniUser) {
+      syncArtworkView(user.dniUser, artworkId, token);
     }
   }, [artwork]);
 
@@ -121,14 +126,13 @@ useEffect(() => {
               catalog.map((a) => [String(a.artworkId), a])
             );
             setRecommendations(
-              list.map((rec) => {
+              list.reduce((acc, rec) => {
                 const match = catalogByArtworkId.get(String(rec.artworkId));
-                return {
-                  ...rec,
-                  imageUrl: match?.imageUrl,
-                  mongoId: match?.id,
-                };
-              })
+                if (match) {
+                  acc.push({ ...rec, imageUrl: match.imageUrl, mongoId: match.id });
+                }
+                return acc;
+              }, [])
             );
           } catch {
             setRecommendations(list);
@@ -153,14 +157,13 @@ useEffect(() => {
             catalog.map((a) => [String(a.artworkId), a])
           );
           setPurchaseRecommendations(
-            list.map((rec) => {
+            list.reduce((acc, rec) => {
               const match = catalogByArtworkId.get(String(rec.artworkId));
-              return {
-                ...rec,
-                imageUrl: match?.imageUrl,
-                mongoId: match?.id,
-              };
-            })
+              if (match) {
+                acc.push({ ...rec, imageUrl: match.imageUrl, mongoId: match.id });
+              }
+              return acc;
+            }, [])
           );
         } catch {
           setPurchaseRecommendations(list);
@@ -194,7 +197,7 @@ useEffect(() => {
     <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h2>Obra no encontrada</h2>
       <p>{artworkError}</p>
-      <Link to="/galeria">← Volver a la galería</Link>
+      <Link to="/artwork">← Volver a la galería</Link>
     </div>
   );
 
