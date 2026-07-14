@@ -51,8 +51,8 @@ export async function showArtist() {
 
 export async function getAllArtworks() {
     try {
-        const response = await axios.get(`${url}/artwork/all`);
-        return response.data;
+        const response = await axios.get(`${url}/artwork/all?size=10000`);
+        return response.data.content || response.data;
     } catch (error) {
         console.log(error);
         throw error;

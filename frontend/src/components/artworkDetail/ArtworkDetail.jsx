@@ -121,14 +121,13 @@ useEffect(() => {
               catalog.map((a) => [String(a.artworkId), a])
             );
             setRecommendations(
-              list.map((rec) => {
+              list.reduce((acc, rec) => {
                 const match = catalogByArtworkId.get(String(rec.artworkId));
-                return {
-                  ...rec,
-                  imageUrl: match?.imageUrl,
-                  mongoId: match?.id,
-                };
-              })
+                if (match) {
+                  acc.push({ ...rec, imageUrl: match.imageUrl, mongoId: match.id });
+                }
+                return acc;
+              }, [])
             );
           } catch {
             setRecommendations(list);
@@ -153,14 +152,13 @@ useEffect(() => {
             catalog.map((a) => [String(a.artworkId), a])
           );
           setPurchaseRecommendations(
-            list.map((rec) => {
+            list.reduce((acc, rec) => {
               const match = catalogByArtworkId.get(String(rec.artworkId));
-              return {
-                ...rec,
-                imageUrl: match?.imageUrl,
-                mongoId: match?.id,
-              };
-            })
+              if (match) {
+                acc.push({ ...rec, imageUrl: match.imageUrl, mongoId: match.id });
+              }
+              return acc;
+            }, [])
           );
         } catch {
           setPurchaseRecommendations(list);
@@ -194,7 +192,7 @@ useEffect(() => {
     <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h2>Obra no encontrada</h2>
       <p>{artworkError}</p>
-      <Link to="/galeria">← Volver a la galería</Link>
+      <Link to="/artwork">← Volver a la galería</Link>
     </div>
   );
 
