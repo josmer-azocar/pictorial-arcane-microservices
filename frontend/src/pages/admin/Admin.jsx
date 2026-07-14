@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Palette, Users, BookOpen, CalendarCheck,
   FileBarChart, UserPlus, ChevronDown, Search, Bell, LogOut,
-  AlertTriangle, Plus, Monitor, Image
+  AlertTriangle, Plus, Monitor, Image, TrendingUp
 } from 'lucide-react';
 import PendingReservations from "./Pendingreservations.jsx";
+import Positioning from "./Positioning.jsx";
 import CreateAdmin from "./CreateAdmin.jsx";
 import CreateArtwork from "./CreateArtwork.jsx";
 import "./Admin.css";
@@ -179,6 +180,8 @@ function Admin() {
         return <UpdateArtist />;
       case 'reports':
         return <Reports />;
+      case 'positioning':
+        return <Positioning />;
       case 'deleteArtwork':
         return <DeleteArtwork />;
       case 'createGenre':
@@ -309,6 +312,7 @@ function Admin() {
 
           {sidebarItem("Reservas", <CalendarCheck />, "reservations", activeSection === "reservations")}
           {sidebarItem("Reportes", <FileBarChart />, "reports", activeSection === "reports")}
+          {sidebarItem("Posicionamiento", <TrendingUp />, "positioning", activeSection === "positioning")}
         </div>
 
         <button className="sidebar-create-btn" onClick={() => handleSectionChange('createAdmin')}>

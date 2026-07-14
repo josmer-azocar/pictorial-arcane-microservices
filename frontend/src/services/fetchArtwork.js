@@ -654,6 +654,34 @@ export async function getUserRecommendationsByLastViewed(userId, token) {
   }
 }
 
+export async function getTopArtists() {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/admin/top-artists`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener top artists:", error);
+    throw error;
+  }
+}
+
+export async function getTopArtworks() {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/admin/top-artworks`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener top artworks:", error);
+    throw error;
+  }
+}
+
 export async function getArtworkRecommendations(artworkId) {
   try {
     const response = await axios.get(
