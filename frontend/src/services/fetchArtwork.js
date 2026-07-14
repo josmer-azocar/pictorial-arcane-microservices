@@ -668,6 +668,22 @@ export async function getTopArtists() {
   }
 }
 
+export async function syncArtworkView(compradorId, artworkId, token) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/api/v1/recommendations/sync/view`,
+      {
+        compradorId,
+        artworkId,
+        fecha: new Date().toISOString(),
+      },
+      { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error("Error al sincronizar vista:", error);
+  }
+}
+
 export async function getTopArtworks() {
   try {
     const token = localStorage.getItem("token");

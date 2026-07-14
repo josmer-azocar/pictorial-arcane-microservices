@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../services/AuthContext.jsx';
-import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations } from '../../services/fetchArtwork.js';
+import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations, syncArtworkView } from '../../services/fetchArtwork.js';
 import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
@@ -87,8 +87,9 @@ useEffect(() => {
       });
   }
 }, [id]);
-  // ── EFECTO: GET artista por idArtist ────────────────────
-  // Se ejecuta cuando ya tenemos la obra y necesitamos el nombre del artista
+  // ── EFECTO: GET artista por idArtist + sync vista ──────
+  // Se ejecuta cuando ya tenemos la obra: carga el nombre del artista
+  // y, si el usuario está logueado, registra la vista en Neo4j.
   useEffect(() => {
     const artistId = artwork?.artworkResponse?.artistId;
     if (artistId) {
@@ -100,6 +101,10 @@ useEffect(() => {
         .catch(() => {
           setArtistName("Artista");
         });
+    }
+    const artworkId = artwork?.artworkResponse?.artworkId;
+    if (artworkId && token && user?.dniUser) {
+      syncArtworkView(user.dniUser, artworkId, token);
     }
   }, [artwork]);
 
