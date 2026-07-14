@@ -6,7 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +27,8 @@ public class ArtworkNode {
     private Double price;  // 3200, 4500...
     private String imageUrl;
 
+    @Property("embedding")
+    private List<Double> embedding;
     // (Artwork)-[:HAS_GENRE]->(Genre)
     @Relationship(type = "HAS_GENRE", direction = Relationship.Direction.OUTGOING)
     private GenreNode genre;
@@ -31,4 +37,18 @@ public class ArtworkNode {
     @Relationship(type = "CREATED", direction = Relationship.Direction.INCOMING)
     private ArtistNode artist;
 
+    public void setEmbedding(float[] vector) {
+        if (vector == null) {
+            this.embedding = null;
+            return;
+        }
+        // Creamos la lista de Double con el tamaño exacto para optimizar memoria
+        List<Double> doubleList = new ArrayList<>(vector.length);
+
+        // Convertimos cada float primitivo a Double
+        for (float f : vector) {
+            doubleList.add((double) f);
+        }
+        this.embedding = doubleList;
+    }
 }

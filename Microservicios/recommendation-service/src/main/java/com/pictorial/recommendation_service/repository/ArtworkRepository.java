@@ -39,4 +39,30 @@ public interface ArtworkRepository extends Neo4jRepository<ArtworkNode, Long> {
     // Verifica la existencia de una obra por su clave de negocio (para validar antes del sync)
     @Query("MATCH (aw: Artwork {artworkId: $artworkId}) RETURN count(aw) > 0")
     boolean existsByArtworkId(@Param("artworkId") Long artworkId);
+
+    // Devuelve cuántas obras en total quedan sin vector asignado
+    @Query("MATCH (o:Artwork) WHERE o.embedding IS NULL RETURN count(o)")
+    long countArtworksSinEmbedding();
+
+    // Trae un lote de obras sin embedding (paginado usando SKIP y LIMIT)
+    @Query("MATCH (o:Artwork) WHERE o.embedding IS NULL RETURN o SKIP $skip LIMIT $limit")
+    List<ArtworkNode> findArtworksSinEmbedding(@Param("skip") int skip, @Param("limit") int limit);
+
+    // Búsqueda semántica directa contra el índice vectorial nativo de Neo4j.
+    // Devuelve las entidades ArtworkNode reales (con su artworkId propio), evitando
+    // el mapeo por id/text de VectorStore.similaritySearch(), que no aplica a este
+    // esquema (los nodos Artwork no tienen propiedades "id"/"text").
+    // El desempate por artworkId es necesario para que la paginación sea estable:
+    // el kNN de Neo4j es aproximado y, sin un criterio secundario, dos llamadas con
+    // el mismo k pueden devolver los empates (o casi-empates) de score en distinto
+    // orden, duplicando/salteando obras entre páginas.
+    @Query("""
+            CALL db.index.vector.queryNodes($indexName, $topK, $queryVector)
+            YIELD node, score
+            WHERE score >= $threshold
+            RETURN node
+            ORDER BY score DESC, node.artworkId ASC
+            """)
+    List<ArtworkNode> findSimilarArtworks(@Param("indexName") String indexName, @Param("topK") int topK,
+            @Param("queryVector") List<Double> queryVector, @Param("threshold") double threshold);
 }
