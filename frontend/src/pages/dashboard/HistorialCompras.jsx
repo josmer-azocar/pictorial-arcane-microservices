@@ -66,7 +66,7 @@ function HistorialCompras() {
                 <tbody>
                     {content.map((purchase) => (
                         <tr key={purchase.idSale}>
-                            <td>{purchase.artworkTitle}</td>
+                            <td>{purchase.artworkName}</td>
                             <td>{new Date(purchase.date).toLocaleDateString()}</td>
                             <td>${purchase.price.toFixed(2)}</td>
                         </tr>
