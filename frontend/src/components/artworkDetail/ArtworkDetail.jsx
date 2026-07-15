@@ -226,8 +226,10 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
 
     try {
       await reserveArtwork(artworkIdToReserve, artworkPrice, 0.1, securityCode, token);
-      toast.success("¡Obra reservada exitosamente!");
       setShowModal(false);
+      toast.success("¡Obra reservada exitosamente!", {
+        onClose: () => window.location.reload()
+      });
     } catch (err) {
       console.log("Error completo:", err.response?.data);
       const backendMessage = err.response?.data?.message || "";
