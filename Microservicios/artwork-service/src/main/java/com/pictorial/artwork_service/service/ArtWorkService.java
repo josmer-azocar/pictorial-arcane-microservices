@@ -60,8 +60,10 @@ public class ArtWorkService {
         return artWorkMapper.toResponseDto(artWorkRepository.save(document));
     }
 
-    public List<ArtWorkResponseDto> getAll() {
-        return artWorkMapper.toResponseDto(artWorkRepository.findAll());
+    public Page<ArtWorkResponseDto> getAll(int page, int size, String sortBy, Sort.Direction direction) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<ArtWorkDocument> pageResult = artWorkRepository.findAll(pageRequest);
+        return pageResult.map(artWorkMapper::toResponseDto);
     }
 
     public ArtWorkResponseDto getById(String id) {

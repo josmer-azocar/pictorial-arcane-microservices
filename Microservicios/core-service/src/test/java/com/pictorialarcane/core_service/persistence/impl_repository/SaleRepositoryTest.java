@@ -15,6 +15,7 @@ import com.pictorialarcane.core_service.persistence.entity.ClientEntity;
 import com.pictorialarcane.core_service.persistence.entity.PaymentEntity;
 import com.pictorialarcane.core_service.persistence.entity.SaleEntity;
 import com.pictorialarcane.core_service.persistence.entity.UserEntity;
+import com.pictorialarcane.core_service.domain.dto.response.PurchaseResponseDto;
 import com.pictorialarcane.core_service.persistence.mapper.PaymentMapper;
 import com.pictorialarcane.core_service.persistence.mapper.SaleMapper;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -146,5 +152,50 @@ public class SaleRepositoryTest {
         assertEquals(10000001L, billing.getValue().adminDni());
         assertEquals(20000002L, billing.getValue().clientDni());
         assertEquals(42L, billing.getValue().artworkId());
+    }
+
+    // ------------------------------------------------------------------
+    // Nombre de la obra desnormalizado en la venta: se persiste al crear
+    // la reserva y viaja en el historial de compras sin llamar a artwork-service.
+    // ------------------------------------------------------------------
+
+    @Test
+    public void createReservedSalePersisteElNombreDeLaObra() {
+        ClientEntity client = new ClientEntity();
+        client.setDniUser(20000002L);
+
+        when(crudSaleRepository.save(any(SaleEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        SaleEntity result = saleRepository.createReservedSale(42L, "La noche estrellada", 1000.0, 0.08, client);
+
+        assertEquals(42L, result.getIdArtwork());
+        assertEquals("La noche estrellada", result.getArtworkName());
+        assertEquals(SaleStatus.PENDING.name(), result.getSaleStatus());
+    }
+
+    @Test
+    public void getClientPurchasesIncluyeElNombreDeLaObraSinLlamarAArtworkService() {
+        SaleEntity sale = new SaleEntity();
+        sale.setIdSale(5L);
+        sale.setIdArtwork(42L);
+        sale.setArtworkName("La noche estrellada");
+        sale.setDate(LocalDate.now());
+        sale.setPrice(1000.0);
+        sale.setTaxAmount(160.0);
+        sale.setTotalPaid(1160.0);
+        sale.setShippingStatus(ShippingStatus.PENDING.name());
+        sale.setSaleStatus(SaleStatus.PENDING.name());
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<SaleEntity> page = new PageImpl<>(List.of(sale), pageable, 1);
+        when(crudSaleRepository.getClientPurchases(20000002L, pageable)).thenReturn(page);
+
+        Page<PurchaseResponseDto> result = saleRepository.getClientPurchases(0, 10, 20000002L);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("La noche estrellada", result.getContent().get(0).artworkName());
+        assertEquals(42L, result.getContent().get(0).artworkId());
+        verify(artworkClient, never()).reserve(any(), any());
     }
 }

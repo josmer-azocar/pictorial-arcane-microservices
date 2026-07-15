@@ -3,6 +3,7 @@ package com.pictorial.artwork_service.web.controller;
 import com.pictorial.artwork_service.dto.request.*;
 import com.pictorial.artwork_service.dto.response.*;
 import com.pictorial.artwork_service.service.ArtWorkService;
+import com.pictorial.artwork_service.service.AzureBlobService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -10,17 +11,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/artwork")
 public class ArtWorkController {
 
     private final ArtWorkService artWorkService;
+    private final AzureBlobService azureBlobService;
 
-    public ArtWorkController(ArtWorkService artWorkService) {
+    public ArtWorkController(ArtWorkService artWorkService, AzureBlobService azureBlobService) {
         this.artWorkService = artWorkService;
+        this.azureBlobService = azureBlobService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -32,8 +37,12 @@ public class ArtWorkController {
     // Público: cualquiera puede consultar las obras.
     @PreAuthorize("permitAll()")
     @GetMapping("/all")
-    public ResponseEntity<List<ArtWorkResponseDto>> getAll() {
-        return ResponseEntity.ok(artWorkService.getAll());
+    public ResponseEntity<Page<ArtWorkResponseDto>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
+        return ResponseEntity.ok(artWorkService.getAll(page, size, sortBy, direction));
     }
 
     @PreAuthorize("permitAll()")
@@ -138,5 +147,28 @@ public class ArtWorkController {
                                                       @RequestParam Long changedBy,
                                                       @RequestParam(required = false) String reason) {
         return ResponseEntity.ok(artWorkService.release(artworkId, changedBy, reason));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/artworkImage")
+    public ResponseEntity<?> uploadArtworkImage(@PathVariable String id,
+                                                @RequestParam("file") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(this.azureBlobService.uploadArtworkImage(id, file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error al subir la imagen: " + e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}/artworkImage")
+    public ResponseEntity<?> deleteArtworkImage(@PathVariable String id) {
+        try {
+            return this.azureBlobService.deleteArtworkImage(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of("error", "Error al procesar la solicitud: " + e.getMessage()));
+        }
     }
 }

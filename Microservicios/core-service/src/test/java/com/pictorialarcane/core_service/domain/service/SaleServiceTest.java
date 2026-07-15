@@ -59,11 +59,12 @@ public class SaleServiceTest {
         when(crudUserRepository.findFirstByEmail(email)).thenReturn(user);
         when(crudClientRepository.findFirstByDniUser(20000002L)).thenReturn(client);
         when(passwordEncoder.matches(securityCode, "encoded_security_code")).thenReturn(true);
+        when(artworkClient.reserve(artworkId, 20000002L)).thenReturn("La noche estrellada");
 
         saleService.reserveArtWork(artworkId, price, commissionRate, securityCode, email);
 
         verify(membershipService).getActiveMembership(email);
         verify(artworkClient).reserve(artworkId, 20000002L);
-        verify(saleRepository).createReservedSale(artworkId, price, commissionRate, client);
+        verify(saleRepository).createReservedSale(artworkId, "La noche estrellada", price, commissionRate, client);
     }
 }

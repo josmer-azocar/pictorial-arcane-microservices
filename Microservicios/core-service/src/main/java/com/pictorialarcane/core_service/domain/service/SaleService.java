@@ -85,10 +85,12 @@ public class SaleService {
 
         // Reserva la obra en artwork-service (AVAILABLE -> RESERVED). Si no está disponible o el
         // servicio no responde, lanza ArtworkNotAvailableException y la venta NO se crea.
-        artworkClient.reserve(artworkId, client.getDniUser());
+        // La respuesta ya trae el nombre de la obra, así que se aprovecha para desnormalizarlo
+        // en la venta y evitar consultas a artwork-service al listar el historial de compras.
+        String artworkName = artworkClient.reserve(artworkId, client.getDniUser());
 
         // Una vez asegurada la reserva de la obra, se registra la venta en estado PENDING.
-        saleRepository.createReservedSale(artworkId, price, commissionRate, client);
+        saleRepository.createReservedSale(artworkId, artworkName, price, commissionRate, client);
     }
 
     public Page<PurchaseResponseDto> getClientPurchases(int page, int size, String clientEmail) {
