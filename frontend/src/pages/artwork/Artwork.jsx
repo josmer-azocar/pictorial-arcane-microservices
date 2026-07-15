@@ -57,6 +57,8 @@ function Artwork() {
     //   { idArtist: 9, name: 'Camila Vega' },
     // ];
 
+    const PAGE_SIZE = 10;
+
     const getArt = async (
         page = 0,
         idGenre = sortConfig.idGenre,
@@ -67,17 +69,20 @@ function Artwork() {
         isLoad(true);
         try {
             setError("");
+            // El backend pagina antes de que nosotros podamos filtrar por status, así que
+            // traemos un lote grande (cubre el total de obras sembradas) y paginamos acá
+            // ya filtrado, para no perder obras AVAILABLE que hayan quedado en otra página.
             const response = await showArtwork(idGenre,
                 idArtist,
                 title,
                 minPrice === '' ? null : Number(minPrice),
                 maxPrice === '' ? null : Number(maxPrice),
-                page,
-                10,
+                0,
+                1000,
                 sortBy,
                 direction);
             const artistData = await showArtist();
-            const formattedArt = (response.content || [])
+            const availableArt = (response.content || [])
                 .filter(art => art.status === 'AVAILABLE')
                 .map(art => ({
                     ...art,
@@ -87,13 +92,19 @@ function Artwork() {
                     image: art.imageUrl,
                     genre: art.genreName || "General"
                 }));
+
+            const totalPages = Math.ceil(availableArt.length / PAGE_SIZE) || 0;
+            const safePage = Math.min(page, Math.max(totalPages - 1, 0));
+            const pageContent = availableArt.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+
             setWork({
-                ...response,
-                content: formattedArt
+                content: pageContent,
+                totalPages,
+                number: safePage
             });
             setSortConfig({ idGenre, idArtist, title: '', sortBy, direction });
             setAvailableArtists(artistData);
-            const uniqueGenres = [...new Set(formattedArt.map(item => item.genre))];
+            const uniqueGenres = [...new Set(availableArt.map(item => item.genre))];
             setAvailableGenres(uniqueGenres);
 
         } catch (error) {
