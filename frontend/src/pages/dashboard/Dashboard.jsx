@@ -258,7 +258,7 @@ function Dashboard() {
                         {/* INFORMACIÓN DEL NICKNAME Y CITA Y2K */}
                         <div className="kawaii-profile-identity">
                             <h2 className="kawaii-username">
-                                {`( ✦ , ${user?.firstName || 'Usuario'} ${user?.lastName || ''} 、. ✙ )`}
+                                {`${user?.firstName || 'Usuario'} ${user?.lastName || ''}`}
                             </h2>
                             <div className="kawaii-bio-container">
                                 <div className="kawaii-bio-divider"></div>
@@ -280,13 +280,8 @@ function Dashboard() {
                         {/* SECCIÓN "OBRAS RECOMENDADAS DE LA GALERÍA" (CONEXIÓN CON LA GALERÍA) */}
                         <div className="kawaii-gallery-showcase">
                             <div className="kawaii-showcase-header">
-                                <h3 className="kawaii-showcase-title">✦ OBRAS RECOMENDADAS ✦</h3>
-                                <div className="kawaii-capybara-container">
-                                    <div className="kawaii-thought-bubble">
-                                        ¿Qué obras veremos hoy? 🤔🎨
-                                    </div>
-                                    <img src="/imagen/capibara.png" alt="Capibara" className="kawaii-capybara-img" />
-                                </div>
+                                <h3 className="kawaii-showcase-title">OBRAS RECOMENDADAS</h3>
+
                             </div>
                             {recommendedArtworks.length > 0 ? (
                                 <div className="kawaii-artworks-grid">

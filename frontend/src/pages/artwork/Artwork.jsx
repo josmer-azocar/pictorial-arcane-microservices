@@ -16,6 +16,7 @@ function Artwork() {
     const [maxPrice, setMaxPrice] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [genreList, setGenreList] = useState([]);
+    const [modoIA, setModoIA] = useState(false);
 
     useEffect(() => {
     const fetchGenres = async () => {
@@ -135,7 +136,7 @@ function Artwork() {
 
     return (
         <section id="art-display">
-            <div id="titulo-galeria">
+            <div id="titulo-galeria" className={modoIA ? 'modo-ia' : ''}>
                 <p>GALERÍA</p>
                 <div className="buscador-wrapper">
               <svg className="buscador-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
@@ -148,7 +149,14 @@ function Artwork() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
               />
-              <button onClick={() => getArt(0)}>Buscar</button>
+              <button className={`ai-toggle ${modoIA ? 'active' : ''}`} onClick={() => setModoIA(prev => !prev)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
+                  <path d="M18 15l-1.5 3L21 19l-3.5 1.5L18 24l-1.5-3.5L13 19l3.5-1.5z"/>
+                </svg>
+                IA
+              </button>
+              <button className="search-btn" onClick={() => getArt(0)}>Buscar</button>
             </div>
             </div>
             <div className="filter-container">
