@@ -51,8 +51,8 @@ export async function showArtist() {
 
 export async function getAllArtworks() {
     try {
-        const response = await axios.get(`${url}/artwork/all`);
-        return response.data;
+        const response = await axios.get(`${url}/artwork/all?size=10000`);
+        return response.data.content || response.data;
     } catch (error) {
         console.log(error);
         throw error;
@@ -650,6 +650,50 @@ export async function getUserRecommendationsByLastViewed(userId, token) {
     return response.data;
   } catch (error) {
     console.error("Error al obtener recomendaciones por última vista:", error);
+    throw error;
+  }
+}
+
+export async function getTopArtists() {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/admin/top-artists`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener top artists:", error);
+    throw error;
+  }
+}
+
+export async function syncArtworkView(compradorId, artworkId, token) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/api/v1/recommendations/sync/view`,
+      {
+        compradorId,
+        artworkId,
+        fecha: new Date().toISOString(),
+      },
+      { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error("Error al sincronizar vista:", error);
+  }
+}
+
+export async function getTopArtworks() {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${API_BASE_URL}/api/v1/recommendations/admin/top-artworks`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener top artworks:", error);
     throw error;
   }
 }

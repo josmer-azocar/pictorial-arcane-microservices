@@ -38,22 +38,29 @@ function HistorialCompras() {
         return <Loading />;
     }
 
-    if (!purchasesResponse) {
-        return <p>No se pudieron cargar las compras.</p>;
+    if (!purchasesResponse || !purchasesResponse.content || purchasesResponse.content.length === 0) {
+        return (
+            <section className='purchases-section'>
+                <h3 className="info-section-title">Tu Historial de Compras</h3>
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '15px', opacity: 0.5 }}><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>No tienes compras registradas aún.</p>
+                </div>
+            </section>
+        );
     }
 
     const { content, totalPages, number } = purchasesResponse;
 
     return (
         <section className='purchases-section'>
-            <h3>Tu Historial de Compras</h3>
-            <h3>Compras:</h3>
+            <h3 className="info-section-title">Tu Historial de Compras</h3>
             <table className="purchases-table">
                 <thead>
                     <tr>
                         <th>Obra</th>
                         <th>Fecha de Compra</th>
-                        <th>Precio</th>
+                        <th style={{ textAlign: 'right' }}>Precio</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,7 +83,7 @@ function HistorialCompras() {
                     >
                         Anterior
                     </button>
-                    <span>Página {number + 1} de {totalPages}</span>
+                    <span style={{ fontWeight: '500' }}>Página {number + 1} de {totalPages}</span>
                     <button
                         onClick={() => goToPage(number + 1)}
                         disabled={number === totalPages - 1}

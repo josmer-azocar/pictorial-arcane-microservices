@@ -1,58 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { useParams ,useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './ArtistProfile.css';
 import { getArtistById, getArtworksByArtist } from '../../services/fetchArtwork';
-
-
 import Loading from '../../components/Loading.jsx';
 
 const ArtistProfile = () => {
   const { id } = useParams();
-  const artistId = parseInt(id);
   const navigate = useNavigate();
 
   const [artist, setArtist] = useState(null);
-  const [artworksByGenre, setArtworksByGenre] = useState({});
+  const [artworksByGenre, setArtworksByGenre] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); 
 
-  /*useEffect(() => {
-    const fetchMockData = () => {
-      setLoading(true);
-      setTimeout(() => {
-        const foundArtist = mockArtists.find(a => a.id === artistId);
-        if (foundArtist) {
-          setArtist(foundArtist);
-          const artistWorks = mockArtworks[artistId] || {};
-          setArtworksByGenre(artistWorks);
-        }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [artistData, artworksData] = await Promise.all([
+          getArtistById(id),
+          getArtworksByArtist(id)
+        ]);
+        setArtist(artistData);
+        setArtworksByGenre(artworksData || []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
-      }, 500);
+      }
     };
-    fetchMockData();
-  }, [artistId, mockArtists, mockArtworks]);*/
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [artistData, artworksData] = await Promise.all([
-        getArtistById(id),
-        getArtworksByArtist(id)
-      ]);
-      setArtist(artistData);
-
-      setArtworksByGenre(artworksData);
-
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchData();
-}, [id]);
-
+    fetchData();
+  }, [id]);
 
   if (error) return <div className="artp-page"><p>Error: {error}</p></div>;
   if (loading) return <Loading />;
@@ -60,17 +38,31 @@ useEffect(() => {
 
   return (
     <div className="artp-page">
-      {/* SECCIÓN SUPERIOR - Basada en tu boceto */}
-      <div className="artp-top-layout"style={{ backgroundImage: "url('/g.gif')" }}>
-        
-      
+      {/* SECCIÓN SUPERIOR - Degradado y geometrías inspirados en la maqueta */}
+      <div className="artp-top-layout">
+        <div className="artp-banner-decor"></div>
+        {/* Formas geométricas flotantes (Cruces y Círculos) estilo maqueta */}
+        <svg className="geometric-decor" style={{ position: 'absolute', top: '20px', left: '40px', opacity: 0.25 }} width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <svg className="geometric-decor" style={{ position: 'absolute', top: '30px', right: '50px', opacity: 0.25 }} width="40" height="40" viewBox="0 0 100 100">
+            <path d="M 50 10 A 40 40 0 0 0 10 50 L 50 50 Z" fill="black"></path>
+        </svg>
+        <svg className="geometric-decor" style={{ position: 'absolute', bottom: '20px', right: '140px', opacity: 0.25 }} width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <svg className="geometric-decor" style={{ position: 'absolute', bottom: '15px', left: '160px', opacity: 0.25 }} width="30" height="30" viewBox="0 0 100 100">
+            <path d="M 50 10 A 40 40 0 0 0 10 50 L 50 50 Z" fill="black" transform="rotate(90 50 50)"></path>
+        </svg>
 
-        {/* Derecha: Nombre y Círculo */}
+        {/* Nombre y Círculo de Perfil */}
         <aside className="artp-main-header">
           <div className="artp-avatar-frame">
             <img 
-              src={artist.imageUrl} 
-              alt={artist.first_name} 
+              src={artist.imageUrl || 'https://picsum.photos/200'} 
+              alt={artist.name || artist.first_name} 
               className="artp-circle-img" 
             />
           </div>
@@ -80,42 +72,45 @@ useEffect(() => {
         </aside>
       </div>
   
-     
-    
-<div className="artp-layout-split">{/*contenedor Flex */}
+      <div className="artp-layout-split">
+        {/* IZQUIERDA: Biografía */}
+        <aside className="artp-side-info">
+          <div className="artp-card">
+            <div className="artp-field">
+              <span className="artp-label">Fecha de nacimiento:</span>
+              <span className="artp-value">{artist.birthdate || 'No especificada'}</span>
+            </div>
+            <div className="artp-field">
+              <span className="artp-label">Nacionalidad:</span>
+              <span className="artp-value">{artist.nationality || 'No especificada'}</span>
+            </div>
+            <div className="artp-field">
+              <span className="artp-label">Biografía:</span>
+              <p className="artp-bio-text">{artist.biography || 'Sin biografía disponible.'}</p>
+            </div>
+          </div>
+        </aside>
 
-  {/* IZQUIERDA: Biografía  */}
-  <aside className="artp-side-info">
-    <div className="artp-card">
-      <div className="artp-field">
-        <span className="artp-label">Fecha de nacimiento:</span>
-        <span className="artp-value">{artist.birthdate}</span>
+        {/* DERECHA: Galería de obras */}
+        <section className="artp-gallery-right">
+          <h2 className="artp-section-title">Obras del Artista</h2>
+          {Array.isArray(artworksByGenre) && artworksByGenre.length > 0 ? (
+            <div className="artp-genres-row">
+              {artworksByGenre.map((work) => (
+                <div key={work.id} className="artp-work-mini-card" onClick={() => navigate(`/artwork/${work.id}`)} style={{ cursor: 'pointer' }}>
+                  <img src={work.imageUrl || 'https://picsum.photos/400/300'} alt={work.name} className="artp-genre-cover" />
+                  <p className="artp-work-name">{work.name}</p>
+                  <span className="artp-work-price">${work.price}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
+              <p style={{ fontSize: '1.05rem', fontWeight: '500' }}>Este artista no tiene obras registradas aún.</p>
+            </div>
+          )}
+        </section>
       </div>
-      <div className="artp-field">
-        <span className="artp-label">Nacionalidad:</span>
-        <span className="artp-value">{artist.nationality}</span>
-      </div>
-      <div className="artp-field">
-        <span className="artp-label">Biografía:</span>
-        <p className="artp-bio-text">{artist.biography}</p>
-      </div>
-    </div>
-  </aside>
-
-   <section className="artp-gallery-right">
-    <h2 className="artp-section-title">Obras del Artista</h2>
-    <div className="artp-genres-row">
-      {artworksByGenre.map((work) => (
-        <div key={work.id} className="artp-work-mini-card" onClick={() => navigate(`/artwork/${work.id}`)} style={{ cursor: 'pointer' }}>
-          <img src={work.imageUrl} alt={work.name} className="artp-genre-cover" />
-          <p className="artp-work-name">{work.name}</p>
-          <span className="artp-work-price">${work.price}</span>
-        </div>
-      ))}
-    </div>
-  </section>
-
-</div>
     </div>
   );
 };

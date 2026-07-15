@@ -1,237 +1,223 @@
 :root {
-  --primary-purple: #4a0080;
+  --primary-purple: #7c3aed;
+  --purple-dark: #4a148c;
   --accent-gold: #ffd700;
-  --glass-bg: rgba(255, 255, 255, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.4);
   --text-dark: #2d0050;
-
+  --bg-gradient: linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%);
 }
 
 .artp-page {
   min-height: 100vh;
-  padding: 40px;
-  font-family: 'Inter', sans-serif;
+  padding: 130px 40px 40px;
+  font-family: 'Roboto Flex', 'Inter', sans-serif;
   background: var(--bg-gradient);
   color: var(--text-dark);
   display: flex;
   flex-direction: column;
   gap: 30px;
+  box-sizing: border-box;
 }
 
-/*  SECCIÓN SUPERIOR (Avatar y Nombre) */
+/* SECCIÓN SUPERIOR (Avatar y Nombre) */
 .artp-top-layout {
+  position: relative;
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  border-radius: 24px;
+  height: 240px;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 40px;
-  padding-left: 50px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(124, 76, 219, 0.15);
+}
+
+.artp-banner-decor {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image: 
+    radial-gradient(circle at 15px 15px, #000 1.5px, transparent 0),
+    radial-gradient(circle at 30px 30px, #000 1.5px, transparent 0);
+  background-size: 50px 50px;
+  pointer-events: none;
+}
+
+.artp-main-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
 }
 
 .artp-avatar-frame {
-  width: 180px;
-  height: 180px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  padding: 5px;
-  background: linear-gradient(to bottom, var(--primary-purple), var(--accent-gold));
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 4px solid white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  background: white;
+  transition: transform 0.3s ease;
+}
+
+.artp-avatar-frame:hover {
+  transform: scale(1.05);
 }
 
 .artp-circle-img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
-  border: 4px solid white;
 }
 
 .artp-artist-name {
   color: white;
-  font-size: 3.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* LAYOUT SPLIT */
 .artp-layout-split {
-  display: flex;         /* Pone los hijos en fila */
+  display: grid;
+  grid-template-columns: 320px 1fr;
   align-items: flex-start;
-  gap: 30px;            /* Espacio entre biografía y galería */
+  gap: 30px;
   width: 100%;
 }
 
 /* PANEL LATERAL IZQUIERDO (Biografía) */
 .artp-side-info {
-  width: 350px;         /* Ancho fijo para que no se mueva */
-  flex-shrink: 0;       /* Evita que se encoja */
+  width: 100%;
 }
 
 .artp-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 25px;
+  border-radius: 20px;
   padding: 30px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(124, 76, 219, 0.05);
+  backdrop-filter: blur(10px);
 }
 
 .artp-field {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+}
+
+.artp-field:last-child {
+  margin-bottom: 0;
 }
 
 .artp-label {
   display: block;
   font-weight: 700;
-  font-size: 0.9rem;
-  margin-bottom: 5px;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
   color: var(--primary-purple);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .artp-value, .artp-bio-text {
-  font-size: 1.1rem;
-  color: #333;
-  line-height: 1.5;
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
 }
 
-/*SECCIÓN DE GALERÍA (DERECHA) */
+.artp-bio-text {
+  white-space: pre-line;
+}
+
+/* SECCIÓN DE GALERÍA (DERECHA) */
 .artp-gallery-right {
-  flex: 1;              /* Ocupa todo el espacio restante a la derecha */
-  background: white;  
-  border-radius: 20px;
+  background: white;
+  border-radius: 24px;
   padding: 30px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(124, 76, 219, 0.03);
+  border: 1px solid var(--glass-border);
 }
 
 .artp-section-title {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: var(--primary-purple);
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: var(--purple-dark);
+  font-weight: 800;
+  border-bottom: 2px solid #f3e8ff;
+  padding-bottom: 10px;
 }
 
-/* El contenedor que agrupa las tarjetas de escultura */
-.artp-works-container {
-  display: flex; 
-  flex-wrap: wrap;       /* Hace que las fotos bajen si no caben */
-  gap: 25px;            /* Espacio entre cada tarjeta */
-  padding: 10px 0;
-}
-
-/* TARJETAS DE ESCULTURA */
-/* SECCIÓN DE GALERÍA (DERECHA) */
-.artp-gallery-right {
-  flex: 1;
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-}
-
-/* GRID igual que la galería principal */
 .artp-genres-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  padding: 20px 0;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
 }
 
-/* TARJETA igual que .art-piece */
+/* TARJETA DE OBRA DE ARTE (Pinterest-inspired) */
 .artp-work-mini-card {
-  width: 100%;
-  height: 480px;
   background-color: white;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  border: 1px solid #f3f4f6;
+  position: relative;
 }
 
 .artp-work-mini-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.14);
-}
-
-/* IMAGEN igual que .art-piece img */
-/* SECCIÓN DE GALERÍA (DERECHA) */
-.artp-gallery-right {
-  flex: 1;
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-}
-
-/* GRID igual que la galería principal */
-.artp-genres-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  padding: 20px 0;
-}
-
-/* TARJETA igual que .art-piece */
-.artp-work-mini-card {
-  width: 100%;
-  height: 480px;
-  background-color: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.artp-work-mini-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.14);
-}
-
-/* IMAGEN igual que .art-piece img */
-.artp-genres-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  padding: 20px 0;
-}
-
-.artp-work-mini-card {
-  width: 100%;
-  height: 480px;
-  background-color: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.artp-work-mini-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(124, 76, 219, 0.12);
+  border-color: #e5e7eb;
 }
 
 .artp-genre-cover {
   width: 100%;
-  height: 340px;
+  height: 260px;
   object-fit: cover;
-  object-position: center;
   display: block;
 }
 
 .artp-work-name {
-  font-weight: 400;
-  font-size: 1.15rem;
-  margin: 14px 16px 6px;
-  color: #111;
-  line-height: 1.3;
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 14px 16px 4px;
+  color: var(--text-dark);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .artp-work-price {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: rgb(176, 91, 255);
-  text-align: right;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-purple);
   padding: 0 16px 14px;
   margin-top: auto;
   display: block;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .artp-page {
+    padding: 100px 20px 20px;
+  }
+
+  .artp-layout-split {
+    grid-template-columns: 1fr;
+  }
+
+  .artp-top-layout {
+    height: 200px;
+  }
 }
