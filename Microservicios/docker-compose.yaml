@@ -1,0 +1,114 @@
+# Levanta los 7 microservicios de Pictorial Arcane en una sola ejecución:
+#   docker compose up -d --build
+#
+# Todos los servicios usan bases de datos remotas (Postgres en Azure, MongoDB Atlas,
+# Cassandra/Astra DB, Neo4j Aura) ya configuradas por defecto en cada application.properties,
+# por lo que este compose NO levanta ninguna base de datos local.
+#
+# Los overrides EUREKA_CLIENT_SERVICEURL_DEFAULTZONE / SPRING_CLOUD_CONFIG_URI /
+# SPRING_CONFIG_IMPORT reemplazan los "localhost" hardcodeados en cada
+# application.properties/yml para que los contenedores se encuentren entre sí por
+# nombre de servicio Docke
+  r en vez de localhost.
+
+services:
+  service-registry:
+    build:
+      context: .
+      dockerfile: service-registry/Dockerfile
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    restart: unless-stopped
+
+  config-server:
+    build:
+      context: .
+      dockerfile: config-server/Dockerfile
+    container_name: config-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    ports:
+      - "8088:8088"
+    depends_on:
+      - service-registry
+    restart: unless-stopped
+
+  core-service:
+    build:
+      context: .
+      dockerfile: core-service/Dockerfile
+    container_name: core-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8088
+    ports:
+      - "8082:8082"
+    depends_on:
+      - service-registry
+      - config-server
+    restart: unless-stopped
+
+  artwork-service:
+    build:
+      context: .
+      dockerfile: artwork-service/Dockerfile
+    container_name: artwork-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8088
+    ports:
+      - "8070:8070"
+    depends_on:
+      - service-registry
+      - config-server
+    restart: unless-stopped
+
+  audit-service:
+    build:
+      context: .
+      dockerfile: audit-service/Dockerfile
+    container_name: audit-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8088
+    ports:
+      - "8071:8071"
+    depends_on:
+      - service-registry
+      - config-server
+    restart: unless-stopped
+
+  recommendation-service:
+    build:
+      context: .
+      dockerfile: recommendation-service/Dockerfile
+    container_name: recommendation-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8088
+    ports:
+      - "8072:8072"
+    depends_on:
+      - service-registry
+      - config-server
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8088
+    ports:
+      - "8060:8060"
+    depends_on:
+      - service-registry
+      - config-server
+      - core-service
+      - artwork-service
+      - audit-service
+      - recommendation-service
+    restart: unless-stopped
