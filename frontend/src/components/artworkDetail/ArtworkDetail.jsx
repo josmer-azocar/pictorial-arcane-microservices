@@ -3,13 +3,13 @@ import './ArtworkDetail.css';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../services/AuthContext.jsx';
 import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations, syncArtworkView } from '../../services/fetchArtwork.js';
 import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
-import { ShieldCheck, Truck, Award, PartyPopper } from 'lucide-react';
+import { ShieldCheck, Truck, Award } from 'lucide-react';
 
 // ── COMPONENTE PRINCIPAL ─────────────────────────────────────
 const ArtworkDetail = ({ artwork: artworkProp }) => {
@@ -17,7 +17,7 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   // ── HOOKS: RUTA Y AUTENTICACIÓN ──────────────────────────
   const { id } = useParams();
   const { token, user } = useAuth();
-
+  const navigate = useNavigate();
   // ── ESTADOS: OBRA Y ZOOM DE IMAGEN ──────────────────────
   const [artwork, setArtwork] = useState(artworkProp || null);
   const [artworkError, setArtworkError] = useState(null);
@@ -328,6 +328,17 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
       if (successTimerRef.current) clearTimeout(successTimerRef.current);
     };
   }, []);
+
+  // Cerrar modal de éxito con tecla ESC
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && showSuccessModal) {
+        setShowSuccessModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [showSuccessModal]);
 
   // ── RENDER: detalles específicos según género ────────────
   // Muestra campos distintos dependiendo del tipo de obra (pintura, escultura, etc.)
@@ -756,7 +767,7 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
 
         {/* ── MODAL 4: ÉXITO DE RESERVA CON CONFETI ── */}
         {showSuccessModal && (
-          <div className="success-overlay">
+          <div className="success-overlay" onClick={() => setShowSuccessModal(false)}>
             {/* Confeti cayendo por toda la pantalla */}
             <div className="confetti-container" aria-hidden="true">
               {confettiPieces.map((piece) => (
@@ -778,7 +789,14 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
             </div>
 
             {/* Tarjeta de éxito */}
-            <div className="success-card">
+            <div className="success-card" onClick={(e) => e.stopPropagation()}>
+              <button
+                className="success-x-btn"
+                onClick={() => setShowSuccessModal(false)}
+                aria-label="Cerrar"
+              >
+                ✕
+              </button>
               <img
                 src="/imagen/cap05.png"
                 alt="¡Reserva exitosa!"
@@ -790,15 +808,20 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
                 Nuestro equipo de trabajo se pondrá en contacto contigo para
                 realizar el trámite de compra de la obra.
               </p>
-              <div className="success-details-badge">
-                <PartyPopper size={18} />
-                <span>¡Felicidades por tu nueva adquisición!</span>
-              </div>
+              <p className="success-info-text">
+                Revisa tu correo en los próximos minutos.
+              </p>
               <button
                 className="success-close-btn"
                 onClick={() => setShowSuccessModal(false)}
               >
                 Continuar Explorando
+              </button>
+              <button
+                className="success-secondary-btn"
+                onClick={() => { setShowSuccessModal(false); navigate('/dashboard'); }}
+              >
+                Ver mis reservas
               </button>
             </div>
           </div>

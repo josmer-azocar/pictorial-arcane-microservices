@@ -684,62 +684,6 @@ body {
   }
 }
 
-/* Brillo de fondo detrás de la tarjeta */
-.success-glow {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(124, 58, 237, 0.12) 60deg,
-    transparent 120deg,
-    rgba(168, 85, 247, 0.08) 180deg,
-    transparent 240deg,
-    rgba(236, 72, 153, 0.1) 300deg,
-    transparent 360deg
-  );
-  animation: glowSpin 8s linear infinite;
-  pointer-events: none;
-  z-index: -1;
-}
-
-@keyframes glowSpin {
-  to { transform: rotate(360deg); }
-}
-
-/* Anillo con el ícono de check */
-.success-icon-ring {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  margin-bottom: 16px;
-  box-shadow:
-    0 0 0 6px rgba(16, 185, 129, 0.2),
-    0 0 30px rgba(16, 185, 129, 0.3);
-  animation: iconPulse 2s ease-in-out infinite;
-}
-
-@keyframes iconPulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 6px rgba(16, 185, 129, 0.2),
-      0 0 30px rgba(16, 185, 129, 0.3);
-  }
-  50% {
-    box-shadow:
-      0 0 0 12px rgba(16, 185, 129, 0.1),
-      0 0 50px rgba(16, 185, 129, 0.25);
-  }
-}
-
 /* Mascota / imagen cap05 */
 .success-mascot {
   display: block;
@@ -790,40 +734,13 @@ body {
   font-size: 15px;
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
-  margin: 0 0 20px;
+  margin: 0 0 24px;
   font-weight: 400;
 }
 
 .success-subtitle strong {
   color: #fbbf24;
   font-weight: 700;
-}
-
-/* Badge de felicidades */
-.success-details-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 50px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 24px;
-  animation: badgeFadeIn 0.6s ease-out 0.7s both;
-}
-
-@keyframes badgeFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Botón de cerrar / continuar */
@@ -867,4 +784,56 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Texto informativo secundario */
+.success-info-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  margin: -12px 0 24px;
+  line-height: 1.5;
+  animation: btnFadeIn 0.6s ease-out 0.8s both;
+}
+
+/* Botón X para cerrar */
+.success-x-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.success-x-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Botón secundario "Ver mis reservas" */
+.success-secondary-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: btnFadeIn 0.6s ease-out 1s both;
+}
+
+.success-secondary-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
 }
