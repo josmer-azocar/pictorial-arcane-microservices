@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../services/AuthContext.jsx';
-import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations, syncArtworkView } from '../../services/fetchArtwork.js';
+import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAllArtworks, getUserPurchaseRecommendations, getUserPurchaseHistory, syncArtworkView } from '../../services/fetchArtwork.js';
 import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
@@ -149,30 +149,38 @@ useEffect(() => {
 
   // ── EFECTO: GET /api/v1/recommendations/user/{id}/recommendations ──
   // Carga recomendaciones basadas en compras anteriores del usuario
-  // Solo se ejecuta si el usuario está autenticado
+  // Solo se ejecuta si el usuario está autenticado y tiene al menos 1 compra
   useEffect(() => {
     if (!token || !user?.dniUser) return;
 
-    getUserPurchaseRecommendations(user.dniUser, token)
-      .then(async (data) => {
-        const list = Array.isArray(data) ? data : [];
-        try {
-          const catalog = await getAllArtworks();
-          const catalogByArtworkId = new Map(
-            catalog.map((a) => [String(a.artworkId), a])
-          );
-          setPurchaseRecommendations(
-            list.reduce((acc, rec) => {
-              const match = catalogByArtworkId.get(String(rec.artworkId));
-              if (match) {
-                acc.push({ ...rec, imageUrl: match.imageUrl, mongoId: match.id });
-              }
-              return acc;
-            }, [])
-          );
-        } catch {
-          setPurchaseRecommendations(list);
+    getUserPurchaseHistory(user.dniUser, token)
+      .then((purchases) => {
+        if (!Array.isArray(purchases) || purchases.length === 0) {
+          setPurchaseRecommendations([]);
+          return;
         }
+        getUserPurchaseRecommendations(user.dniUser, token)
+          .then(async (data) => {
+            const list = Array.isArray(data) ? data : [];
+            try {
+              const catalog = await getAllArtworks();
+              const catalogByArtworkId = new Map(
+                catalog.map((a) => [String(a.artworkId), a])
+              );
+              setPurchaseRecommendations(
+                list.reduce((acc, rec) => {
+                  const match = catalogByArtworkId.get(String(rec.artworkId));
+                  if (match) {
+                    acc.push({ ...rec, imageUrl: match.imageUrl, mongoId: match.id });
+                  }
+                  return acc;
+                }, [])
+              );
+            } catch {
+              setPurchaseRecommendations(list);
+            }
+          })
+          .catch(() => setPurchaseRecommendations([]));
       })
       .catch(() => setPurchaseRecommendations([]));
   }, [token, user?.dniUser]);

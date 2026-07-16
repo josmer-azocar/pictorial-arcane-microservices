@@ -16,4 +16,40 @@ body {
 
 .main-content {
     flex: 1;
+    position: relative;
+}
+
+.back-button-global {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    z-index: 99;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(107, 45, 212, 0.2);
+    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s;
+}
+
+.back-button-global:hover {
+    opacity: 0.7;
+}
+
+.back-button-global.disabled {
+    color: #b0b0b0;
+    border-color: rgba(176, 176, 176, 0.2);
+    cursor: default;
+    opacity: 0.5;
+}
+
+.back-button-global.disabled:hover {
+    opacity: 0.5;
 }

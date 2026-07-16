@@ -7,6 +7,7 @@ interface MemberInfo {
   role: string;
   engine: DBEngine;
   photo: string;
+  icon?: string;
 }
 
 const engineIcons: Record<string, string> = {
@@ -17,7 +18,7 @@ const engineIcons: Record<string, string> = {
 };
 
 const members: MemberInfo[] = [
-  { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.PostgreSQL, photo: '/assets/josue.jpg' },
+  { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.PostgreSQL, photo: '/assets/josue.jpg', icon: '/assets/spring-logo.png' },
   { name: 'Azocar Josmer', role: 'DBA Relacional', engine: DBEngine.PostgreSQL, photo: '/assets/josmer.jpg' },
   { name: 'Avendaño Licett', role: 'DBA Documental', engine: DBEngine.MongoDB, photo: '/assets/patricia.jpeg' },
   { name: 'Salazar Inés', role: 'Ingeniero de Datos', engine: DBEngine.Cassandra, photo: '/assets/ines.jpeg' },
@@ -142,7 +143,7 @@ export default function Team() {
 
                   {/* Engine Icon + Badge */}
                   <div className="flex items-center gap-2">
-                    <img src={engineIcons[member.engine]} alt="" className="w-4 h-4 object-contain select-none pointer-events-none" />
+                    <img src={member.icon || engineIcons[member.engine]} alt="" className="w-4 h-4 object-contain select-none pointer-events-none" />
                     <span className={`rounded-full font-mono font-bold tracking-wide uppercase transition-all duration-500 ${
                       isCenter
                         ? 'px-4 py-1.5 text-[10px] bg-purple-50 text-arcane-purple border border-arcane-purple/20'

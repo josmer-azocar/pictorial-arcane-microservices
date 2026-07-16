@@ -668,6 +668,19 @@ export async function getTopArtists() {
   }
 }
 
+export async function getUserPurchaseHistory(userId, token) {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/api/users/${userId}/purchase-history`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener historial de compras:", error);
+    return [];
+  }
+}
+
 export async function syncArtworkView(compradorId, artworkId, token) {
   try {
     await axios.post(

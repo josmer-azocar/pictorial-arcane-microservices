@@ -49,6 +49,7 @@ export default function ClosingSlide() {
             <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-2 max-w-[200px]">
               Universidad Nacional Experimental de Guayana
             </p>
+            <img src="/assets/uneg-logo.png" alt="UNEG" className="w-[190px] mx-auto mt-4 object-contain" />
           </div>
         </div>
       </div>
