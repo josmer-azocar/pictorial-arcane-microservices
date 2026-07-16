@@ -64,7 +64,7 @@ function Header(){
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                     Mi Perfil
                                 </Link>
-                                <Link to="/shipment" className="dropdown-item" onClick={() => setShowMenu(false)}>
+                                <Link to="/dashboard" state={{ section: 'reservations' }} className="dropdown-item" onClick={() => setShowMenu(false)}>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                                     Mis Órdenes
                                 </Link>
