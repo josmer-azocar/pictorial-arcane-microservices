@@ -127,13 +127,14 @@ function Dashboard() {
             }
 
             try {
-                // Fetch some artworks to display as recommendations
-                const response = await showArtwork(null, null, '', null, null, 0, 3);
-                if (response && response.content) {
-                    setRecommendedArtworks(response.content);
-                } else if (Array.isArray(response)) {
-                    setRecommendedArtworks(response.slice(0, 3));
-                }
+                // Fetch some artworks to display as recommendations, solo AVAILABLE.
+                // Se pide un lote grande porque el backend pagina antes de que
+                // podamos filtrar por status, así no perdemos obras disponibles.
+                const response = await showArtwork(null, null, '', null, null, 0, 100);
+                const content = response?.content || (Array.isArray(response) ? response : []);
+                setRecommendedArtworks(
+                    content.filter(work => work.status === 'AVAILABLE').slice(0, 3)
+                );
             } catch (err) {
                 console.error("Error fetching recommended artworks on mount:", err);
             }
