@@ -68,7 +68,7 @@ function Admin() {
     const loadCounts = async () => {
       try {
         const [artworks, artists] = await Promise.all([getAllArtworks(), getArtists()]);
-        setArtworksCount(artworks.length);
+        setArtworksCount(artworks.filter(a => a.status === 'AVAILABLE').length);
         setArtistsCount(artists.length);
       } catch (error) {
         console.error("Error al cargar conteos del dashboard:", error);
