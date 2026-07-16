@@ -27,6 +27,7 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   // ── ESTADOS: MODAL COMPRA ────────────────────────────────
   const [showModal, setShowModal] = useState(false);
   const [securityCode, setSecurityCode] = useState("");
+  const [purchasing, setPurchasing] = useState(false);
 
   // ── ESTADOS: MODAL RECUPERAR CÓDIGO ─────────────────────
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
@@ -224,6 +225,8 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
       return;
     }
 
+    setPurchasing(true);
+
     try {
       await reserveArtwork(artworkIdToReserve, artworkPrice, 0.1, securityCode, token);
       setShowModal(false);
@@ -248,6 +251,8 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
       } else {
         toast.error("Error al procesar la reserva.");
       }
+    } finally {
+      setPurchasing(false);
     }
   };
 
@@ -564,6 +569,7 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
         )}
 
         {/* ── MODAL 1: INGRESAR CÓDIGO DE SEGURIDAD PARA COMPRAR ── */}
+        {purchasing && <Loading />}
         {showModal && (
           <div className="modal-overlay">
             <div className="modal-content">
@@ -585,11 +591,10 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
                 <button className="modal-btn modal-btn-cancel" onClick={() => setShowModal(false)}>
                   Cancelar
                 </button>
-                <button className="modal-btn modal-btn-confirm" onClick={handleReservar}>
-                  Confirmar Compra
+                <button className="modal-btn modal-btn-confirm" onClick={handleReservar} disabled={purchasing}>
+                  {purchasing ? 'Procesando...' : 'Confirmar Compra'}
                 </button>
               </div>
-              {/* Enlace para abrir el modal de recuperación */}
               <div className="forgot-link-container">
                 <button className="forgot-link" onClick={() => { setShowModal(false); setShowRecoveryModal(true); }}>
                   ¿Has olvidado tu código de seguridad?
