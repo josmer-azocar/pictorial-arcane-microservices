@@ -567,3 +567,210 @@ body {
 .recovery-message.success {
   color: var(--green);
 }
+
+/* ==========================================
+   MODAL ÉXITO + CONFETI
+   ========================================== */
+
+/* Fondo fullscreen con gradiente radial */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(124, 58, 237, 0.25) 0%,
+    rgba(20, 0, 50, 0.85) 100%
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: successOverlayIn 0.4s ease-out;
+}
+
+@keyframes successOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Canvas de confeti (animado por JS con requestAnimationFrame) ── */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* ── Tarjeta de éxito ── */
+.success-card {
+  position: relative;
+  z-index: 10001;
+  background: #fff;
+  border: 1.5px solid #ede6fa;
+  border-radius: 28px;
+  padding: 40px 36px 36px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow:
+    0 8px 32px rgba(124, 58, 237, 0.15),
+    0 0 60px rgba(124, 58, 237, 0.08);
+  animation: successCardIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+  overflow: hidden;
+}
+
+@keyframes successCardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Mascota / imagen cap05 */
+.success-mascot {
+  display: block;
+  margin: 0 auto 20px;
+  width: 180px;
+  max-height: 200px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
+  animation: mascotBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+}
+
+@keyframes mascotBounce {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Título del éxito */
+.success-title {
+  font-family: 'Roboto Flex', 'Inter', Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #4b158c;
+  margin: 0 0 12px;
+  letter-spacing: -0.5px;
+}
+
+/* Subtítulo */
+.success-subtitle {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 24px;
+  font-weight: 400;
+}
+
+.success-subtitle strong {
+  color: #7c3aed;
+  font-weight: 700;
+}
+
+/* Botón de cerrar / continuar */
+.success-close-btn {
+  display: inline-block;
+  padding: 14px 40px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
+  background-size: 200% 200%;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 15px rgba(124, 58, 237, 0.4),
+    0 0 30px rgba(124, 58, 237, 0.1);
+  animation: btnFadeIn 0.6s ease-out 0.9s both;
+  letter-spacing: 0.3px;
+}
+
+.success-close-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow:
+    0 8px 25px rgba(124, 58, 237, 0.5),
+    0 0 50px rgba(124, 58, 237, 0.2);
+  background-position: 100% 0%;
+}
+
+.success-close-btn:active {
+  transform: translateY(-1px) scale(1.01);
+}
+
+@keyframes btnFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Texto informativo secundario */
+.success-info-text {
+  font-size: 13px;
+  color: #999;
+  margin: -12px 0 24px;
+  line-height: 1.5;
+  animation: btnFadeIn 0.6s ease-out 0.8s both;
+}
+
+/* Botón X para cerrar */
+.success-x-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.success-x-btn:hover {
+  color: #333;
+  background: #f3f3f3;
+}
+
+/* Botón secundario "Ver mis reservas" */
+.success-secondary-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #888;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: btnFadeIn 0.6s ease-out 1s both;
+}
+
+.success-secondary-btn:hover {
+  color: #555;
+  border-color: #bbb;
+  background: #fafafa;
+}
