@@ -69,10 +69,6 @@ function InvoiceModal({ reservation, onClose, onSuccess }) {
             <span>Nombre</span>
             <strong>{reservation.clientFullName}</strong>
           </div>
-          <div className="summary-row">
-            <span>Email</span>
-            <strong>{reservation.clientEmail || 'No disponible'}</strong>
-          </div>
         </div>
 
         <p className="modal-section-label">Datos de la Obra</p>

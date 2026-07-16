@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import InvoiceModal from './InvoiceModal.jsx';
 import './Admin.css';
 import { getPendingSales } from '../../services/fetchSales';
+import { getAllArtworks } from '../../services/fetchArtwork.js';
 
 const API_BASE_URL  = import.meta.env.VITE_API_URL;
 
@@ -22,10 +23,16 @@ const formatRemaining = (dateStr) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A';
-  return new Date(dateStr).toLocaleString('en-US', {
+  return new Date(dateStr).toLocaleString('es-ES', {
     month: 'short', day: 'numeric',
     hour: '2-digit', minute: '2-digit',
   });
+};
+
+const saleStatusLabels = {
+  PENDING: 'Pendiente',
+  APPROVED: 'Aprobada',
+  CANCELED: 'Cancelada',
 };
 
 function PendingReservations() {
@@ -40,7 +47,22 @@ function PendingReservations() {
     setLoading(true);
     try {
       const data = await getPendingSales(token);
-      setReservations(Array.isArray(data) ? data : data?.content || []);
+      const sales = Array.isArray(data) ? data : data?.content || [];
+
+      // SaleResponseDto solo trae artworkId (no el nombre de la obra), así que
+      // se cruza contra el catálogo de artwork-service para mostrarlo en la tabla.
+      let artworkNameById = new Map();
+      try {
+        const catalog = await getAllArtworks();
+        artworkNameById = new Map(catalog.map(a => [String(a.artworkId), a.name]));
+      } catch (err) {
+        console.error('Error al cargar el catálogo de obras:', err);
+      }
+
+      setReservations(sales.map(sale => ({
+        ...sale,
+        artworkTitle: artworkNameById.get(String(sale.artworkId)) || `Obra #${sale.artworkId}`
+      })));
     } catch (err) {
       toast.error('Error al cargar las reservas pendientes.');
     } finally {
@@ -110,28 +132,28 @@ function PendingReservations() {
             </div>
           )}
           <button className="btn btn-secondary" onClick={fetchPendingSales}>
-            ↻ Refresh
+            ↻ Actualizar
           </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="empty-state">Loading reservations...</div>
+        <div className="empty-state">Cargando reservas...</div>
       ) : (
         <div className="data-table-container">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Sale ID</th>
-                <th>Artwork</th>
-                <th>Buyer</th>
-                <th>Price</th>
+                <th>ID Venta</th>
+                <th>Obra</th>
+                <th>Comprador</th>
+                <th>Precio</th>
                 <th>IVA</th>
                 <th>Total</th>
-                <th>Reserved At</th>
+                <th>Reservado el</th>
                 <th>Tiempo Restante</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>Estado</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -153,7 +175,7 @@ function PendingReservations() {
                     </td>
                     <td>
                       <span className={`status-chip ${r.saleStatus === 'PENDING' ? 'ok' : 'critical'}`}>
-                        {r.saleStatus}
+                        {saleStatusLabels[r.saleStatus] || r.saleStatus}
                       </span>
                     </td>
                     <td>
@@ -162,13 +184,13 @@ function PendingReservations() {
                           className="btn btn-primary"
                           onClick={() => setSelectedReservation(r)}
                         >
-                          Invoice
+                          Facturar
                         </button>
                         <button
                           className="btn btn-danger"
                           onClick={() => handleCancel(r.idSale)}
                         >
-                          Cancel
+                          Cancelar
                         </button>
                       </div>
                     </td>
@@ -179,7 +201,7 @@ function PendingReservations() {
               {reservations.length === 0 && (
                 <tr>
                   <td colSpan="10" className="empty-state">
-                    No pending reservations
+                    No hay reservas pendientes
                   </td>
                 </tr>
               )}

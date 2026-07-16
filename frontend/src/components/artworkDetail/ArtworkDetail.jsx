@@ -227,8 +227,16 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
     try {
       await reserveArtwork(artworkIdToReserve, artworkPrice, 0.1, securityCode, token);
       setShowModal(false);
-      toast.success("¡Obra reservada exitosamente!", {
-        onClose: () => window.location.reload()
+      toast.success("¡Obra reservada exitosamente!");
+      // Actualiza el status localmente para deshabilitar el botón de compra
+      // sin recargar toda la página.
+      setArtwork(prev => {
+        if (!prev) return prev;
+        const key = prev.artWorkResponse ? 'artWorkResponse' : 'artworkResponse';
+        return {
+          ...prev,
+          [key]: { ...prev[key], status: 'RESERVED' }
+        };
       });
     } catch (err) {
       console.log("Error completo:", err.response?.data);
