@@ -52,10 +52,11 @@ export default function App() {
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
       if (e.deltaY > 0) nextSlide();
       else prevSlide();
     };
-    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
   }, [nextSlide, prevSlide]);
 
