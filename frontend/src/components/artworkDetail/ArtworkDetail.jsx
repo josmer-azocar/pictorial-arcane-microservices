@@ -911,7 +911,7 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
               </button>
               <button
                 className="success-secondary-btn"
-                onClick={() => { setShowSuccessModal(false); navigate('/dashboard'); }}
+                onClick={() => { setShowSuccessModal(false); navigate('/dashboard', { state: { section: 'reservations' } }); }}
               >
                 Ver mis reservas
               </button>

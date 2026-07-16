@@ -1,7 +1,7 @@
 import './Dashboard.css'
 import { useAuth } from '../../services/AuthContext.jsx';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import HistorialCompras from './HistorialCompras';
 import InfoUsuario from './InfoUsuario';
 import Loading from '../../components/Loading.jsx';
@@ -99,7 +99,15 @@ function SpotifyWidget() {
 function Dashboard() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [activeSection, setActiveSection] = useState('welcome');
+
+    useEffect(() => {
+        if (location.state?.section) {
+            setActiveSection(location.state.section);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state]);
     const [member, setMember] = useState(null);
     const [loading, setLoading] = useState(false);
     const [purchaseCount, setPurchaseCount] = useState(0);
