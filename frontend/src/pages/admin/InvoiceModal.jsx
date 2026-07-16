@@ -9,6 +9,7 @@ function InvoiceModal({ reservation, onClose, onSuccess }) {
   const token = localStorage.getItem('token');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showAnimation, setShowAnimation] = useState(false);
 
   const [formData, setFormData] = useState({
     amount: reservation.totalPaid || 0,
@@ -47,7 +48,10 @@ function InvoiceModal({ reservation, onClose, onSuccess }) {
       },
       { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
     );
-    onSuccess(reservation.idSale);
+    setShowAnimation(true);
+    setTimeout(() => {
+      onSuccess(reservation);
+    }, 3200);
   } catch (err) {
     const msg = err.response?.data?.message || 'Error al procesar la factura. Intenta de nuevo.';
     toast.error(msg);
@@ -59,107 +63,123 @@ function InvoiceModal({ reservation, onClose, onSuccess }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={e => e.stopPropagation()}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}
+        style={loading || showAnimation ? { textAlign: 'center', padding: '40px' } : {}}>
         <button className="modal-close" onClick={onClose}>✕</button>
-        <h2 className="modal-title">Confirmar Venta</h2>
 
-        <p className="modal-section-label">Datos del Comprador</p>
-        <div className="invoice-summary">
-          <div className="summary-row">
-            <span>Nombre</span>
-            <strong>{reservation.clientFullName}</strong>
-          </div>
-        </div>
+        {loading || showAnimation ? (
+          <>
+            <h2 className="modal-title" style={{ marginBottom: 20 }}>Generando factura...</h2>
+            <div className="typewriter">
+              <div className="slide"><i></i></div>
+              <div className="paper"></div>
+              <div className="keyboard"></div>
+            </div>
+            <p style={{ marginTop: 20, color: '#a78bfa', fontSize: 14 }}>Procesando venta, espere un momento...</p>
+          </>
+        ) : (
+          <>
+            <h2 className="modal-title">Confirmar Venta</h2>
 
-        <p className="modal-section-label">Datos de la Obra</p>
-        <div className="invoice-summary">
-          <div className="summary-row">
-            <span>Obra</span>
-            <strong>{reservation.artworkTitle}</strong>
-          </div>
-          <div className="summary-divider" />
-          <div className="summary-row">
-            <span>Precio</span>
-            <span>${subtotal?.toLocaleString()}</span>
-          </div>
-          <div className="summary-row">
-            <span>IVA</span>
-            <span>${iva?.toLocaleString()}</span>
-          </div>
-          <div className="summary-row total">
-            <span>Total</span>
-            <strong>${total?.toLocaleString()}</strong>
-          </div>
-        </div>
+            <p className="modal-section-label">Datos del Comprador</p>
+            <div className="invoice-summary">
+              <div className="summary-row">
+                <span>Nombre</span>
+                <strong>{reservation.clientFullName}</strong>
+              </div>
+            </div>
 
-        <p className="modal-section-label">Datos del Pago</p>
+            <p className="modal-section-label">Datos de la Obra</p>
+            <div className="invoice-summary">
+              <div className="summary-row">
+                <span>Obra</span>
+                <strong>{reservation.artworkTitle}</strong>
+              </div>
+              <div className="summary-divider" />
+              <div className="summary-row">
+                <span>Precio</span>
+                <span>${subtotal?.toLocaleString()}</span>
+              </div>
+              <div className="summary-row">
+                <span>IVA</span>
+                <span>${iva?.toLocaleString()}</span>
+              </div>
+              <div className="summary-row total">
+                <span>Total</span>
+                <strong>${total?.toLocaleString()}</strong>
+              </div>
+            </div>
 
-        <div className="form-group">
-          <label className="form-label">Banco *</label>
-          <input className="form-input" type="text"
-            placeholder="Ej: Banco Nacional"
-            name="bankName"
-            value={formData.bankName}
-            onChange={handleChange}
-          />
-        </div>
+            <p className="modal-section-label">Datos del Pago</p>
 
-        <div className="form-group">
-          <label className="form-label">Referencia *</label>
-          <input className="form-input" type="text"
-            placeholder="Ej: REF-2026-00123"
-            name="reference"
-            value={formData.reference}
-            onChange={handleChange}
-          />
-        </div>
+            <div className="form-group">
+              <label className="form-label">Banco *</label>
+              <input className="form-input" type="text"
+                placeholder="Ej: Banco Nacional"
+                name="bankName"
+                value={formData.bankName}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="form-group">
-          <label className="form-label">Monto *</label>
-          <input className="form-input" type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-          />
-        </div>
+            <div className="form-group">
+              <label className="form-label">Referencia *</label>
+              <input className="form-input" type="text"
+                placeholder="Ej: REF-2026-00123"
+                name="reference"
+                value={formData.reference}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="form-group">
-          <label className="form-label">Fecha de Pago *</label>
-          <input className="form-input" type="date"
-            name="paymentDate"
-            value={formData.paymentDate}
-            onChange={handleChange}
-          />
-        </div>
+            <div className="form-group">
+              <label className="form-label">Monto *</label>
+              <input className="form-input" type="number"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="form-group">
-          <label className="form-label">Descripción *</label>
-          <textarea className="form-input" rows="2"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
+            <div className="form-group">
+              <label className="form-label">Fecha de Pago *</label>
+              <input className="form-input" type="date"
+                name="paymentDate"
+                value={formData.paymentDate}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="form-group">
-          <label className="form-label">Dirección de envío *</label>
-          <input className="form-input" type="text"
-            name="direction"
-            value={formData.direction}
-            onChange={handleChange}
-          />
-        </div>
+            <div className="form-group">
+              <label className="form-label">Descripción *</label>
+              <textarea className="form-input" rows="2"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </div>
 
-        {error && <p className="form-error">{error}</p>}
+            <div className="form-group">
+              <label className="form-label">Dirección de envío *</label>
+              <input className="form-input" type="text"
+                name="direction"
+                value={formData.direction}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="modal-actions">
-          <button className="btn-secondary" onClick={onClose} disabled={loading}>
-            Cancelar
-          </button>
-          <button className="btn-primary" onClick={handleConfirm} disabled={loading}>
-            {loading ? 'Procesando...' : '✓ Confirmar Venta'}
-          </button>
-        </div>
+            {error && <p className="form-error">{error}</p>}
+
+            <div className="modal-actions">
+              <button className="btn-secondary" onClick={onClose} disabled={loading}>
+                Cancelar
+              </button>
+              <button className="btn-primary" onClick={handleConfirm} disabled={loading}>
+                {loading ? 'Procesando...' : '✓ Confirmar Venta'}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

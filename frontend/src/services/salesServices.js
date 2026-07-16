@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = 'http://localhost:8080/api/sales';
+const API_URL = 'https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io/api/sales';
 
 /*export const getSoldArtworks = async (startDate, endDate) => {
     try {

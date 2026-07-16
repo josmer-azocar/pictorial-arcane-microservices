@@ -3,8 +3,8 @@ const url = import.meta.env.VITE_API_URL;
 const API_BASE_URL = url;
 
 // we keep two base URLs: one for auth endpoints and one general server url
-//const authUrl = "http://localhost:8080/auth";
-//const baseUrl = "http://localhost:8080";
+//const authUrl = "https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io/auth";
+//const baseUrl = "https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io";
 
 /*export async function logUser(credentials) {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials);

@@ -7,8 +7,10 @@ import {
     updateSecurityAnswer,
     getAllQuestions
 } from '../../services/authUser.js';
+import { useAuth } from '../../services/AuthContext.jsx';
 
 import Loading from '../../components/Loading.jsx';
+import { Shield } from 'lucide-react';
 
 function CompleteRegistration() {
     const [securityAnswers, setSecurityAnswers] = useState([
@@ -22,6 +24,7 @@ function CompleteRegistration() {
     const [isLoadingPreguntas, setIsLoadingPreguntas] = useState(false);
     const [errorPreguntas, setErrorPreguntas] = useState(null);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     useEffect(() => {
         const token = localStorage.getItem('reg_token');
@@ -51,14 +54,12 @@ function CompleteRegistration() {
     const handleConfirm = async () => {
         setErrMessage("");
 
-        // Verificar que todas tengan pregunta seleccionada
         const incompletas = securityAnswers.some(r => !r.idQuestion || !r.answer.trim());
         if (incompletas) {
             setErrMessage("Selecciona una pregunta y escribe tu respuesta en cada campo.");
             return;
         }
 
-        // Verificar que no haya preguntas repetidas
         const ids = securityAnswers.map(r => parseInt(r.idQuestion));
         const hayRepetidas = new Set(ids).size !== ids.length;
         if (hayRepetidas) {
@@ -77,7 +78,7 @@ function CompleteRegistration() {
             for (const r of securityAnswers) {
                 await updateSecurityAnswer(parseInt(r.idQuestion), r.answer, token);
             }
-            // Limpiar localStorage
+            await login(token);
             localStorage.removeItem('reg_token');
             localStorage.removeItem('reg_step');
             localStorage.removeItem('reg_data');
@@ -85,8 +86,7 @@ function CompleteRegistration() {
                 position: "top-center",
                 autoClose: 6000,
             });
-            // Permitir navegar, quizás a home
-            navigate('/');
+            navigate('/dashboard');
         } catch (err) {
             console.error("Error al guardar las preguntas:", err);
             setErrMessage("Error al guardar las preguntas.");
@@ -96,58 +96,75 @@ function CompleteRegistration() {
     };
 
     return (
-        <section className='auth-form'>
+        <div className="reg-success-wrapper">
             <ToastContainer />
-            <div>
-                {errMessage && <p style={{ color: 'red', fontWeight: 'bold' }}>{errMessage}</p>}
-                <h2>Completa tu Registro</h2>
-                <p style={{ fontSize: '17px' }}>Elige 3 preguntas de seguridad y escribe tu respuesta.
-                Las necesitarás si algún día olvidas tu <b>código de seguridad</b></p>
+            <div className="reg-success-card">
+
+                <p className="reg-security-hint">
+                    <Shield size={14} className="reg-security-hint-icon" />
+                    Configura tus preguntas de seguridad para proteger tu cuenta
+                    y poder recuperar tu código si lo necesitas más adelante.
+                </p>
+
+                {errMessage && <p className="reg-error-msg">{errMessage}</p>}
 
                 {isLoadingPreguntas && <Loading />}
-                {errorPreguntas && <p style={{ color: 'red' }}>{errorPreguntas}</p>}
+                {errorPreguntas && <p style={{ color: 'red', fontSize: 13 }}>{errorPreguntas}</p>}
 
-                {securityAnswers.map((r, i) => (
-                    <div key={i} className="question-card">
-                        <span className="question-label">Pregunta {i + 1}</span>
-                        <select
-                            value={r.idQuestion}
-                            onChange={(e) => {
-                                const nuevas = [...securityAnswers];
-                                nuevas[i].idQuestion = e.target.value;
-                                setSecurityAnswers(nuevas);
-                            }}
+                {!isLoadingPreguntas && !errorPreguntas && (
+                    <>
+                        <div className="reg-questions-list">
+                            {securityAnswers.map((r, i) => (
+                                <div key={i} className="reg-question-block">
+                                    <span className="reg-question-label">Pregunta {i + 1}</span>
+                                    <select
+                                        className="reg-question-select"
+                                        value={r.idQuestion}
+                                        onChange={(e) => {
+                                            const nuevas = [...securityAnswers];
+                                            nuevas[i].idQuestion = e.target.value;
+                                            setSecurityAnswers(nuevas);
+                                        }}
+                                    >
+                                        <option value="">-- Selecciona --</option>
+                                        {preguntasBackend?.length > 0 ? (
+                                            preguntasBackend.map(p => (
+                                                <option key={p.idQuestion} value={p.idQuestion}>
+                                                    {p.wording}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option disabled>No hay preguntas disponibles</option>
+                                        )}
+                                    </select>
+                                    <input
+                                        className="reg-question-input"
+                                        type="text"
+                                        placeholder="Tu respuesta"
+                                        value={r.answer}
+                                        onChange={(e) => {
+                                            const nuevas = [...securityAnswers];
+                                            nuevas[i].answer = e.target.value;
+                                            setSecurityAnswers(nuevas);
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+
+                        {isLoading && <Loading />}
+                        <button
+                            className="reg-save-btn"
+                            type="button"
+                            onClick={handleConfirm}
+                            disabled={isLoading}
                         >
-                            <option value="">-- Pregunta {i + 1} --</option>
-                            {preguntasBackend?.length > 0 ? (
-                                preguntasBackend.map(p => (
-                                    <option key={p.idQuestion} value={p.idQuestion}>
-                                        {p.wording}
-                                    </option>
-                                ))
-                            ) : (
-                                <option disabled>No hay preguntas disponibles</option>
-                            )}
-                        </select>
-                        <input
-                            type="text"
-                            placeholder="Tu respuesta"
-                            value={r.answer}
-                            onChange={(e) => {
-                                const nuevas = [...securityAnswers];
-                                nuevas[i].answer = e.target.value;
-                                setSecurityAnswers(nuevas);
-                            }}
-                        />
-                    </div>
-                ))}
-
-                {isLoading && <Loading />}
-                <button type="button" onClick={handleConfirm} disabled={isLoading}>
-                    {isLoading ? 'Guardando...' : 'Confirmar'}
-                </button>
+                            {isLoading ? 'Guardando...' : 'Guardar'}
+                        </button>
+                    </>
+                )}
             </div>
-        </section>
+        </div>
     );
 }
 

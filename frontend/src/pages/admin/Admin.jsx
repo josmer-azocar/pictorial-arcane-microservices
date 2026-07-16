@@ -13,7 +13,7 @@ import "./Admin.css";
 import CreateArtist from "./CreateArtist.jsx";
 import DeleteArtist from './DeleteArtist.jsx';
 import UpdateArtwork from './UpdateArtwork.jsx';
-import { getGenres, getAllArtworks, getArtists } from '../../services/fetchArtwork.js';
+import { getGenres, getAllArtworks, getArtists, getTopArtworks, getTopArtists } from '../../services/fetchArtwork.js';
 import { useAuth } from '../../services/AuthContext';
 import { getPendingSales } from '../../services/fetchSales';
 import AddSculpture from './AddSculpture.jsx';
@@ -39,6 +39,8 @@ function Admin() {
   const [artworksCount, setArtworksCount] = useState(null);
   const [artistsCount, setArtistsCount] = useState(null);
 
+  const [topArtworks, setTopArtworks] = useState([]);
+  const [topArtists, setTopArtists] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [bellOpen, setBellOpen] = useState(false);
   const [unread, setUnread] = useState(0);
@@ -75,6 +77,22 @@ function Admin() {
       }
     };
     loadCounts();
+  }, []);
+
+  useEffect(() => {
+    const loadRankings = async () => {
+      try {
+        const [artworks, artists] = await Promise.all([
+          getTopArtworks(),
+          getTopArtists(),
+        ]);
+        setTopArtworks(artworks);
+        setTopArtists(artists);
+      } catch (error) {
+        console.error("Error al cargar rankings:", error);
+      }
+    };
+    loadRankings();
   }, []);
 
   const handleActionSuccess = () => {
@@ -243,6 +261,61 @@ function Admin() {
               </p>
               <div className="capibara-container">
                 <img src="/imagen/cap03.png" alt="capibara guia" className="capibara-img" />
+              </div>
+            </div>
+
+            <div className="ranking-grid">
+              <div className="card ranking-card">
+                <div className="ranking-header">
+                  <TrendingUp size={22} className="ranking-icon" />
+                  <h3 className="ranking-title">Top Obras</h3>
+                </div>
+                {topArtworks.length > 0 ? (
+                  <div className="champion-list">
+                    <div className="champion-card">
+                      <span className="champion-medal">🥇</span>
+                      <div className="champion-info">
+                        <span className="champion-name">{topArtworks[0].name}</span>
+                        <span className="champion-stat">{topArtworks[0].timesComprada} compras</span>
+                      </div>
+                    </div>
+                    {topArtworks.slice(1).map((item, i) => (
+                      <div className="ranking-row" key={item.artworkId}>
+                        <span className="ranking-pos">{i + 2}</span>
+                        <span className="ranking-name">{item.name}</span>
+                        <span className="ranking-stat">{item.timesComprada}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="empty-text">No hay datos disponibles.</p>
+                )}
+              </div>
+              <div className="card ranking-card">
+                <div className="ranking-header">
+                  <Users size={22} className="ranking-icon" />
+                  <h3 className="ranking-title">Top Artistas</h3>
+                </div>
+                {topArtists.length > 0 ? (
+                  <div className="champion-list">
+                    <div className="champion-card">
+                      <span className="champion-medal">🥇</span>
+                      <div className="champion-info">
+                        <span className="champion-name">{topArtists[0].artistName}</span>
+                        <span className="champion-stat">{topArtists[0].salesCount} vendidas</span>
+                      </div>
+                    </div>
+                    {topArtists.slice(1).map((item, i) => (
+                      <div className="ranking-row" key={item.artistName}>
+                        <span className="ranking-pos">{i + 2}</span>
+                        <span className="ranking-name">{item.artistName}</span>
+                        <span className="ranking-stat">{item.salesCount}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="empty-text">No hay datos disponibles.</p>
+                )}
               </div>
             </div>
           </div>

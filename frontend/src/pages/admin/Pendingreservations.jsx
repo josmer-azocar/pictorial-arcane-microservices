@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InvoiceModal from './InvoiceModal.jsx';
+import TicketInvoice from './TicketInvoice.jsx';
 import './Admin.css';
 import { getPendingSales } from '../../services/fetchSales';
 import { getAllArtworks } from '../../services/fetchArtwork.js';
@@ -39,6 +40,7 @@ function PendingReservations() {
   const [loading, setLoading] = useState(true);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [reservations, setReservations] = useState([]);
+  const [completedInvoice, setCompletedInvoice] = useState(null);
   const prevCountRef = useRef(0);
   const token = localStorage.getItem('token');
 
@@ -101,10 +103,20 @@ function PendingReservations() {
     }
   };
 
-  const handleInvoiced = (saleId) => {
-    setReservations(prev => prev.filter(r => r.idSale !== saleId));
+  const handleInvoiced = (reservation) => {
+    setReservations(prev => prev.filter(r => r.idSale !== reservation.idSale));
     setSelectedReservation(null);
     toast.success('Factura emitida correctamente. Obra marcada como Vendida.');
+    setCompletedInvoice({
+      invoiceCode: String(reservation.idSale),
+      date: reservation.date,
+      artworkId: reservation.artworkId,
+      artworkName: reservation.artworkTitle || `Obra #${reservation.artworkId}`,
+      artworkPrice: reservation.price,
+      museumProfitAmount: reservation.profitAmount,
+      museumProfitPercentage: reservation.profitPercentage,
+      totalPaid: reservation.totalPaid
+    });
   };
 
   const criticalCount = reservations.filter(r => {
@@ -215,6 +227,13 @@ function PendingReservations() {
           reservation={selectedReservation}
           onClose={() => setSelectedReservation(null)}
           onSuccess={handleInvoiced}
+        />
+      )}
+
+      {completedInvoice && (
+        <TicketInvoice
+          sale={completedInvoice}
+          onClose={() => setCompletedInvoice(null)}
         />
       )}
     </div>

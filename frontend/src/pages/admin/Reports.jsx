@@ -1,6 +1,7 @@
 import './Reports.css'
 import { useState } from 'react';
 import { getBillingByPeriod, getBillingByMonth, getAllBilling, getAllSecurityLogs, getSecurityLogsByEvent, findSecurityLog, getArtworkStatusHistory, getAllStatusHistory } from '../../services/auditServices';
+import { getAllArtworks } from '../../services/fetchArtwork.js';
 import Loading from '../../components/Loading';
 import ReportsSearch from './ReportsSearch';
 import TicketInvoice from './TicketInvoice';
@@ -40,12 +41,12 @@ function generateMonths() {
 
 const MONTH_OPTIONS = generateMonths();
 
-function transformRecords(records) {
+function transformRecords(records, artworkNameById) {
     const sales = records.map(r => ({
         invoiceCode: r.saleId.toString(),
         date: r.saleDate,
         artworkId: r.artworkId,
-        artworkName: r.description || 'N/A',
+        artworkName: (artworkNameById?.get(String(r.artworkId))) || r.description || 'N/A',
         artworkPrice: r.salePrice,
         museumProfitAmount: r.profitAmount,
         museumProfitPercentage: r.profitPercentage,
@@ -153,7 +154,15 @@ function Reports() {
                 } else {
                     records = await getAllBilling();
                 }
-                const data = transformRecords(records);
+                let artworkNameById;
+                try {
+                    const catalog = await getAllArtworks();
+                    artworkNameById = new Map(catalog.map(a => [String(a.artworkId), a.name]));
+                } catch (err) {
+                    console.error('Error al cargar el catálogo de obras:', err);
+                    artworkNameById = new Map();
+                }
+                const data = transformRecords(records, artworkNameById);
                 data.filterLabel = selectedMonth ? `Mes: ${selectedMonth}` : (startDate && endDate ? `Periodo: ${startDate} — ${endDate}` : 'Todas las facturas');
                 setBillingData(data);
                 setShowChart(false);

@@ -141,7 +141,7 @@ useEffect(() => {
                 position: "top-center",
                 autoClose: 6000,
             });
-            navigate('/completar-registro');
+            navigate('/registro-exitoso');
              
         } catch (err) {
             console.error("Error en registro", err);

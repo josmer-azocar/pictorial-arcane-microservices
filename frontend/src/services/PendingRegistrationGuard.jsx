@@ -9,6 +9,7 @@ function PendingRegistrationGuard({ children }) {
         const token = localStorage.getItem('reg_token');
         const rutasLibres = [
             '/completar-registro',
+            '/registro-exitoso',
             '/auth/signUp',
             '/auth/login'
         ];

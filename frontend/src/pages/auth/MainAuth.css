@@ -201,25 +201,221 @@
     margin-bottom: 8px;
     text-align: left;
     display: block;
-}.question-card {
+}
+
+.reg-success-wrapper {
+    min-height: 100vh;
+    background-image: url("/fondoLo.gif");
+    background-size: cover;
+    background-position: center;
+    padding-top: 80px;
+    padding-bottom: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.reg-success-modal {
+    max-width: 440px;
+    width: 90%;
+    background: #fff;
+    border-radius: 24px;
+    border: 1.5px solid #ede6fa;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.13);
+    padding: 48px 32px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-family: "Roboto Flex", Arial, Helvetica, sans-serif;
+}
+
+.reg-success-card {
+    max-width: 520px;
+    width: 92%;
+    background: rgba(255,255,255,0.50);
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    padding: 32px 28px 40px;
+    font-family: "Roboto Flex", Arial, Helvetica, sans-serif;
+}
+
+.reg-success-capy {
+    height: 120px;
+    width: auto;
+    margin-bottom: 8px;
+}
+
+.reg-success-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #7c3aed;
+    margin: 0 0 6px;
+    line-height: 1.2;
+}
+
+.reg-success-subtitle {
+    font-size: 14px;
+    color: #555;
+    margin: 0 0 6px;
+    line-height: 1.5;
+    max-width: 280px;
+}
+
+.reg-success-hint {
+    font-size: 12px;
+    color: #999;
+    margin: 16px 0 0;
+    line-height: 1.5;
+    max-width: 300px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    text-align: left;
+}
+
+.reg-success-hint-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.reg-success-btn {
     width: 100%;
-    background: #f8f8f8;
+    max-width: 300px;
+    height: 46px;
+    background-color: #7c3aed;
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
     border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.reg-success-btn:hover {
+    background-color: #6d28d9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+.reg-success-btn:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 3px;
+}
+
+.reg-security-hint {
+    font-size: 13px;
+    color: #6B7280;
+    margin: 0 0 16px;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.reg-security-hint-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.reg-error-msg {
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    text-align: center;
+}
+
+.reg-questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.reg-question-block {
+    background: #f5f5f5;
     border: 1.5px solid #ecedec;
+    border-radius: 12px;
+    padding: 12px;
     box-sizing: border-box;
 }
 
-.question-card:focus-within {
+.reg-question-block:focus-within {
     border-color: #892df3;
 }
 
-.question-label {
+.reg-question-label {
     font-size: 12px;
     font-weight: 700;
     color: #892df3;
     margin-bottom: 8px;
     text-align: left;
     display: block;
+}
+
+.reg-question-select,
+.reg-question-input {
+    width: 100%;
+    height: 42px;
+    border: 1.5px solid #ecedec;
+    border-radius: 10px;
+    padding: 0 14px;
+    box-sizing: border-box;
+    background-color: #fff;
+    margin-bottom: 8px;
+    outline: none;
+    transition: 0.2s;
+    font-family: "Roboto Flex", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+.reg-question-select:focus,
+.reg-question-input:focus {
+    border-color: #2ddcf3;
+    background-color: #fff;
+}
+
+.reg-question-select {
+    appearance: none;
+    cursor: pointer;
+}
+
+.reg-question-input {
+    margin-bottom: 0;
+}
+
+.reg-save-btn {
+    margin-top: 20px;
+    width: 120px;
+    height: 42px;
+    background-color: #7c3aed;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.reg-save-btn:hover {
+    background-color: #6d28d9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+}
+
+.reg-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }

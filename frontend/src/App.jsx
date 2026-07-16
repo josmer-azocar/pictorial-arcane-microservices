@@ -20,6 +20,7 @@ import Admin from './pages/admin/Admin.jsx';
 import { NotificationProvider } from './services/NotificationContext';
 import PendingRegistrationGuard from './services/PendingRegistrationGuard';
 import CompleteRegistration from './pages/auth/CompleteRegistration.jsx';
+import RegistrationSuccess from './pages/auth/RegistrationSuccess.jsx';
 
 
 function App() {
@@ -81,6 +82,7 @@ return (
           <Route path="/login" element={<MainAuth />} />
           <Route path='/auth/*' element={<MainAuth/>} />
           <Route path="/completar-registro" element={<CompleteRegistration />} />
+          <Route path="/registro-exitoso" element={<RegistrationSuccess />} />
           <Route path='/artwork' element={<Artwork/>}/>
           <Route path='/artwork/:id' element={<ArtworkDetail />} />
         

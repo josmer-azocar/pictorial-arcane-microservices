@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './Admin.css';
 import { getGenresByArtist } from '../../services/genreServices';
 
-//const BASE_URL = 'http://localhost:8080';
+//const BASE_URL = 'https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io';
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function DeleteArtist() {

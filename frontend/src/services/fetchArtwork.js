@@ -1,5 +1,5 @@
 import axios from "axios";
-//const url = "http://localhost:8080";
+//const url = "https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io";
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const url = API_BASE_URL;
 
@@ -130,7 +130,7 @@ export async function showArtist() {
 // *Artistas
 // Trae un artista por su id - GET /artists/{id}
 export async function getArtistById(id) {
-  //const url =`http://localhost:8080/artist/${id}`;
+  //const url =`https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io/artist/${id}`;
   try {
     const response = await axios.get(`${API_BASE_URL}/artist/${id}`);
     return response.data;
@@ -157,7 +157,7 @@ export async function getArtists() {
 // *Obras 
 // Trae todas las obras de un artista - GET /artwork/search?idArtist={artistId}
 export async function getArtworksByArtist(artistId) {
-  //const url = `http://localhost:8080/artwork/search?idArtist=${artistId}`;
+  //const url = `https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io/artwork/search?idArtist=${artistId}`;
   try {
     const response = await axios.get(`${API_BASE_URL}/artwork/search?idArtist=${artistId}`);
     return response.data.content;

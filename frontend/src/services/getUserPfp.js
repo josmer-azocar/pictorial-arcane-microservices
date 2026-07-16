@@ -1,5 +1,5 @@
 import axios from "axios";
-//const url = "http://localhost:8080";
+//const url = "https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io";
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const getProfile = async (token) => {
