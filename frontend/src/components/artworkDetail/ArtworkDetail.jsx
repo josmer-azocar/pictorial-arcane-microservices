@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import './ArtworkDetail.css'; 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { getSpecificArtworkById, getArtistById, getArtworkRecommendations, getAl
 import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
-import { ShieldCheck, Truck, Award } from 'lucide-react';
+import { ShieldCheck, Truck, Award, PartyPopper } from 'lucide-react';
 
 // ── COMPONENTE PRINCIPAL ─────────────────────────────────────
 const ArtworkDetail = ({ artwork: artworkProp }) => {
@@ -28,6 +28,11 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
   const [showModal, setShowModal] = useState(false);
   const [securityCode, setSecurityCode] = useState("");
   const [purchasing, setPurchasing] = useState(false);
+
+  // ── ESTADOS: MODAL ÉXITO + CONFETI ──────────────────────
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [confettiPieces, setConfettiPieces] = useState([]);
+  const successTimerRef = useRef(null);
 
   // ── ESTADOS: MODAL RECUPERAR CÓDIGO ─────────────────────
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
@@ -202,8 +207,7 @@ useEffect(() => {
     </div>
   );
 
-if (!artwork || !artwork.artworkResponse) return <Loading />;
-const generalInfo = artwork.artworkResponse;
+const generalInfo = artwork?.artworkResponse || {};
 const { artworkId, name, imageUrl, price, status } = generalInfo;
 
   // ── HANDLER: POST /sale/reserve ──────────────────────────
@@ -230,7 +234,8 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
     try {
       await reserveArtwork(artworkIdToReserve, artworkPrice, 0.1, securityCode, token);
       setShowModal(false);
-      toast.success("¡Obra reservada exitosamente!");
+      // Lanza el modal de éxito con confeti en lugar del toast
+      launchSuccessConfetti();
       // Actualiza el status localmente para deshabilitar el botón de compra
       // sin recargar toda la página.
       setArtwork(prev => {
@@ -289,6 +294,40 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
       toast.error("Error al actualizar las respuestas.");
     }
   };
+
+  // ── HANDLER: LANZAR CONFETI DE ÉXITO ────────────────────
+  const CONFETTI_COLORS = [
+    '#7c3aed', '#a855f7', '#c084fc', '#e9d5ff',
+    '#f59e0b', '#fbbf24', '#fcd34d',
+    '#ec4899', '#f472b6', '#fb7185',
+    '#10b981', '#34d399', '#6ee7b7',
+    '#3b82f6', '#60a5fa', '#93c5fd',
+    '#ff6b6b', '#ffa502', '#ffffff'
+  ];
+
+  const launchSuccessConfetti = useCallback(() => {
+    const pieces = Array.from({ length: 150 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      delay: Math.random() * 3,
+      duration: 2.5 + Math.random() * 3,
+      size: 6 + Math.random() * 10,
+      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+      rotation: Math.random() * 360,
+      rotationSpeed: 200 + Math.random() * 600,
+      drift: -30 + Math.random() * 60,
+      shape: ['square', 'circle', 'strip'][Math.floor(Math.random() * 3)],
+    }));
+    setConfettiPieces(pieces);
+    setShowSuccessModal(true);
+  }, []);
+
+  // Limpia el timer de éxito al desmontar
+  useEffect(() => {
+    return () => {
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+    };
+  }, []);
 
   // ── RENDER: detalles específicos según género ────────────
   // Muestra campos distintos dependiendo del tipo de obra (pintura, escultura, etc.)
@@ -367,6 +406,14 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
     return null;
   };
   // ── RENDER PRINCIPAL ─────────────────────────────────────
+  if (!artwork || !artwork.artworkResponse) {
+    return (
+      <div className="artwork-detail-page">
+        <Loading />
+      </div>
+    );
+  }
+
   return (
     <div className="artwork-detail-page">
       <main className="product-layout">
@@ -703,6 +750,56 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
                   Guardar Respuestas
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── MODAL 4: ÉXITO DE RESERVA CON CONFETI ── */}
+        {showSuccessModal && (
+          <div className="success-overlay">
+            {/* Confeti cayendo por toda la pantalla */}
+            <div className="confetti-container" aria-hidden="true">
+              {confettiPieces.map((piece) => (
+                <div
+                  key={piece.id}
+                  className={`confetti-piece confetti-${piece.shape}`}
+                  style={{
+                    '--x': `${piece.x}vw`,
+                    '--delay': `${piece.delay}s`,
+                    '--duration': `${piece.duration}s`,
+                    '--size': `${piece.size}px`,
+                    '--color': piece.color,
+                    '--rotation': `${piece.rotation}deg`,
+                    '--rotation-speed': `${piece.rotationSpeed}deg`,
+                    '--drift': `${piece.drift}px`,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Tarjeta de éxito */}
+            <div className="success-card">
+              <img
+                src="/imagen/cap05.png"
+                alt="¡Reserva exitosa!"
+                className="success-mascot"
+              />
+              <h2 className="success-title">¡Reserva Exitosa!</h2>
+              <p className="success-subtitle">
+                Tu obra <strong>{name}</strong> ha sido reservada correctamente.
+                Nuestro equipo de trabajo se pondrá en contacto contigo para
+                realizar el trámite de compra de la obra.
+              </p>
+              <div className="success-details-badge">
+                <PartyPopper size={18} />
+                <span>¡Felicidades por tu nueva adquisición!</span>
+              </div>
+              <button
+                className="success-close-btn"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                Continuar Explorando
+              </button>
             </div>
           </div>
         )}

@@ -567,3 +567,304 @@ body {
 .recovery-message.success {
   color: var(--green);
 }
+
+/* ==========================================
+   MODAL ÉXITO + CONFETI
+   ========================================== */
+
+/* Fondo fullscreen con gradiente radial */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(124, 58, 237, 0.25) 0%,
+    rgba(20, 0, 50, 0.85) 100%
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: successOverlayIn 0.4s ease-out;
+}
+
+@keyframes successOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Contenedor de confeti ── */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10000;
+}
+
+/* Pieza individual de confeti */
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  background: var(--color);
+  opacity: 0;
+  animation: confettiFall var(--duration) var(--delay) ease-in both;
+}
+
+.confetti-square {
+  border-radius: 2px;
+}
+
+.confetti-circle {
+  border-radius: 50%;
+}
+
+.confetti-strip {
+  width: calc(var(--size) * 0.35);
+  height: var(--size);
+  border-radius: 2px;
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(var(--rotation)) scale(0);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(5vh) translateX(calc(var(--drift) * 0.1)) rotate(calc(var(--rotation) + 40deg)) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(50vh) translateX(calc(var(--drift) * 0.6)) rotate(calc(var(--rotation) + var(--rotation-speed) * 0.5));
+  }
+  85% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(110vh) translateX(var(--drift)) rotate(calc(var(--rotation) + var(--rotation-speed)));
+  }
+}
+
+/* ── Tarjeta de éxito con glassmorphism ── */
+.success-card {
+  position: relative;
+  z-index: 10001;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 28px;
+  padding: 40px 36px 36px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow:
+    0 8px 32px rgba(124, 58, 237, 0.35),
+    0 0 80px rgba(124, 58, 237, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  animation: successCardIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+  overflow: hidden;
+}
+
+@keyframes successCardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Brillo de fondo detrás de la tarjeta */
+.success-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(124, 58, 237, 0.12) 60deg,
+    transparent 120deg,
+    rgba(168, 85, 247, 0.08) 180deg,
+    transparent 240deg,
+    rgba(236, 72, 153, 0.1) 300deg,
+    transparent 360deg
+  );
+  animation: glowSpin 8s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes glowSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Anillo con el ícono de check */
+.success-icon-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  margin-bottom: 16px;
+  box-shadow:
+    0 0 0 6px rgba(16, 185, 129, 0.2),
+    0 0 30px rgba(16, 185, 129, 0.3);
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 6px rgba(16, 185, 129, 0.2),
+      0 0 30px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 12px rgba(16, 185, 129, 0.1),
+      0 0 50px rgba(16, 185, 129, 0.25);
+  }
+}
+
+/* Mascota / imagen cap05 */
+.success-mascot {
+  display: block;
+  margin: 0 auto 20px;
+  width: 180px;
+  max-height: 200px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
+  animation: mascotBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+}
+
+@keyframes mascotBounce {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Título del éxito */
+.success-title {
+  font-family: 'Roboto Flex', 'Inter', Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #e9d5ff 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 12px;
+  letter-spacing: -0.5px;
+  animation: titleShine 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Subtítulo */
+.success-subtitle {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0 0 20px;
+  font-weight: 400;
+}
+
+.success-subtitle strong {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+/* Badge de felicidades */
+.success-details-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  animation: badgeFadeIn 0.6s ease-out 0.7s both;
+}
+
+@keyframes badgeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botón de cerrar / continuar */
+.success-close-btn {
+  display: inline-block;
+  padding: 14px 40px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
+  background-size: 200% 200%;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 15px rgba(124, 58, 237, 0.4),
+    0 0 30px rgba(124, 58, 237, 0.1);
+  animation: btnFadeIn 0.6s ease-out 0.9s both;
+  letter-spacing: 0.3px;
+}
+
+.success-close-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow:
+    0 8px 25px rgba(124, 58, 237, 0.5),
+    0 0 50px rgba(124, 58, 237, 0.2);
+  background-position: 100% 0%;
+}
+
+.success-close-btn:active {
+  transform: translateY(-1px) scale(1.01);
+}
+
+@keyframes btnFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
