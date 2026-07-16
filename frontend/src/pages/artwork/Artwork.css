@@ -72,6 +72,15 @@
     box-shadow: 0 2px 10px rgba(124, 76, 219, 0.3);
 }
 
+.ai-message {
+    position: relative;
+    z-index: 2;
+    margin-top: 16px;
+    color: #7c3aed;
+    font-size: 0.95rem;
+    font-style: italic;
+}
+
 
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { showArtwork, showArtist, getGenres } from '../../services/fetchArtwork.js'
+import { showArtwork, showArtist, getGenres, getAllArtworks, searchSmartArtworks } from '../../services/fetchArtwork.js'
 import Loading from "../../components/Loading";
 import { Link } from "react-router-dom";
 import './Artwork.css'
@@ -17,6 +17,7 @@ function Artwork() {
     const [searchTerm, setSearchTerm] = useState('');
     const [genreList, setGenreList] = useState([]);
     const [modoIA, setModoIA] = useState(false);
+    const [aiMessage, setAiMessage] = useState('');
 
     useEffect(() => {
     const fetchGenres = async () => {
@@ -117,6 +118,57 @@ function Artwork() {
         }
     }
 
+    // Búsqueda semántica ("modo IA"): recommendation-service devuelve hasta 100
+    // candidatos ya rankeados por similitud; paginamos ese pool acá igual que en
+    // getArt, filtrando solo AVAILABLE.
+    const getArtIA = async (page = 0) => {
+        if (!searchTerm.trim()) {
+            setAiMessage('Escribe algo para buscar con IA.');
+            setWork({ content: [], totalPages: 0, number: 0 });
+            return;
+        }
+        isLoad(true);
+        try {
+            setError("");
+            const response = await searchSmartArtworks(searchTerm, 0, 100);
+            setAiMessage(response?.mensaje || '');
+
+            const catalog = await getAllArtworks();
+            const mongoIdByArtworkId = new Map(catalog.map(a => [String(a.artworkId), a.id]));
+
+            const availableArt = (response?.obras?.content || [])
+                .filter(art => art.status === 'AVAILABLE')
+                .map(art => ({
+                    id: mongoIdByArtworkId.get(String(art.artworkId)) || art.artworkId,
+                    artworkId: art.artworkId,
+                    name: art.name,
+                    precio: art.price,
+                    image: art.imageUrl,
+                    artistId: art.artist?.id,
+                    artistName: art.artist ? `${art.artist.name} ${art.artist.lastName || ''}`.trim() : 'Desconocido',
+                    genre: art.genre?.name || 'General'
+                }));
+
+            const totalPages = Math.ceil(availableArt.length / PAGE_SIZE) || 0;
+            const safePage = Math.min(page, Math.max(totalPages - 1, 0));
+            const pageContent = availableArt.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+
+            setWork({
+                content: pageContent,
+                totalPages,
+                number: safePage
+            });
+        } catch (error) {
+            console.error("Smart search failed:", error);
+            setAiMessage('');
+            setError("No se pudo completar la búsqueda con IA.");
+        } finally {
+            isLoad(false);
+        }
+    };
+
+    const doSearch = (page = 0) => modoIA ? getArtIA(page) : getArt(page);
+
     useEffect(() => {
         getArt();
 
@@ -144,76 +196,91 @@ function Artwork() {
               </svg>
               <input
                 type="text"
-                placeholder="Buscar por título..."
+                placeholder={modoIA ? "Describe lo que buscas..." : "Buscar por título..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
+                onKeyDown={(e) => e.key === 'Enter' && doSearch(0)}
               />
-              <button className={`ai-toggle ${modoIA ? 'active' : ''}`} onClick={() => setModoIA(prev => !prev)}>
+              <button
+                className={`ai-toggle ${modoIA ? 'active' : ''}`}
+                onClick={() => {
+                  const nextMode = !modoIA;
+                  setModoIA(nextMode);
+                  setAiMessage('');
+                  if (nextMode) {
+                    if (searchTerm.trim()) getArtIA(0);
+                  } else {
+                    getArt(0);
+                  }
+                }}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
                   <path d="M18 15l-1.5 3L21 19l-3.5 1.5L18 24l-1.5-3.5L13 19l3.5-1.5z"/>
                 </svg>
-                IA
+                {modoIA ? 'Modo Normal' : 'IA'}
               </button>
-              <button className="search-btn" onClick={() => getArt(0)}>Buscar</button>
+              <button className="search-btn" onClick={() => doSearch(0)}>Buscar</button>
             </div>
+            {modoIA && aiMessage && <p className="ai-message">{aiMessage}</p>}
             </div>
-            <div className="filter-container">
-              <div className="filter-group">
-              <input
-                type="number"
-                placeholder="Min"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
-                className="price-input"
-                min="0"
-              />
-              <input
-                type="number"
-                placeholder="Max"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
-                className="price-input"
-                min="0"
-              />
-              <button onClick={() => getArt(0, sortConfig.idGenre, sortConfig.idArtist, 'price', sortConfig.direction === 'ASC' ? 'DESC' : 'ASC')}>
-                Precio {sortConfig.direction === 'ASC' ? '↑' : '↓'}
-              </button>
-              <select
-                value={sortConfig.idArtist || ""}
-                onChange={(e) => getArt(0, sortConfig.idGenre, e.target.value)}
-              >
-                <option value="">Todos los Artistas</option>
-                {availableArtists.map(artist => (
-                  <option key={artist.id} value={artist.id}>
-                    {artist.name}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={sortConfig.idGenre || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  getArt(0, val === "" ? null : val, sortConfig.idArtist);
-                }}
-              >
-                <option value="">Todos los Géneros</option>
-                {genreList.map((genre) => (
-                  <option key={genre.id} value={genre.id}>
-                    {genre.name}
-                  </option>
-                ))}
-              </select>
+            {!modoIA && (
+              <div className="filter-container">
+                <div className="filter-group">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
+                  className="price-input"
+                  min="0"
+                />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && getArt(0)}
+                  className="price-input"
+                  min="0"
+                />
+                <button onClick={() => getArt(0, sortConfig.idGenre, sortConfig.idArtist, 'price', sortConfig.direction === 'ASC' ? 'DESC' : 'ASC')}>
+                  Precio {sortConfig.direction === 'ASC' ? '↑' : '↓'}
+                </button>
+                <select
+                  value={sortConfig.idArtist || ""}
+                  onChange={(e) => getArt(0, sortConfig.idGenre, e.target.value)}
+                >
+                  <option value="">Todos los Artistas</option>
+                  {availableArtists.map(artist => (
+                    <option key={artist.id} value={artist.id}>
+                      {artist.name}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={sortConfig.idGenre || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    getArt(0, val === "" ? null : val, sortConfig.idArtist);
+                  }}
+                >
+                  <option value="">Todos los Géneros</option>
+                  {genreList.map((genre) => (
+                    <option key={genre.id} value={genre.id}>
+                      {genre.name}
+                    </option>
+                  ))}
+                </select>
+                </div>
+                <button className="filter-clear" onClick={() => {
+                  setMinPrice('');
+                  setMaxPrice('');
+                  getArt(0, null, null, 'price', 'ASC', '');
+                }}>Limpiar</button>
               </div>
-              <button className="filter-clear" onClick={() => {
-                setMinPrice('');
-                setMaxPrice('');
-                getArt(0, null, null, 'price', 'ASC', '');
-              }}>Limpiar</button>
-            </div>
+            )}
             <section id="art-grid">
                 {(works.content || []).map((artPiece) => (
                     <div className="art-piece" key={artPiece.id}>
@@ -233,13 +300,13 @@ function Artwork() {
                 ))}
             </section>
             <section className="pagination">
-                <button className="prev" onClick={() => getArt(works.number - 1)} disabled={works.number === 0} />
+                <button className="prev" onClick={() => doSearch(works.number - 1)} disabled={works.number === 0} />
                 {(() => {
                     const total = works.totalPages || 0;
                     const current = works.number;
                     if (total <= 7) {
                         return [...Array(total)].map((_, i) => (
-                            <button key={i} onClick={() => getArt(i)} className={current === i ? "active-page" : ""}>{i + 1}</button>
+                            <button key={i} onClick={() => doSearch(i)} className={current === i ? "active-page" : ""}>{i + 1}</button>
                         ));
                     }
                     const pages = [];
@@ -252,11 +319,11 @@ function Artwork() {
                     pages.push(total - 1);
                     return pages.map((p, idx) =>
                         p === '...' ? <span key={`e${idx}`} className="pagination-ellipsis">...</span> : (
-                            <button key={p} onClick={() => getArt(p)} className={current === p ? "active-page" : ""}>{p + 1}</button>
+                            <button key={p} onClick={() => doSearch(p)} className={current === p ? "active-page" : ""}>{p + 1}</button>
                         )
                     );
                 })()}
-                <button className="next" onClick={() => getArt(works.number + 1)} disabled={works.number === works.totalPages - 1} />
+                <button className="next" onClick={() => doSearch(works.number + 1)} disabled={works.number === works.totalPages - 1} />
             </section>
             
 

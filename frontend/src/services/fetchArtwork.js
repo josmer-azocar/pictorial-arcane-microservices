@@ -59,6 +59,19 @@ export async function getAllArtworks() {
     }
 }
 
+// Búsqueda semántica ("modo IA") - recommendation-service, GET /api/v1/artworks/search-smart
+export async function searchSmartArtworks(query, page = 0, size = 10) {
+    try {
+        const response = await axios.get(`${url}/api/v1/artworks/search-smart`, {
+            params: { query, page, size }
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 
 /*export async function showArtwork(page = 0, sortBy = '', direction = 'asc', genre = '') {
   return new Promise((resolve) => {
