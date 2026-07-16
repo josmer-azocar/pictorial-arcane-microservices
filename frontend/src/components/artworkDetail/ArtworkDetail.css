@@ -595,61 +595,14 @@ body {
   to   { opacity: 1; }
 }
 
-/* ── Contenedor de confeti ── */
-.confetti-container {
+/* ── Canvas de confeti (animado por JS con requestAnimationFrame) ── */
+.confetti-canvas {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  overflow: hidden;
   z-index: 10000;
-}
-
-/* Pieza individual de confeti */
-.confetti-piece {
-  position: absolute;
-  top: -20px;
-  left: var(--x);
-  width: var(--size);
-  height: var(--size);
-  background: var(--color);
-  opacity: 0;
-  animation: confettiFall var(--duration) var(--delay) ease-in both;
-}
-
-.confetti-square {
-  border-radius: 2px;
-}
-
-.confetti-circle {
-  border-radius: 50%;
-}
-
-.confetti-strip {
-  width: calc(var(--size) * 0.35);
-  height: var(--size);
-  border-radius: 2px;
-}
-
-@keyframes confettiFall {
-  0% {
-    opacity: 1;
-    transform: translateY(0) translateX(0) rotate(var(--rotation)) scale(0);
-  }
-  10% {
-    opacity: 1;
-    transform: translateY(5vh) translateX(calc(var(--drift) * 0.1)) rotate(calc(var(--rotation) + 40deg)) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(50vh) translateX(calc(var(--drift) * 0.6)) rotate(calc(var(--rotation) + var(--rotation-speed) * 0.5));
-  }
-  85% {
-    opacity: 0.7;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(110vh) translateX(var(--drift)) rotate(calc(var(--rotation) + var(--rotation-speed)));
-  }
 }
 
 /* ── Tarjeta de éxito ── */

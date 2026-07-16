@@ -31,7 +31,6 @@ const ArtworkDetail = ({ artwork: artworkProp }) => {
 
   // ── ESTADOS: MODAL ÉXITO + CONFETI ──────────────────────
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [confettiPieces, setConfettiPieces] = useState([]);
   const successTimerRef = useRef(null);
 
   // ── ESTADOS: MODAL RECUPERAR CÓDIGO ─────────────────────
@@ -295,7 +294,7 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
     }
   };
 
-  // ── HANDLER: LANZAR CONFETI DE ÉXITO ────────────────────
+  // ── CONFETI: CONSTANTES Y REFS ───────────────────────────
   const CONFETTI_COLORS = [
     '#7c3aed', '#a855f7', '#c084fc', '#e9d5ff',
     '#f59e0b', '#fbbf24', '#fcd34d',
@@ -304,23 +303,129 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
     '#3b82f6', '#60a5fa', '#93c5fd',
     '#ff6b6b', '#ffa502', '#ffffff'
   ];
+  const SHAPES = ['square', 'circle', 'strip'];
+  const confettiCanvasRef = useRef(null);
+  const confettiAnimRef = useRef(null);
+  const confettiParticlesRef = useRef([]);
 
-  const launchSuccessConfetti = useCallback(() => {
-    const pieces = Array.from({ length: 150 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      delay: Math.random() * 3,
-      duration: 2.5 + Math.random() * 3,
-      size: 6 + Math.random() * 10,
+  // Crea una partícula con propiedades aleatorias
+  const createParticle = useCallback((w, h, forceTop = false) => {
+    // "depth" 0..1 → piezas lejanas son pequeñas y transparentes
+    const depth = Math.random();
+    const size = 4 + depth * 12;          // 4‑16 px
+    const opacity = 0.35 + depth * 0.65;  // 0.35‑1.0
+    return {
+      x: Math.random() * w,
+      y: forceTop ? -(Math.random() * h * 0.3) : Math.random() * h,
+      size,
+      opacity,
       color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-      rotation: Math.random() * 360,
-      rotationSpeed: 200 + Math.random() * 600,
-      drift: -30 + Math.random() * 60,
-      shape: ['square', 'circle', 'strip'][Math.floor(Math.random() * 3)],
-    }));
-    setConfettiPieces(pieces);
+      shape: SHAPES[Math.floor(Math.random() * 3)],
+      // Caída: velocidad variable
+      speed: 1.2 + Math.random() * 3.5,
+      // Rotación propia
+      angle: Math.random() * Math.PI * 2,
+      angleSpeed: (0.02 + Math.random() * 0.08) * (Math.random() > 0.5 ? 1 : -1),
+      // Vaivén horizontal (senoidal)
+      wobblePhase: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.02 + Math.random() * 0.04,
+      wobbleRadius: 20 + Math.random() * 50,
+    };
+  }, []);
+
+  // Lanza el modal e inicializa las partículas
+  const launchSuccessConfetti = useCallback(() => {
     setShowSuccessModal(true);
   }, []);
+
+  // ── EFECTO: loop de animación canvas con requestAnimationFrame ──
+  useEffect(() => {
+    if (!showSuccessModal) return;
+
+    const canvas = confettiCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    // Ajustar tamaño al viewport (incluye devicePixelRatio)
+    const dpr = window.devicePixelRatio || 1;
+    const resize = () => {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Generar partículas iniciales distribuidas por todo el canvas
+    const PARTICLE_COUNT = 180;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    confettiParticlesRef.current = Array.from(
+      { length: PARTICLE_COUNT },
+      () => createParticle(w, h, false)
+    );
+
+    // Función de dibujo de una partícula
+    const drawParticle = (p) => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+
+      const s = p.size;
+      if (p.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(0, 0, s / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.shape === 'strip') {
+        ctx.fillRect(-s * 0.18, -s / 2, s * 0.36, s);
+      } else {
+        // square
+        ctx.fillRect(-s / 2, -s / 2, s, s);
+      }
+      ctx.restore();
+    };
+
+    // Loop principal con requestAnimationFrame
+    const loop = () => {
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+      ctx.clearRect(0, 0, cw, ch);
+
+      for (const p of confettiParticlesRef.current) {
+        // Caída
+        p.y += p.speed;
+        // Rotación
+        p.angle += p.angleSpeed;
+        // Vaivén horizontal
+        p.wobblePhase += p.wobbleSpeed;
+        p.x += Math.sin(p.wobblePhase) * (p.wobbleRadius * 0.03);
+
+        // Reset cuando sale por abajo
+        if (p.y > ch + p.size) {
+          Object.assign(p, createParticle(cw, ch, true));
+          p.y = -(Math.random() * 40);
+        }
+        // Wrap horizontal
+        if (p.x > cw + p.size) p.x = -p.size;
+        if (p.x < -p.size) p.x = cw + p.size;
+
+        drawParticle(p);
+      }
+
+      confettiAnimRef.current = requestAnimationFrame(loop);
+    };
+
+    confettiAnimRef.current = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(confettiAnimRef.current);
+      window.removeEventListener('resize', resize);
+    };
+  }, [showSuccessModal, createParticle]);
 
   // Limpia el timer de éxito al desmontar
   useEffect(() => {
@@ -768,25 +873,12 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
         {/* ── MODAL 4: ÉXITO DE RESERVA CON CONFETI ── */}
         {showSuccessModal && (
           <div className="success-overlay" onClick={() => setShowSuccessModal(false)}>
-            {/* Confeti cayendo por toda la pantalla */}
-            <div className="confetti-container" aria-hidden="true">
-              {confettiPieces.map((piece) => (
-                <div
-                  key={piece.id}
-                  className={`confetti-piece confetti-${piece.shape}`}
-                  style={{
-                    '--x': `${piece.x}vw`,
-                    '--delay': `${piece.delay}s`,
-                    '--duration': `${piece.duration}s`,
-                    '--size': `${piece.size}px`,
-                    '--color': piece.color,
-                    '--rotation': `${piece.rotation}deg`,
-                    '--rotation-speed': `${piece.rotationSpeed}deg`,
-                    '--drift': `${piece.drift}px`,
-                  }}
-                />
-              ))}
-            </div>
+            {/* Confeti canvas — animado con requestAnimationFrame */}
+            <canvas
+              ref={confettiCanvasRef}
+              className="confetti-canvas"
+              aria-hidden="true"
+            />
 
             {/* Tarjeta de éxito */}
             <div className="success-card" onClick={(e) => e.stopPropagation()}>
