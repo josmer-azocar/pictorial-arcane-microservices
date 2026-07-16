@@ -17,6 +17,7 @@ import Dashboard from './pages/dashboard/Dashboard.jsx';
 import PrivateRoutes from './services/PrivateRoutes.jsx';
 import PrivateRoutesAdmin from './services/PrivateRoutesAdmin.jsx';
 import Admin from './pages/admin/Admin.jsx';
+import BackButton from './components/BackButton.jsx';
 import { NotificationProvider } from './services/NotificationContext';
 import PendingRegistrationGuard from './services/PendingRegistrationGuard';
 import CompleteRegistration from './pages/auth/CompleteRegistration.jsx';
@@ -73,6 +74,7 @@ return (
       <NotificationProvider>
         {!isAdmin && <Header />}
         <main className={`main-content ${!isAdmin ? 'with-header' : ''}`}>
+        {!isAdmin && <BackButton />}
         <PendingRegistrationGuard>
         <Routes>
           <Route path="/" element={<Home/>} />
