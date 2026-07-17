@@ -4,6 +4,7 @@
  */
 
 export enum DBEngine {
+  SpringBoot = 'Spring Boot',
   PostgreSQL = 'PostgreSQL',
   MongoDB = 'MongoDB',
   Cassandra = 'Cassandra',

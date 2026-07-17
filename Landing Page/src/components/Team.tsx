@@ -18,7 +18,7 @@ const engineIcons: Record<string, string> = {
 };
 
 const members: MemberInfo[] = [
-  { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.PostgreSQL, photo: '/assets/josue.jpg', icon: '/assets/spring-logo.png' },
+  { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.SpringBoot, photo: '/assets/josue.jpg', icon: '/assets/spring-logo.png' },
   { name: 'Azocar Josmer', role: 'DBA Relacional', engine: DBEngine.PostgreSQL, photo: '/assets/josmer.jpg' },
   { name: 'Avendaño Licett', role: 'DBA Documental', engine: DBEngine.MongoDB, photo: '/assets/patricia.jpeg' },
   { name: 'Salazar Inés', role: 'Ingeniero de Datos', engine: DBEngine.Cassandra, photo: '/assets/ines.jpeg' },
