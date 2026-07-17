@@ -3,11 +3,13 @@ import { fetchPurchases } from '../../services/fetchPurchases';
 import { useState } from 'react';
 import Loading from '../../components/Loading';
 import { useEffect } from 'react';
+import TicketInvoice from '../admin/TicketInvoice.jsx';
 
 function HistorialCompras({ filter = 'APPROVED' }) {
     const [purchasesResponse, setPurchasesResponse] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
 
     const isReservas = filter === 'PENDING';
 
@@ -81,6 +83,7 @@ function HistorialCompras({ filter = 'APPROVED' }) {
                         <th>Fecha</th>
                         {isReservas && <th>Estado</th>}
                         <th style={{ textAlign: 'right' }}>Precio</th>
+                        {!isReservas && <th style={{ textAlign: 'center' }}>Factura</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -90,10 +93,21 @@ function HistorialCompras({ filter = 'APPROVED' }) {
                             <td>{new Date(purchase.date).toLocaleDateString()}</td>
                             {isReservas && <td><span className="status-pending">Pendiente</span></td>}
                             <td>${purchase.price.toFixed(2)}</td>
+                            {!isReservas && (
+                                <td style={{ textAlign: 'center' }}>
+                                    <button className="invoice-btn" onClick={() => setSelectedInvoice(purchase)}>
+                                        🧾 Ver Factura
+                                    </button>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            {selectedInvoice && (
+                <TicketInvoice sale={selectedInvoice} onClose={() => setSelectedInvoice(null)} />
+            )}
 
             {totalPages > 1 && (
                 <div className="pagination-controls">

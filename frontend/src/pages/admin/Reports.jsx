@@ -170,9 +170,11 @@ function Reports() {
                 setFoundLog(null);
                 if (securityEventTypeFilter && securityDateFilter) {
                     const logs = await getSecurityLogsByEvent(securityEventTypeFilter, securityDateFilter);
+                    console.log("📦 Logs por evento:", logs);
                     setSecurityLogs(logs);
                 } else {
                     const logs = await getAllSecurityLogs();
+                    console.log("📦 Todos los logs:", logs);
                     setSecurityLogs(logs);
                 }
             }
@@ -519,11 +521,18 @@ const renderReportContent = () => {
                     return <p>No hay eventos de seguridad registrados.</p>;
                 }
                 const filteredLogs = securityLogs.filter(log => {
+                    console.log("🔍 log:", log, "eventDate:", log.eventDate, "type:", typeof log.eventDate);
                     const matchType = !securityEventTypeFilter || log.eventType === securityEventTypeFilter;
-                    const matchDate = !securityDateFilter || log.eventDate === securityDateFilter;
+                    console.log("   matchType:", matchType, "(", log.eventType, "===", securityEventTypeFilter, ")");
+                    const formatDate = (d) => Array.isArray(d)
+                        ? `${d[0]}-${String(d[1]).padStart(2,'0')}-${String(d[2]).padStart(2,'0')}`
+                        : d;
+                    const matchDate = !securityDateFilter || formatDate(log.eventDate) === securityDateFilter;
+                    console.log("   matchDate:", matchDate, "(", formatDate(log.eventDate), "===", securityDateFilter, ")");
                     const matchDni = !securityDniFilter ||
                         String(log.adminDni || '').includes(securityDniFilter) ||
                         String(log.clientDni || '').includes(securityDniFilter);
+                    console.log("   matchDni:", matchDni, "(admin:", log.adminDni, "client:", log.clientDni, "filter:", securityDniFilter, ")");
                     return matchType && matchDate && matchDni;
                 });
                 return (

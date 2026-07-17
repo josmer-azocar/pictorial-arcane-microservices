@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Palette, Users, BookOpen, CalendarCheck,
   FileBarChart, UserPlus, ChevronDown, Search, Bell, LogOut,
-  AlertTriangle, Plus, Monitor, Image, TrendingUp
+  AlertTriangle, Plus, Monitor, Image, TrendingUp, Trophy
 } from 'lucide-react';
 import PendingReservations from "./Pendingreservations.jsx";
 import Positioning from "./Positioning.jsx";
@@ -47,6 +47,42 @@ function Admin() {
   const [bellRing, setBellRing] = useState(false);
   const bellRef = useRef(null);
   const prevCountRef = useRef(0);
+  const audioCtxRef = useRef(null);
+
+  const playBellSound = () => {
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const now = ctx.currentTime;
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(800, now);
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(1200, now);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.8, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.5);
+      osc2.stop(now + 0.5);
+    } catch (e) {
+      console.warn('Error al reproducir sonido de campana:', e);
+    }
+  };
 
   const handleSectionChange = (section) => {
     setActiveSection(section);
@@ -113,6 +149,10 @@ function Admin() {
           setTimeout(() => setBellRing(false), 1500);
         }
 
+        if (sales.length > 0) {
+          playBellSound();
+        }
+
         prevCountRef.current = sales.length;
         setNotifications(sales);
         setUnread(sales.length);
@@ -122,8 +162,11 @@ function Admin() {
     };
 
     fetchNotifs();
-    const id = setInterval(fetchNotifs, 70000);
-    return () => clearInterval(id);
+    const id = setInterval(fetchNotifs, 10000);
+    return () => {
+      clearInterval(id);
+      audioCtxRef.current?.close().catch(() => {});
+    };
   }, []);
 
   useEffect(() => {
@@ -145,6 +188,10 @@ function Admin() {
     const hours = 24 - (Date.now() - new Date(r.date)) / (1000 * 60 * 60);
     return hours > 0 && hours < 2;
   }).length;
+
+  const isExpired = (dateStr) => {
+    return (Date.now() - new Date(dateStr)) / (1000 * 60 * 60) >= 24;
+  };
 
   const renderUpdateForm = () => {
     if (!artworkToEdit || !genres.length) {
@@ -241,15 +288,6 @@ function Admin() {
                   <span className="stat-card-label">Artistas</span>
                 </div>
               </div>
-              <div className="stat-card" onClick={() => handleSectionChange('reports')}>
-                <div className="stat-card-icon">
-                  <FileBarChart />
-                </div>
-                <div className="stat-card-body">
-                  <span className="stat-card-value">—</span>
-                  <span className="stat-card-label">Reportes</span>
-                </div>
-              </div>
             </div>
 
             <div className="card welcome-card">
@@ -273,7 +311,7 @@ function Admin() {
                 {topArtworks.length > 0 ? (
                   <div className="champion-list">
                     <div className="champion-card">
-                      <span className="champion-medal">🥇</span>
+                      <span className="champion-medal"><Trophy size={28} /></span>
                       <div className="champion-info">
                         <span className="champion-name">{topArtworks[0].name}</span>
                         <span className="champion-stat">{topArtworks[0].timesComprada} compras</span>
@@ -299,7 +337,7 @@ function Admin() {
                 {topArtists.length > 0 ? (
                   <div className="champion-list">
                     <div className="champion-card">
-                      <span className="champion-medal">🥇</span>
+                      <span className="champion-medal"><Trophy size={28} /></span>
                       <div className="champion-info">
                         <span className="champion-name">{topArtists[0].artistName}</span>
                         <span className="champion-stat">{topArtists[0].salesCount} vendidas</span>
@@ -430,7 +468,7 @@ function Admin() {
                   <p className="bell-empty">No hay reservas pendientes</p>
                 ) : (
                   notifications.map(r => (
-                    <div key={r.idSale} className="bell-item" onClick={() => { handleSectionChange('reservations'); }}>
+                    <div key={r.idSale} className={`bell-item${isExpired(r.date) ? ' expired' : ''}`} onClick={() => { handleSectionChange('reservations'); }}>
                       <span className="bell-item-title">{r.artworkTitle}</span>
                       <span className="bell-item-client">{r.clientFullName}</span>
                       <span className="bell-item-price">${r.totalPaid?.toLocaleString()}</span>

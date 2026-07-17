@@ -64,7 +64,7 @@ function PendingReservations() {
       setReservations(sales.map(sale => ({
         ...sale,
         artworkTitle: artworkNameById.get(String(sale.artworkId)) || `Obra #${sale.artworkId}`
-      })));
+      })).sort((a, b) => new Date(b.date) - new Date(a.date)));
     } catch (err) {
       toast.error('Error al cargar las reservas pendientes.');
     } finally {
