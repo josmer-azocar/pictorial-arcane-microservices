@@ -22,34 +22,47 @@ body {
 .back-button-global {
     position: fixed;
     top: 100px;
-    left: 20px;
+    left: 24px;
     z-index: 99;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(107, 45, 212, 0.2);
-    color: #000;
-    font-size: 14px;
+    background: rgba(124, 58, 237, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    color: #c4b5fd;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    padding: 6px 14px;
-    border-radius: 6px;
+    padding: 8px 18px;
+    border-radius: 10px;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    transition: opacity 0.2s;
+    gap: 6px;
+    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.1);
+    transition: all 0.25s ease;
+    letter-spacing: 0.02em;
 }
 
 .back-button-global:hover {
-    opacity: 0.7;
+    background: rgba(124, 58, 237, 0.25);
+    border-color: rgba(124, 58, 237, 0.45);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
+    transform: translateX(-2px);
+    color: #e9d5ff;
 }
 
 .back-button-global.disabled {
-    color: #b0b0b0;
-    border-color: rgba(176, 176, 176, 0.2);
+    color: rgba(196, 181, 253, 0.4);
+    border-color: rgba(124, 58, 237, 0.1);
     cursor: default;
     opacity: 0.5;
+    box-shadow: none;
+    transform: none;
 }
 
 .back-button-global.disabled:hover {
     opacity: 0.5;
+    transform: none;
+    border-color: rgba(124, 58, 237, 0.1);
+    background: rgba(124, 58, 237, 0.15);
+    color: rgba(196, 181, 253, 0.4);
 }

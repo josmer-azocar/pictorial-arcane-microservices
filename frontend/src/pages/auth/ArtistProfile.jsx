@@ -99,10 +99,13 @@ const ArtistProfile = () => {
           {Array.isArray(artworksByGenre) && artworksByGenre.length > 0 ? (
             <div className="artp-genres-row">
               {artworksByGenre.map((work) => (
-                <div key={work.id} className="artp-work-mini-card" onClick={() => navigate(`/artwork/${work.id}`)} style={{ cursor: 'pointer' }}>
-                  <img src={work.imageUrl || 'https://picsum.photos/400/300'} alt={work.name} className="artp-genre-cover" />
-                  <p className="artp-work-name">{work.name}</p>
-                  <span className="artp-work-price">${work.price}</span>
+                <div key={work.id} className="art-piece" onClick={() => navigate(`/artwork/${work.id}`)}>
+                  <img src={work.imageUrl || 'https://picsum.photos/400/300'} alt={work.name} />
+                  <div className="pin-overlay"></div>
+                  <span className="pin-save-btn">${work.price}</span>
+                  <div className="text-art-piece">
+                    <h3>{work.name}</h3>
+                  </div>
                 </div>
               ))}
             </div>
