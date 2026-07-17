@@ -21,7 +21,7 @@ public interface ArtworkStatusHistoryMapper {
 
     @Mapping(source = "artworkId", target = "key.artworkId")
     @Mapping(target = "key.changedAt", expression = "java(java.time.Instant.now())")
-    @Mapping(target = "key.changeId", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "key.changeId", expression = "java(com.datastax.oss.driver.api.core.uuid.Uuids.timeBased())")
     @Mapping(target = "createdAt", expression = "java(java.time.Instant.now())")
     ArtworkStatusHistoryTable toTable(ArtworkStatusHistoryRequestDto dto);
 }

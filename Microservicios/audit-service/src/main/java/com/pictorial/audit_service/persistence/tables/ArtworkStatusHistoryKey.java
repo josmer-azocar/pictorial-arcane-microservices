@@ -24,6 +24,7 @@ public class ArtworkStatusHistoryKey implements Serializable {
     @PrimaryKeyColumn(name = "changed_at", type = PrimaryKeyType.CLUSTERED, ordinal = 1, ordering = Ordering.DESCENDING)
     private Instant changedAt;
 
+    @org.springframework.data.cassandra.core.mapping.CassandraType(type = org.springframework.data.cassandra.core.mapping.CassandraType.Name.TIMEUUID)
     @PrimaryKeyColumn(name = "change_id", type = PrimaryKeyType.CLUSTERED, ordinal = 2, ordering = Ordering.DESCENDING)
     private UUID changeId; // Mapea el timeuuid de Cassandra
 
