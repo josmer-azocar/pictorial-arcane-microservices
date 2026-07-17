@@ -18,6 +18,17 @@ function Artwork() {
     const [genreList, setGenreList] = useState([]);
     const [modoIA, setModoIA] = useState(false);
     const [aiMessage, setAiMessage] = useState('');
+    const [showBubble, setShowBubble] = useState(false);
+
+    useEffect(() => {
+        if (modoIA) {
+            const showTimer = setTimeout(() => setShowBubble(true), 300);
+            const hideTimer = setTimeout(() => setShowBubble(false), 6000);
+            return () => { clearTimeout(showTimer); clearTimeout(hideTimer); };
+        } else {
+            setShowBubble(false);
+        }
+    }, [modoIA]);
 
     useEffect(() => {
     const fetchGenres = async () => {
@@ -189,6 +200,23 @@ function Artwork() {
     return (
         <section id="art-display">
             <div id="titulo-galeria" className={modoIA ? 'modo-ia' : ''}>
+                {modoIA && (
+                    <>
+                        {showBubble && (
+                            <div className="speech-bubble">
+                                <button className="bubble-close" onClick={() => setShowBubble(false)}>×</button>
+                                <div className="bubble-title">Bienvenido al modo IA</div>
+                                <div className="bubble-text">Aquí puedes realizar búsquedas inteligentes.</div>
+                                <div className="bubble-text">¿Cómo funciona? Ingresas lo que deseas buscar.</div>
+                            </div>
+                        )}
+                        <img
+                            src="/imagen/emocionesCapi/saludo.gif"
+                            alt="Saludo"
+                            className="saludo-gif"
+                        />
+                    </>
+                )}
                 <p>GALERÍA</p>
                 <div className="buscador-wrapper">
               <svg className="buscador-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
