@@ -74,7 +74,6 @@ return (
       <NotificationProvider>
         {!isAdmin && <Header />}
         <main className={`main-content ${!isAdmin ? 'with-header' : ''}`}>
-        {!isAdmin && <BackButton />}
         <PendingRegistrationGuard>
         <Routes>
           <Route path="/" element={<Home/>} />

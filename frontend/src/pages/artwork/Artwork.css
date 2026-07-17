@@ -529,40 +529,6 @@
     margin: 2px 0 0;
 }
 
-/* Menú de tres puntos (estilo Pinterest) */
-.pin-actions {
-    position: absolute;
-    bottom: 52px;
-    right: 12px;
-    z-index: 3;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.art-piece:hover .pin-actions {
-    opacity: 1;
-}
-
-.pin-actions-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.9);
-    color: #111;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s ease;
-}
-
-.pin-actions-btn:hover {
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
     .buscador-wrapper {

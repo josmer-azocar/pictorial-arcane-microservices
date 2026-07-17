@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './ArtistProfile.css';
 import { getArtistById, getArtworksByArtist } from '../../services/fetchArtwork';
 import Loading from '../../components/Loading.jsx';
+import BackButton from '../../components/BackButton.jsx';
 
 const ArtistProfile = () => {
   const { id } = useParams();
@@ -38,6 +39,7 @@ const ArtistProfile = () => {
 
   return (
     <div className="artp-page">
+      <BackButton />
       {/* SECCIÓN SUPERIOR - Degradado y geometrías inspirados en la maqueta */}
       <div className="artp-top-layout">
         <div className="artp-banner-decor"></div>

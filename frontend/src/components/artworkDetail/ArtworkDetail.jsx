@@ -10,6 +10,7 @@ import { reserveArtwork } from '../../services/fetchSales.js';
 import { getAssignedSecurityQuestions, recoverSecurityCode, updateSecurityAnswer } from '../../services/authUser.js';
 import Loading from '../Loading.jsx';
 import { ShieldCheck, Truck, Award } from 'lucide-react';
+import BackButton from '../BackButton.jsx';
 
 // ── COMPONENTE PRINCIPAL ─────────────────────────────────────
 const ArtworkDetail = ({ artwork: artworkProp }) => {
@@ -540,6 +541,7 @@ const { artworkId, name, imageUrl, price, status } = generalInfo;
 
   return (
     <div className="artwork-detail-page">
+      <BackButton />
       <main className="product-layout">
 
         {/* ── COLUMNA 1: IMAGEN CON ZOOM ── */}

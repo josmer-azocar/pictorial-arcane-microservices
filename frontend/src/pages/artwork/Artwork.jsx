@@ -317,9 +317,6 @@ function Artwork() {
                         <div className="pin-overlay"></div>
                         <span className="pin-save-btn">${artPiece.precio}</span>
                       </Link>
-                      <div className="pin-actions">
-                        <button className="pin-actions-btn" title="Más opciones">⋯</button>
-                      </div>
                       <div className="text-art-piece">
                         <h3>{artPiece.name}</h3>
                         <p><Link to={`/artist/${artPiece.artistId}`}>{artPiece.artistName}</Link></p>
