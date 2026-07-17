@@ -116,33 +116,50 @@
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   animation: capibara-enter 1s ease-out forwards;
-  
 }
 
 .capibara-img {
   width: 180px;
   animation: saludo 1.5s ease-in-out infinite;
   transform-origin: bottom center;
-}.speech-bubble {
+}.capibara-container .speech-bubble {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 15px;
+  top: auto;
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
   background: white;
   color: #5b21b6;
   font-weight: bold;
   font-size: 13px;
   padding: 10px 16px;
   border-radius: 20px;
-  margin-bottom: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   text-align: center;
   animation: aparecer 1s ease-out 0.5s forwards;
   opacity: 0;
-  max-width: 180px;
-  z-index: 20; 
-  position: relative; 
-}@keyframes aparecer {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  width: 180px;
+  box-sizing: border-box;
+  z-index: 20;
+}
+
+.capibara-container .speech-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 35%;
+  transform: translateX(-50%);
+  border: 10px solid transparent;
+  border-top-color: white;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }/* ── CAPIBARA CHAT ── */
 .capibara-chat {
   position: absolute;

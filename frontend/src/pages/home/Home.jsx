@@ -186,24 +186,22 @@ const Home = () => {
 
             <div className="recommendations-track" ref={viewsRecTrackRef}>
               {viewsRecommendations.map((rec) => (
-                <Link
-                  to={`/artwork/${rec.mongoId || rec.artworkId}`}
-                  key={rec.artworkId}
-                  className="recommendation-card"
-                >
-                  <div className="recommendation-image-frame">
+                <div className="recommendation-card" key={rec.artworkId}>
+                  <Link to={`/artwork/${rec.mongoId || rec.artworkId}`}>
                     {rec.imageUrl && (
                       <img
                         src={rec.imageUrl}
                         alt={rec.name}
-                        className="recommendation-image"
                       />
                     )}
+                    <div className="pin-overlay"></div>
+                    <span className="pin-save-btn">${rec.price?.toLocaleString()}</span>
+                  </Link>
+                  <div className="text-art-piece">
+                    <h3>{rec.name}</h3>
+                    <p>{rec.genreName}</p>
                   </div>
-                  <h3 className="recommendation-name">{rec.name}</h3>
-                  <p className="recommendation-genre">{rec.genreName}</p>
-                  <p className="recommendation-price">${rec.price?.toLocaleString()}</p>
-                </Link>
+                </div>
               ))}
             </div>
 
@@ -239,24 +237,22 @@ const Home = () => {
 
             <div className="recommendations-track" ref={lastViewedRecTrackRef}>
               {lastViewedRecommendations.map((rec) => (
-                <Link
-                  to={`/artwork/${rec.mongoId || rec.artworkId}`}
-                  key={rec.artworkId}
-                  className="recommendation-card"
-                >
-                  <div className="recommendation-image-frame">
+                <div className="recommendation-card" key={rec.artworkId}>
+                  <Link to={`/artwork/${rec.mongoId || rec.artworkId}`}>
                     {rec.imageUrl && (
                       <img
                         src={rec.imageUrl}
                         alt={rec.name}
-                        className="recommendation-image"
                       />
                     )}
+                    <div className="pin-overlay"></div>
+                    <span className="pin-save-btn">${rec.price?.toLocaleString()}</span>
+                  </Link>
+                  <div className="text-art-piece">
+                    <h3>{rec.name}</h3>
+                    <p>{rec.genreName}</p>
                   </div>
-                  <h3 className="recommendation-name">{rec.name}</h3>
-                  <p className="recommendation-genre">{rec.genreName}</p>
-                  <p className="recommendation-price">${rec.price?.toLocaleString()}</p>
-                </Link>
+                </div>
               ))}
             </div>
 
