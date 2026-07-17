@@ -303,6 +303,15 @@ body {
   background: #fff;
   transition: transform 0.2s ease;
   box-shadow: 0 2px 8px rgba(124, 76, 219, 0.04);
+  cursor: pointer;
+}
+
+.recommendation-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px 16px 0 0;
+  object-fit: cover;
 }
 
 .recommendation-card:hover {
