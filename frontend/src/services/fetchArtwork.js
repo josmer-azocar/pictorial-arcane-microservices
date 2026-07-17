@@ -16,8 +16,9 @@ export async function showArtwork(idGenre = null,
         const searchParams = {
             idGenre: idGenre,
             idArtist: idArtist,
-            name: title || '',
+ name: title || '',
             page: page,
+
             size: size,
             sortBy: sortBy,
             direction: direction,
