@@ -27,6 +27,7 @@ public class ArtworkNode {
     private Double price;  // 3200, 4500...
     private String imageUrl;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Property("embedding")
     private List<Double> embedding;
     // (Artwork)-[:HAS_GENRE]->(Genre)

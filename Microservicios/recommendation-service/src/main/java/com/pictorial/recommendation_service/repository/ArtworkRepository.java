@@ -60,7 +60,9 @@ public interface ArtworkRepository extends Neo4jRepository<ArtworkNode, Long> {
             CALL db.index.vector.queryNodes($indexName, $topK, $queryVector)
             YIELD node, score
             WHERE score >= $threshold
-            RETURN node
+            OPTIONAL MATCH (artist:Artist)-[cRel:CREATED]->(node)
+            OPTIONAL MATCH (node)-[gRel:HAS_GENRE]->(genre:Genre)
+            RETURN node, cRel, artist, gRel, genre
             ORDER BY score DESC, node.artworkId ASC
             """)
     List<ArtworkNode> findSimilarArtworks(@Param("indexName") String indexName, @Param("topK") int topK,
