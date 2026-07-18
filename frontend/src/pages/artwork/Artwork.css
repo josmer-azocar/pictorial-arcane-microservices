@@ -375,6 +375,12 @@
   color: #6B21A8;
 }
 
+.filter-clear:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
 .price-input {
   width: 100px;
   padding: 8px 14px;

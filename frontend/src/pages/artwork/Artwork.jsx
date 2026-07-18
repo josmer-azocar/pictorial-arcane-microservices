@@ -89,8 +89,9 @@ function Artwork() {
         idArtist = sortConfig.idArtist,
         sortBy = sortConfig.sortBy,
         direction = sortConfig.direction,
-        title = searchTerm) => {
-        isLoad(true);
+        title = searchTerm,
+        showLoading = true) => {
+        if (showLoading) isLoad(true);
         try {
             setError("");
             // El backend pagina antes de que nosotros podamos filtrar por status, así que
@@ -136,7 +137,7 @@ function Artwork() {
             setError("No se pudo mostrar. Error del servidor");
 
         } finally {
-            isLoad(false);
+            if (showLoading) isLoad(false);
         }
     }
 
@@ -228,7 +229,9 @@ function Artwork() {
         );
     }
 
-    
+    const hasActiveFilters = Boolean(
+        minPrice || maxPrice || sortConfig.idGenre || sortConfig.idArtist || searchTerm.trim()
+    );
 
     return (
         <section id="art-display">
@@ -278,7 +281,7 @@ function Artwork() {
                   setCapiState('saludo');
                   setSearchTerm('');
                   if (!nextMode) {
-                    getArt(0, undefined, undefined, undefined, undefined, '');
+                    getArt(0, undefined, undefined, undefined, undefined, '', false);
                   }
                 }}
               >
@@ -341,11 +344,16 @@ function Artwork() {
                   ))}
                 </select>
                 </div>
-                <button className="filter-clear" onClick={() => {
-                  setMinPrice('');
-                  setMaxPrice('');
-                  getArt(0, null, null, 'price', 'ASC', '');
-                }}>Limpiar</button>
+                <button
+                  className="filter-clear"
+                  disabled={!hasActiveFilters}
+                  onClick={() => {
+                    setMinPrice('');
+                    setMaxPrice('');
+                    setSearchTerm('');
+                    getArt(0, null, null, 'price', 'ASC', '');
+                  }}
+                >Limpiar</button>
               </div>
             )}
             <section id="art-grid">

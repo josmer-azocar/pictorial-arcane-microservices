@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Palette, Users, BookOpen, CalendarCheck,
-  FileBarChart, UserPlus, ChevronDown, Search, Bell, LogOut,
+  FileBarChart, UserPlus, ChevronDown, Bell, LogOut,
   AlertTriangle, Plus, Monitor, Image, TrendingUp, Trophy
 } from 'lucide-react';
 import PendingReservations from "./Pendingreservations.jsx";
@@ -434,11 +434,6 @@ function Admin() {
 
       <div className="admin-right">
         <header className="admin-topbar">
-          <div className="topbar-search">
-            <Search />
-            <input placeholder="Buscar en el panel..." readOnly />
-          </div>
-
           {criticalCount > 0 && (
             <div className="topbar-alert-badge">
               <button
