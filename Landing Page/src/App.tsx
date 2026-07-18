@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -23,6 +23,9 @@ export default function App() {
   const [demoStep, setDemoStep] = useState(0);
   const [highlightedEngine, setHighlightedEngine] = useState<string | null>(null);
 
+  const currentSlideRef = useRef(currentSlide);
+  currentSlideRef.current = currentSlide;
+
   const goToSlide = useCallback((index: number) => {
     if (index >= 0 && index < SLIDE_IDS.length) {
       setCurrentSlide(index);
@@ -30,35 +33,55 @@ export default function App() {
   }, []);
 
   const nextSlide = useCallback(() => {
-    if (currentSlide < SLIDE_IDS.length - 1) {
+    if (currentSlideRef.current < SLIDE_IDS.length - 1) {
       setCurrentSlide(s => s + 1);
     }
-  }, [currentSlide]);
+  }, []);
 
   const prevSlide = useCallback(() => {
-    if (currentSlide > 0) {
+    if (currentSlideRef.current > 0) {
       setCurrentSlide(s => s - 1);
     }
-  }, [currentSlide]);
+  }, []);
+
+  const nextSlideRef = useRef(nextSlide);
+  nextSlideRef.current = nextSlide;
+  const prevSlideRef = useRef(prevSlide);
+  prevSlideRef.current = prevSlide;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown') { e.preventDefault(); nextSlide(); }
-      if (e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); nextSlideRef.current(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); prevSlideRef.current(); }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextSlide, prevSlide]);
+  }, []);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      const slideEl = document.getElementById(SLIDE_IDS[currentSlideRef.current]);
+      if (slideEl) {
+        const { scrollTop, scrollHeight, clientHeight } = slideEl;
+        const atTop = scrollTop <= 0;
+        const atBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 2;
+
+        if (e.deltaY > 0) {
+          if (!atBottom) return;
+          nextSlideRef.current();
+        } else {
+          if (!atTop) return;
+          prevSlideRef.current();
+        }
+      } else {
+        if (e.deltaY > 0) nextSlideRef.current();
+        else prevSlideRef.current();
+      }
       e.preventDefault();
-      if (e.deltaY > 0) nextSlide();
-      else prevSlide();
     };
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [nextSlide, prevSlide]);
+  }, []);
 
   const handleStepChange = (step: number) => {
     setDemoStep(step);
