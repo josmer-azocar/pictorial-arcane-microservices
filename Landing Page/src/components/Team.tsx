@@ -89,14 +89,16 @@ export default function Team() {
           {/* Left Arrow */}
           <button
             onClick={goPrev}
-            className="absolute left-2 sm:left-4 z-20 w-12 h-12 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer"
+            className="absolute left-2 sm:left-4 z-30 w-12 h-12 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer"
             aria-label="Anterior"
           >
             <ChevronLeft size={24} />
           </button>
 
-          {/* Cards Wrapper */}
-          <div className="relative flex items-center justify-center w-full h-80 sm:h-96" style={{ transformStyle: 'preserve-3d' }}>
+          {/* Cards Wrapper with fade edges */}
+          <div className="relative flex items-center justify-center w-full h-80 sm:h-96 overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
+            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
             {members.map((member, i) => {
               const offset = i - currentIndex;
               const absOffset = Math.abs(offset);
@@ -167,7 +169,7 @@ export default function Team() {
           {/* Right Arrow */}
           <button
             onClick={goNext}
-            className="absolute right-2 sm:right-4 z-20 w-12 h-12 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer"
+            className="absolute right-2 sm:right-4 z-30 w-12 h-12 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer"
             aria-label="Siguiente"
           >
             <ChevronRight size={24} />

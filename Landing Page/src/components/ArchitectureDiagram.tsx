@@ -123,7 +123,7 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
       <div className="max-w-7xl mx-auto flex flex-col w-full z-10 gap-8">
 
         {/* ── ACORDEÓN DE 3 PASOS ── */}
-        <div className="flex flex-row gap-0 rounded-3xl overflow-hidden shadow-xl min-h-[520px]">
+        <div className="flex flex-row gap-0 rounded-3xl overflow-hidden shadow-xl min-h-[520px] max-h-[calc(100vh-220px)]">
 
           {steps.map((step, idx) => {
             const isActive = activeStep === idx;
@@ -182,12 +182,12 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
 
                     {/* ── CONTENIDO BLOQUE 01 ── */}
                     {idx === 0 && (
-                      <div className="flex flex-col gap-4 flex-1">
+                      <div className="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto">
                         <p className="text-sm text-white/90 leading-relaxed max-w-lg">
                           El museo nació sobre PostgreSQL como núcleo transaccional ACID.
                           Gestión de artistas, obras, clientes y ventas en un modelo relacional estricto.
                         </p>
-                        <div className="relative" style={{ position: 'relative' }}
+                        <div className="relative w-fit max-w-full" style={{ position: 'relative' }}
                           onMouseMove={(e) => {
                             const rect = e.currentTarget.getBoundingClientRect();
                             setZoomPos({
@@ -201,12 +201,12 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
                           <img
                             src="./assets/diagrama-sql.png"
                             alt="Diagrama ER SQL"
-                            className="rounded-2xl border-2 border-white/20 shadow-lg max-w-xs object-contain"
+                            className="rounded-2xl border-2 border-white/20 shadow-lg max-w-xs w-full h-auto object-contain"
                           />
                           {showZoom && (
                             <div style={{
                               position: 'absolute', top: 0, right: '-24px',
-                              width: '260px', height: '260px',
+                              width: 'min(260px, 40vw)', height: 'min(260px, 40vw)',
                               border: '3px solid rgba(255,255,255,0.3)', borderRadius: '16px',
                               backgroundImage: `url(./assets/diagrama-sql.png)`,
                               backgroundSize: '400%',
@@ -244,13 +244,13 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
 
                     {/* ── CONTENIDO BLOQUE 03 ── */}
                     {idx === 2 && (
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch w-full flex-1 min-h-0">
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch w-full flex-1 min-h-0 overflow-y-auto">
 
                         {/* SVG diagrama */}
                         <div className="lg:col-span-7 relative flex items-center justify-center">
                           <div
-                            className="w-full max-w-[90%] aspect-[600/490] rounded-[2rem] overflow-hidden border-4 border-white/30 shadow-2xl"
-                            style={{ transform: 'perspective(1200px) rotateY(-2deg) scale(0.95)', transformStyle: 'preserve-3d' }}
+                            className="w-full max-w-full aspect-[600/490] rounded-[2rem] overflow-hidden border-4 border-white/30 shadow-2xl"
+                            style={{ transform: 'perspective(1200px) rotateY(-2deg)', transformStyle: 'preserve-3d' }}
                           >
                             <div className="absolute inset-0 z-0">
                               <img src="/assets/p2.png" alt="" className="w-full h-full object-cover opacity-20 pointer-events-none" />

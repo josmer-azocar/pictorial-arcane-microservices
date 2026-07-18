@@ -60,12 +60,12 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
   return (
     <section 
       id="cap" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
+      className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
     >
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-8">
           <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
             Marco Teórico Distribuido
           </span>
@@ -79,10 +79,10 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
         </div>
 
         {/* Part 1: Interactive Triangle & CAP Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-6">
           
           {/* Triangular CAP Graph SVG (Left 5 cols) */}
-          <div className="lg:col-span-6 bg-white p-4 rounded-2xl border border-arcane-purple/10 shadow-sm flex flex-col items-center justify-center arcane-glass-light relative overflow-hidden min-h-[320px]">
+          <div className="lg:col-span-6 bg-white p-6 rounded-2xl border border-arcane-purple/10 shadow-sm flex flex-col items-center justify-center arcane-glass-light relative overflow-hidden min-h-[320px]">
             <div className="absolute top-2 left-4 text-[10px] font-mono text-gray-400 uppercase tracking-widest">Triángulo CAP SBDII</div>
             
             {/* SVG CAP Triangle */}
@@ -223,7 +223,7 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
             </div>
 
             {/* Active Glassmorphism Detail Card */}
-            <div className="p-4 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm arcane-glass-light animate-fade-in">
+            <div className="p-6 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm arcane-glass-light animate-fade-in">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[10px] uppercase font-mono tracking-widest px-2.5 py-1 rounded bg-arcane-purple/10 border border-arcane-purple/20 text-arcane-purple">
                   {currentDetails.badge}

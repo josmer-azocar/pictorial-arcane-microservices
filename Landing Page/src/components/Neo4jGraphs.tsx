@@ -416,9 +416,9 @@ export default function Neo4jGraphs() {
   return (
     <section 
       id="neo4j-graphs" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
+      className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
     >
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6 items-start">
         
         {/* LEFT COLUMN */}
         <div className="flex flex-col gap-4">
@@ -478,7 +478,7 @@ export default function Neo4jGraphs() {
         </div>
 
         {/* MAIN PANEL CONTENT (RIGHT COLUMN) */}
-        <div className="arcane-glass-light rounded-3xl p-6 border border-arcane-purple/10 shadow-lg min-h-[500px] flex flex-col lg:flex-row gap-6">
+        <div className="arcane-glass-light rounded-3xl p-6 sm:p-8 border border-arcane-purple/10 shadow-lg min-h-[500px] flex flex-col lg:flex-row gap-6">
           
           {/* ==================== TAB 1: SCHEMA VIEW ==================== */}
           {activeTab === 'schema' && (

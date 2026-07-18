@@ -209,12 +209,12 @@ LIMIT 10;`,
   return (
     <section 
       id="dictionary" 
-      className="pt-14 pb-4 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
+      className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
     >
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
             Diccionario Políglota
           </span>
@@ -231,7 +231,7 @@ LIMIT 10;`,
 
           {/* Left: Ficha de Persistencia */}
           <div className="lg:w-80 flex-shrink-0">
-            <div className="p-5 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm h-full">
+            <div className="p-6 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm h-full">
               <div className="inline-flex items-center gap-2 text-xs font-mono text-arcane-purple mb-3 bg-arcane-purple/10 px-2 py-0.5 rounded border border-arcane-purple/20">
                 <BookOpen size={12} />
                 Ficha de Persistencia
@@ -297,7 +297,7 @@ LIMIT 10;`,
             </div>
 
             {/* Code lines container */}
-            <div className="p-3 sm:p-4 overflow-x-auto font-mono text-[11px] text-gray-200 leading-[1.3] bg-[#050209] max-h-[360px]">
+            <div className="p-3 sm:p-4 overflow-x-auto overflow-y-auto font-mono text-[11px] text-gray-200 leading-[1.3] bg-[#050209] max-h-[min(360px,50vh)]">
               <pre className="relative whitespace-pre">
                 <code className="block select-text">
                   {currentItem.codeBlocks[0].code.split('\n').map((line, idx) => {
@@ -344,13 +344,13 @@ LIMIT 10;`,
           </div>
 
           {/* Right: Vertical Icon Buttons (desktop only) */}
-          <div className="hidden lg:flex flex-col gap-3 items-center flex-shrink-0 pt-5">
+          <div className="hidden lg:flex flex-col gap-4 items-center flex-shrink-0 sticky top-8 self-start z-10 mr-2">
             {(Object.keys(dictionaryItems) as DBEngine[]).map((engine) => (
               <button
                 key={engine}
                 id={`dict-tab-btn-${engine.toLowerCase().replace(' ', '-')}`}
                 onClick={() => handleTabChange(engine)}
-                className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 border-2 cursor-pointer select-none"
+                className="group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border-2 cursor-pointer select-none"
                 style={{
                   backgroundColor: activeTab === engine ? '#7c3aed' : '#ffffff',
                   borderColor: activeTab === engine ? '#a78bfa' : '#e5e7eb',
