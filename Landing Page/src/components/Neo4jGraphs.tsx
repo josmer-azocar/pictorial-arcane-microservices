@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { 
   Users, Layers, Database, ShoppingCart, ArrowLeft, Search, 
   Sparkles, Tag, DollarSign, Eye, Info, HelpCircle, Network
@@ -79,6 +79,58 @@ export default function Neo4jGraphs() {
     imageUrl?: string;
     price?: number;
   } | null>(null);
+
+  // ── Zoom / Pan state ────────────────────────────────────────
+  const [viewTransform, setViewTransform] = useState({ x: 0, y: 0, k: 1 });
+  const isPanning = useRef(false);
+  const panStart = useRef({ x: 0, y: 0 });
+  const transformStart = useRef({ x: 0, y: 0, k: 1 });
+
+  const handleSvgMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    isPanning.current = true;
+    panStart.current = { x: e.clientX, y: e.clientY };
+    transformStart.current = { ...viewTransform };
+    e.preventDefault();
+  }, [viewTransform]);
+
+  const handleSvgMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isPanning.current) return;
+    const dx = e.clientX - panStart.current.x;
+    const dy = e.clientY - panStart.current.y;
+    setViewTransform({
+      x: transformStart.current.x + dx,
+      y: transformStart.current.y + dy,
+      k: transformStart.current.k,
+    });
+  }, []);
+
+  const handleSvgMouseUp = useCallback(() => {
+    isPanning.current = false;
+  }, []);
+
+  const handleSvgWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const svgEl = (e.target as SVGElement).closest('svg');
+    if (!svgEl) return;
+    const rect = svgEl.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const factor = e.deltaY > 0 ? 0.85 : 1.15;
+    const newK = Math.min(Math.max(viewTransform.k * factor, 0.3), 6);
+    const newX = mouseX - (mouseX - viewTransform.x) * (newK / viewTransform.k);
+    const newY = mouseY - (mouseY - viewTransform.y) * (newK / viewTransform.k);
+    setViewTransform({ x: newX, y: newY, k: newK });
+  }, [viewTransform]);
+
+  const resetView = useCallback(() => {
+    setViewTransform({ x: 0, y: 0, k: 1 });
+  }, []);
+
+  // Reset transform on tab change
+  useEffect(() => {
+    resetView();
+  }, [activeTab, resetView]);
 
   // Parse cypher file on mount
   const parsedGraph = useMemo<ParsedGraph>(() => {
@@ -494,8 +546,16 @@ export default function Neo4jGraphs() {
               </div>
 
               {/* Schema Graph Canvas */}
-              <div className="relative w-full max-w-2xl aspect-[3/2] border border-dashed border-purple-200 bg-purple-50/10 rounded-2xl overflow-hidden flex items-center justify-center shadow-inner">
-                <svg viewBox="0 0 600 400" className="w-full h-full select-none">
+              <div className="relative w-full max-w-2xl aspect-[3/2] border border-dashed border-purple-200 bg-purple-50/10 rounded-2xl overflow-hidden flex items-center justify-center shadow-inner"
+                style={{ cursor: isPanning.current ? 'grabbing' : 'grab' }}
+              >
+                <svg viewBox="0 0 600 400" className="w-full h-full select-none"
+                  onMouseDown={handleSvgMouseDown}
+                  onMouseMove={handleSvgMouseMove}
+                  onMouseUp={handleSvgMouseUp}
+                  onMouseLeave={handleSvgMouseUp}
+                  onWheel={handleSvgWheel}
+                >
                   {/* Defs for arrow heads and drop shadows */}
                   <defs>
                     <marker id="arrow" viewBox="0 0 10 10" refX="28" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -509,120 +569,126 @@ export default function Neo4jGraphs() {
                     </filter>
                   </defs>
 
-                  {/* Lines (Edges) */}
-                  {schemaEdges.map((edge, idx) => {
-                    const fromNode = schemaNodes.find(n => n.id === edge.from)!;
-                    const toNode = schemaNodes.find(n => n.id === edge.to)!;
-                    
-                    const isHovered = highlightedNode && (highlightedNode.id === edge.from || highlightedNode.id === edge.to);
+                  <g transform={`translate(${viewTransform.x},${viewTransform.y}) scale(${viewTransform.k})`}>
+                    {/* Lines (Edges) */}
+                    {schemaEdges.map((edge, idx) => {
+                      const fromNode = schemaNodes.find(n => n.id === edge.from)!;
+                      const toNode = schemaNodes.find(n => n.id === edge.to)!;
+                      
+                      const isHovered = highlightedNode && (highlightedNode.id === edge.from || highlightedNode.id === edge.to);
 
-                    return (
-                      <g key={idx}>
-                        <line 
-                          x1={fromNode.x} 
-                          y1={fromNode.y} 
-                          x2={toNode.x} 
-                          y2={toNode.y} 
-                          stroke={isHovered ? '#8b2fc9' : '#cbd5e1'} 
-                          strokeWidth={isHovered ? '3' : '2'} 
-                          markerEnd={isHovered ? "url(#arrow-highlight)" : "url(#arrow)"}
-                          className="transition-all duration-300"
-                        />
-                        {/* Label Badge */}
-                        <g transform={`translate(${edge.textX}, ${edge.textY})`}>
-                          <rect 
-                            x="-45" 
-                            y="-9" 
-                            width="90" 
-                            height="18" 
-                            rx="4" 
-                            fill={isHovered ? '#f5f0ff' : '#f8fafc'} 
-                            stroke={isHovered ? '#c084fc' : '#e2e8f0'} 
-                            strokeWidth="1"
+                      return (
+                        <g key={idx}>
+                          <line 
+                            x1={fromNode.x} 
+                            y1={fromNode.y} 
+                            x2={toNode.x} 
+                            y2={toNode.y} 
+                            stroke={isHovered ? '#8b2fc9' : '#cbd5e1'} 
+                            strokeWidth={isHovered ? '3' : '2'} 
+                            markerEnd={isHovered ? "url(#arrow-highlight)" : "url(#arrow)"}
                             className="transition-all duration-300"
                           />
-                          <text 
-                            textAnchor="middle" 
-                            y="4" 
-                            fontSize="8" 
-                            fontWeight="bold" 
-                            className={`font-mono transition-all duration-300 ${isHovered ? 'fill-arcane-purple' : 'fill-slate-500'}`}
-                          >
-                            {edge.label}
-                          </text>
+                          {/* Label Badge */}
+                          <g transform={`translate(${edge.textX}, ${edge.textY})`}>
+                            <rect 
+                              x="-45" 
+                              y="-9" 
+                              width="90" 
+                              height="18" 
+                              rx="4" 
+                              fill={isHovered ? '#f5f0ff' : '#f8fafc'} 
+                              stroke={isHovered ? '#c084fc' : '#e2e8f0'} 
+                              strokeWidth="1"
+                              className="transition-all duration-300"
+                            />
+                            <text 
+                              textAnchor="middle" 
+                              y="4" 
+                              fontSize="8" 
+                              fontWeight="bold" 
+                              className={`font-mono transition-all duration-300 ${isHovered ? 'fill-arcane-purple' : 'fill-slate-500'}`}
+                            >
+                              {edge.label}
+                            </text>
+                          </g>
                         </g>
-                      </g>
-                    );
-                  })}
+                      );
+                    })}
 
-                  {/* Nodes */}
-                  {schemaNodes.map((node) => {
-                    const Icon = node.icon;
-                    const isHovered = highlightedNode && highlightedNode.id === node.id;
+                    {/* Nodes */}
+                    {schemaNodes.map((node) => {
+                      const Icon = node.icon;
+                      const isHovered = highlightedNode && highlightedNode.id === node.id;
 
-                    return (
-                      <g 
-                        key={node.id}
-                        transform={`translate(${node.x}, ${node.y})`}
-                        className="cursor-pointer group"
-                        onMouseEnter={() => setHighlightedNode({
-                          type: 'genre', // dummy type
-                          id: node.id,
-                          label: node.label,
-                          details: node.desc
-                        })}
-                        onMouseLeave={() => setHighlightedNode(null)}
-                        onClick={() => {
-                          if (node.id === 'Artist') setActiveTab('artists');
-                          else if (node.id === 'Genre') setActiveTab('genres');
-                          else if (node.id === 'Artwork') setActiveTab('artworks');
-                          else if (node.id === 'Buyer') setActiveTab('buyers');
-                        }}
-                      >
-                        {/* Outer Glow Ring on Hover */}
-                        <circle 
-                          r="34" 
-                          fill="none" 
-                          stroke="#c084fc" 
-                          strokeWidth="2" 
-                          strokeDasharray="4 2"
-                          className={`transition-all duration-500 ${isHovered ? 'scale-110 opacity-100 rotate-180' : 'scale-75 opacity-0'}`}
-                          style={{ transformOrigin: 'center' }}
-                        />
-                        {/* Solid colored node container */}
-                        <circle 
-                          r="28" 
-                          fill={isHovered ? '#f5f0ff' : '#ffffff'} 
-                          stroke={isHovered ? '#8b2fc9' : '#cbd5e1'} 
-                          strokeWidth={isHovered ? '3' : '2'} 
-                          filter="url(#shadow)"
-                          className="transition-all duration-300"
-                        />
-                        {/* Icon */}
-                        <g transform="translate(-10, -10)">
-                          <Icon size={20} className={isHovered ? 'text-arcane-purple' : 'text-slate-500'} />
-                        </g>
-                        {/* Name Text label underneath */}
-                        <text 
-                          y="42" 
-                          textAnchor="middle" 
-                          fontSize="10" 
-                          fontWeight="bold" 
-                          className={`font-display tracking-wide transition-all ${isHovered ? 'fill-arcane-purple scale-105' : 'fill-gray-700'}`}
+                      return (
+                        <g 
+                          key={node.id}
+                          transform={`translate(${node.x}, ${node.y})`}
+                          className="cursor-pointer group"
+                          onMouseEnter={() => setHighlightedNode({
+                            type: 'genre',
+                            id: node.id,
+                            label: node.label,
+                            details: node.desc
+                          })}
+                          onMouseLeave={() => setHighlightedNode(null)}
+                          onClick={() => {
+                            if (node.id === 'Artist') setActiveTab('artists');
+                            else if (node.id === 'Genre') setActiveTab('genres');
+                            else if (node.id === 'Artwork') setActiveTab('artworks');
+                            else if (node.id === 'Buyer') setActiveTab('buyers');
+                          }}
                         >
-                          {node.label}
-                        </text>
-                        {/* Count Badge */}
-                        <g transform="translate(18, -18)">
-                          <circle r="9" fill="#8b2fc9" />
-                          <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#ffffff">
-                            {node.count}
+                          <circle 
+                            r="34" 
+                            fill="none" 
+                            stroke="#c084fc" 
+                            strokeWidth="2" 
+                            strokeDasharray="4 2"
+                            className={`transition-all duration-500 ${isHovered ? 'scale-110 opacity-100 rotate-180' : 'scale-75 opacity-0'}`}
+                            style={{ transformOrigin: 'center' }}
+                          />
+                          <circle 
+                            r="28" 
+                            fill={isHovered ? '#f5f0ff' : '#ffffff'} 
+                            stroke={isHovered ? '#8b2fc9' : '#cbd5e1'} 
+                            strokeWidth={isHovered ? '3' : '2'} 
+                            filter="url(#shadow)"
+                            className="transition-all duration-300"
+                          />
+                          <g transform="translate(-10, -10)">
+                            <Icon size={20} className={isHovered ? 'text-arcane-purple' : 'text-slate-500'} />
+                          </g>
+                          <text 
+                            y="42" 
+                            textAnchor="middle" 
+                            fontSize="10" 
+                            fontWeight="bold" 
+                            className={`font-display tracking-wide transition-all ${isHovered ? 'fill-arcane-purple scale-105' : 'fill-gray-700'}`}
+                          >
+                            {node.label}
                           </text>
+                          <g transform="translate(18, -18)">
+                            <circle r="9" fill="#8b2fc9" />
+                            <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#ffffff">
+                              {node.count}
+                            </text>
+                          </g>
                         </g>
-                      </g>
-                    );
-                  })}
+                      );
+                    })}
+                  </g>
                 </svg>
+
+                {/* Reset zoom button */}
+                {viewTransform.k !== 1 && (
+                  <button onClick={resetView}
+                    className="absolute top-3 right-3 z-10 px-2.5 py-1.5 bg-white/90 border border-gray-200 rounded-lg text-[10px] font-mono font-bold text-gray-600 shadow-sm hover:bg-white hover:border-gray-300 transition-all cursor-pointer backdrop-blur-sm"
+                  >
+                    Reset
+                  </button>
+                )}
 
                 {/* Corner Tooltip Overlay */}
                 <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-purple-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none transition-all duration-300">
@@ -754,102 +820,123 @@ export default function Neo4jGraphs() {
                     </div>
 
                     {/* Interactive SVG Sub-Graph Canvas */}
-                    <div className="relative flex-1 border border-dashed border-purple-200 bg-purple-50/10 rounded-2xl overflow-hidden min-h-[320px]">
-                      <svg viewBox="0 0 600 400" className="w-full h-full select-none">
-                        {/* Center lines to satellites */}
-                        {artistGraphData.satellites.map((sat, idx) => (
-                          <g key={idx}>
-                            <line 
-                              x1={artistGraphData.center.x} 
-                              y1={artistGraphData.center.y} 
-                              x2={sat.x} 
-                              y2={sat.y} 
-                              stroke={highlightedNode && highlightedNode.id === sat.artworkId ? '#a855f7' : '#cbd5e1'} 
-                              strokeWidth={highlightedNode && highlightedNode.id === sat.artworkId ? '3' : '1.5'} 
-                              strokeDasharray="4 2"
-                              className="transition-all duration-300 animate-pulse"
-                            />
-                            {/* Line relation label */}
-                            <g transform={`translate(${(artistGraphData.center.x + sat.x) / 2}, ${(artistGraphData.center.y + sat.y) / 2})`}>
-                              <rect x="-18" y="-6" width="36" height="12" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
-                              <text textAnchor="middle" y="3" fontSize="6" fontWeight="bold" fill="#6b7280" className="font-mono">
-                                CREATED
-                              </text>
-                            </g>
-                          </g>
-                        ))}
-
-                        {/* Satellite Nodes (Artworks) */}
-                        {artistGraphData.satellites.map((sat: any) => {
-                          const isHighlighted = highlightedNode && highlightedNode.id === sat.artworkId;
-                          const genreColors: Record<string, string> = {
-                            'Impresionismo': '#f59e0b', 'Realismo': '#10b981', 'Surrealismo': '#8b5cf6',
-                            'Arte Abstracto': '#ec4899', 'Cubismo': '#f97316', 'Expresionismo': '#ef4444',
-                            'Barroco': '#6366f1', 'Arte Contemporáneo': '#14b8a6', 'Pop Art': '#e11d48',
-                            'Minimalismo': '#6b7280'
-                          };
-                          const genreColor = genreColors[sat.genreName] || '#94a3b8';
-                          return (
-                            <g 
-                              key={sat.artworkId}
-                              transform={`translate(${sat.x}, ${sat.y})`}
-                              className="cursor-pointer group"
-                              onMouseEnter={() => setHighlightedNode({
-                                type: 'artwork',
-                                id: sat.artworkId,
-                                label: sat.name,
-                                details: `Precio: $${sat.price} USD | Estado: ${sat.status} | Género: ${sat.genreName}`,
-                                imageUrl: sat.imageUrl,
-                                price: sat.price
-                              })}
-                              onMouseLeave={() => setHighlightedNode(null)}
-                            >
-                              <circle 
-                                r="18" 
-                                fill={isHighlighted ? '#f0fdf4' : '#ffffff'} 
-                                stroke={isHighlighted ? genreColor : genreColor} 
-                                strokeWidth={isHighlighted ? '2.5' : '2'}
-                                filter="url(#shadow)"
-                                className="transition-all duration-300"
+                    <div className="relative flex-1 border border-dashed border-purple-200 bg-purple-50/10 rounded-2xl overflow-hidden min-h-[320px]"
+                      style={{ cursor: isPanning.current ? 'grabbing' : 'grab' }}
+                    >
+                      <svg viewBox="0 0 600 400" className="w-full h-full select-none"
+                        onMouseDown={handleSvgMouseDown}
+                        onMouseMove={handleSvgMouseMove}
+                        onMouseUp={handleSvgMouseUp}
+                        onMouseLeave={handleSvgMouseUp}
+                        onWheel={handleSvgWheel}
+                      >
+                        <defs>
+                          <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="4" floodOpacity="0.1" />
+                          </filter>
+                        </defs>
+                        <g transform={`translate(${viewTransform.x},${viewTransform.y}) scale(${viewTransform.k})`}>
+                          {/* Center lines to satellites */}
+                          {artistGraphData.satellites.map((sat, idx) => (
+                            <g key={idx}>
+                              <line 
+                                x1={artistGraphData.center.x} 
+                                y1={artistGraphData.center.y} 
+                                x2={sat.x} 
+                                y2={sat.y} 
+                                stroke={highlightedNode && highlightedNode.id === sat.artworkId ? '#a855f7' : '#cbd5e1'} 
+                                strokeWidth={highlightedNode && highlightedNode.id === sat.artworkId ? '3' : '1.5'} 
+                                strokeDasharray="4 2"
+                                className="transition-all duration-300 animate-pulse"
                               />
-                              <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#64748b" className="font-mono">
-                                W{sat.artworkId}
-                              </text>
-                              <text 
-                                y={sat.angle > 0 && sat.angle < Math.PI ? '26' : '-22'} 
-                                textAnchor="middle" 
-                                fontSize="7" 
-                                fontWeight="semibold" 
-                                fill="#475569"
-                                className="truncate max-w-[80px]"
-                              >
-                                {sat.name.length > 15 ? `${sat.name.slice(0, 12)}...` : sat.name}
-                              </text>
-                              <g transform="translate(11, -11)">
-                                <circle r="7" fill={genreColor} stroke="#fff" strokeWidth="1" />
-                                <text textAnchor="middle" y="2.5" fontSize="5" fontWeight="bold" fill="#fff">
-                                  {sat.genreName.slice(0, 2).toUpperCase()}
+                              <g transform={`translate(${(artistGraphData.center.x + sat.x) / 2}, ${(artistGraphData.center.y + sat.y) / 2})`}>
+                                <rect x="-18" y="-6" width="36" height="12" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
+                                <text textAnchor="middle" y="3" fontSize="6" fontWeight="bold" fill="#6b7280" className="font-mono">
+                                  CREATED
                                 </text>
                               </g>
                             </g>
-                          );
-                        })}
+                          ))}
 
-                        {/* Central Node (Artist) */}
-                        <g transform={`translate(${artistGraphData.center.x}, ${artistGraphData.center.y})`} className="cursor-default">
-                          <circle r="32" fill="#faf5ff" stroke="#8b2fc9" strokeWidth="3" filter="url(#shadow)" />
-                          {/* Artist Avatar Clipped */}
-                          <foreignObject x="-26" y="-26" width="52" height="52" className="rounded-full overflow-hidden border border-purple-200">
-                            <img 
-                              src={selectedArtist.imageUrl || `https://i.pravatar.cc/150?img=${(selectedArtist.id % 70) + 1}`} 
-                              alt="Avatar" 
-                              className="w-full h-full object-cover"
-                            />
-                          </foreignObject>
-                          {/* Inner glowing effect */}
-                          <circle r="26" fill="none" stroke="#a855f7" strokeWidth="2" className="animate-ping opacity-25" />
+                          {/* Satellite Nodes (Artworks) */}
+                          {artistGraphData.satellites.map((sat: any) => {
+                            const isHighlighted = highlightedNode && highlightedNode.id === sat.artworkId;
+                            const genreColors: Record<string, string> = {
+                              'Impresionismo': '#f59e0b', 'Realismo': '#10b981', 'Surrealismo': '#8b5cf6',
+                              'Arte Abstracto': '#ec4899', 'Cubismo': '#f97316', 'Expresionismo': '#ef4444',
+                              'Barroco': '#6366f1', 'Arte Contemporáneo': '#14b8a6', 'Pop Art': '#e11d48',
+                              'Minimalismo': '#6b7280'
+                            };
+                            const genreColor = genreColors[sat.genreName] || '#94a3b8';
+                            return (
+                              <g 
+                                key={sat.artworkId}
+                                transform={`translate(${sat.x}, ${sat.y})`}
+                                className="cursor-pointer group"
+                                onMouseEnter={() => setHighlightedNode({
+                                  type: 'artwork',
+                                  id: sat.artworkId,
+                                  label: sat.name,
+                                  details: `Precio: $${sat.price} USD | Estado: ${sat.status} | Género: ${sat.genreName}`,
+                                  imageUrl: sat.imageUrl,
+                                  price: sat.price
+                                })}
+                                onMouseLeave={() => setHighlightedNode(null)}
+                              >
+                                <circle 
+                                  r="18" 
+                                  fill={isHighlighted ? '#f0fdf4' : '#ffffff'} 
+                                  stroke={isHighlighted ? genreColor : genreColor} 
+                                  strokeWidth={isHighlighted ? '2.5' : '2'}
+                                  filter="url(#shadow)"
+                                  className="transition-all duration-300"
+                                />
+                                <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#64748b" className="font-mono">
+                                  W{sat.artworkId}
+                                </text>
+                                <text 
+                                  y={sat.angle > 0 && sat.angle < Math.PI ? '26' : '-22'} 
+                                  textAnchor="middle" 
+                                  fontSize="7" 
+                                  fontWeight="semibold" 
+                                  fill="#475569"
+                                  className="truncate max-w-[80px]"
+                                >
+                                  {sat.name.length > 15 ? `${sat.name.slice(0, 12)}...` : sat.name}
+                                </text>
+                                <g transform="translate(11, -11)">
+                                  <circle r="7" fill={genreColor} stroke="#fff" strokeWidth="1" />
+                                  <text textAnchor="middle" y="2.5" fontSize="5" fontWeight="bold" fill="#fff">
+                                    {sat.genreName.slice(0, 2).toUpperCase()}
+                                  </text>
+                                </g>
+                              </g>
+                            );
+                          })}
+
+                          {/* Central Node (Artist) */}
+                          <g transform={`translate(${artistGraphData.center.x}, ${artistGraphData.center.y})`} className="cursor-default">
+                            <circle r="32" fill="#faf5ff" stroke="#8b2fc9" strokeWidth="3" filter="url(#shadow)" />
+                            <foreignObject x="-26" y="-26" width="52" height="52" className="rounded-full overflow-hidden border border-purple-200">
+                              <img 
+                                src={selectedArtist.imageUrl || `https://i.pravatar.cc/150?img=${(selectedArtist.id % 70) + 1}`} 
+                                alt="Avatar" 
+                                className="w-full h-full object-cover"
+                              />
+                            </foreignObject>
+                            <circle r="26" fill="none" stroke="#a855f7" strokeWidth="2" className="animate-ping opacity-25" />
+                          </g>
                         </g>
                       </svg>
+
+                      {/* Reset zoom button */}
+                      {viewTransform.k !== 1 && (
+                        <button onClick={resetView}
+                          className="absolute top-3 right-3 z-10 px-2.5 py-1.5 bg-white/90 border border-gray-200 rounded-lg text-[10px] font-mono font-bold text-gray-600 shadow-sm hover:bg-white hover:border-gray-300 transition-all cursor-pointer backdrop-blur-sm"
+                        >
+                          Reset
+                        </button>
+                      )}
 
                       {/* Floating Detail Tooltip */}
                       <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-purple-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px] transition-all duration-300">
@@ -958,87 +1045,108 @@ export default function Neo4jGraphs() {
                     </div>
 
                     {/* Interactive SVG Sub-Graph Canvas */}
-                    <div className="relative flex-1 border border-dashed border-sky-200 bg-sky-50/10 rounded-2xl overflow-hidden min-h-[320px]">
-                      <svg viewBox="0 0 600 400" className="w-full h-full select-none">
-                        {/* Center lines to satellites */}
-                        {genreGraphData.satellites.map((sat, idx) => (
-                          <g key={idx}>
-                            <line 
-                              x1={genreGraphData.center.x} 
-                              y1={genreGraphData.center.y} 
-                              x2={sat.x} 
-                              y2={sat.y} 
-                              stroke={highlightedNode && highlightedNode.id === sat.artworkId ? '#0ea5e9' : '#cbd5e1'} 
-                              strokeWidth={highlightedNode && highlightedNode.id === sat.artworkId ? '3' : '1.5'} 
-                              strokeDasharray="4 2"
-                              className="transition-all duration-300 animate-pulse"
-                            />
-                            {/* Line relation label */}
-                            <g transform={`translate(${(genreGraphData.center.x + sat.x) / 2}, ${(genreGraphData.center.y + sat.y) / 2})`}>
-                              <rect x="-20" y="-6" width="40" height="12" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
-                              <text textAnchor="middle" y="3" fontSize="5" fontWeight="bold" fill="#6b7280" className="font-mono">
-                                HAS_GENRE
-                              </text>
-                            </g>
-                          </g>
-                        ))}
-
-                        {/* Satellite Nodes (Artworks) */}
-                        {genreGraphData.satellites.map((sat) => {
-                          const isHighlighted = highlightedNode && highlightedNode.id === sat.artworkId;
-                          return (
-                            <g 
-                              key={sat.artworkId}
-                              transform={`translate(${sat.x}, ${sat.y})`}
-                              className="cursor-pointer group"
-                              onMouseEnter={() => setHighlightedNode({
-                                type: 'artwork',
-                                id: sat.artworkId,
-                                label: sat.name,
-                                details: `Precio: $${sat.price} USD | Estado: ${sat.status}`,
-                                imageUrl: sat.imageUrl,
-                                price: sat.price
-                              })}
-                              onMouseLeave={() => setHighlightedNode(null)}
-                            >
-                              <circle 
-                                r="18" 
-                                fill={isHighlighted ? '#f0fdf4' : '#ffffff'} 
-                                stroke={isHighlighted ? '#10b981' : '#cbd5e1'} 
-                                strokeWidth={isHighlighted ? '2.5' : '1.5'}
-                                filter="url(#shadow)"
-                                className="transition-all duration-300"
+                    <div className="relative flex-1 border border-dashed border-sky-200 bg-sky-50/10 rounded-2xl overflow-hidden min-h-[320px]"
+                      style={{ cursor: isPanning.current ? 'grabbing' : 'grab' }}
+                    >
+                      <svg viewBox="0 0 600 400" className="w-full h-full select-none"
+                        onMouseDown={handleSvgMouseDown}
+                        onMouseMove={handleSvgMouseMove}
+                        onMouseUp={handleSvgMouseUp}
+                        onMouseLeave={handleSvgMouseUp}
+                        onWheel={handleSvgWheel}
+                      >
+                        <defs>
+                          <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="4" floodOpacity="0.1" />
+                          </filter>
+                        </defs>
+                        <g transform={`translate(${viewTransform.x},${viewTransform.y}) scale(${viewTransform.k})`}>
+                          {/* Center lines to satellites */}
+                          {genreGraphData.satellites.map((sat, idx) => (
+                            <g key={idx}>
+                              <line 
+                                x1={genreGraphData.center.x} 
+                                y1={genreGraphData.center.y} 
+                                x2={sat.x} 
+                                y2={sat.y} 
+                                stroke={highlightedNode && highlightedNode.id === sat.artworkId ? '#0ea5e9' : '#cbd5e1'} 
+                                strokeWidth={highlightedNode && highlightedNode.id === sat.artworkId ? '3' : '1.5'} 
+                                strokeDasharray="4 2"
+                                className="transition-all duration-300 animate-pulse"
                               />
-                              {/* Short abbreviation inside circle */}
-                              <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#64748b" className="font-mono">
-                                W{sat.artworkId}
-                              </text>
-                              {/* Text label */}
-                              <text 
-                                y={sat.angle > 0 && sat.angle < Math.PI ? '26' : '-22'} 
-                                textAnchor="middle" 
-                                fontSize="7" 
-                                fontWeight="semibold" 
-                                fill="#475569"
-                                className="truncate max-w-[80px]"
-                              >
-                                {sat.name.length > 15 ? `${sat.name.slice(0, 12)}...` : sat.name}
-                              </text>
+                              <g transform={`translate(${(genreGraphData.center.x + sat.x) / 2}, ${(genreGraphData.center.y + sat.y) / 2})`}>
+                                <rect x="-20" y="-6" width="40" height="12" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
+                                <text textAnchor="middle" y="3" fontSize="5" fontWeight="bold" fill="#6b7280" className="font-mono">
+                                  HAS_GENRE
+                                </text>
+                              </g>
                             </g>
-                          );
-                        })}
+                          ))}
 
-                        {/* Central Node (Genre) */}
-                        <g transform={`translate(${genreGraphData.center.x}, ${genreGraphData.center.y})`} className="cursor-default">
-                          <circle r="30" fill="#f0f9ff" stroke="#0284c7" strokeWidth="3" filter="url(#shadow)" />
-                          <g transform="translate(-12, -12)">
-                            <Tag size={24} className="text-sky-600 animate-pulse" />
+                          {/* Satellite Nodes (Artworks) */}
+                          {genreGraphData.satellites.map((sat) => {
+                            const isHighlighted = highlightedNode && highlightedNode.id === sat.artworkId;
+                            return (
+                              <g 
+                                key={sat.artworkId}
+                                transform={`translate(${sat.x}, ${sat.y})`}
+                                className="cursor-pointer group"
+                                onMouseEnter={() => setHighlightedNode({
+                                  type: 'artwork',
+                                  id: sat.artworkId,
+                                  label: sat.name,
+                                  details: `Precio: $${sat.price} USD | Estado: ${sat.status}`,
+                                  imageUrl: sat.imageUrl,
+                                  price: sat.price
+                                })}
+                                onMouseLeave={() => setHighlightedNode(null)}
+                              >
+                                <circle 
+                                  r="18" 
+                                  fill={isHighlighted ? '#f0fdf4' : '#ffffff'} 
+                                  stroke={isHighlighted ? '#10b981' : '#cbd5e1'} 
+                                  strokeWidth={isHighlighted ? '2.5' : '1.5'}
+                                  filter="url(#shadow)"
+                                  className="transition-all duration-300"
+                                />
+                                <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#64748b" className="font-mono">
+                                  W{sat.artworkId}
+                                </text>
+                                <text 
+                                  y={sat.angle > 0 && sat.angle < Math.PI ? '26' : '-22'} 
+                                  textAnchor="middle" 
+                                  fontSize="7" 
+                                  fontWeight="semibold" 
+                                  fill="#475569"
+                                  className="truncate max-w-[80px]"
+                                >
+                                  {sat.name.length > 15 ? `${sat.name.slice(0, 12)}...` : sat.name}
+                                </text>
+                              </g>
+                            );
+                          })}
+
+                          {/* Central Node (Genre) */}
+                          <g transform={`translate(${genreGraphData.center.x}, ${genreGraphData.center.y})`} className="cursor-default">
+                            <circle r="30" fill="#f0f9ff" stroke="#0284c7" strokeWidth="3" filter="url(#shadow)" />
+                            <g transform="translate(-12, -12)">
+                              <Tag size={24} className="text-sky-600 animate-pulse" />
+                            </g>
+                            <text y="42" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0369a1" className="font-display">
+                              {selectedGenre.name}
+                            </text>
                           </g>
-                          <text y="42" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0369a1" className="font-display">
-                            {selectedGenre.name}
-                          </text>
                         </g>
                       </svg>
+
+                      {/* Reset zoom button */}
+                      {viewTransform.k !== 1 && (
+                        <button onClick={resetView}
+                          className="absolute top-3 right-3 z-10 px-2.5 py-1.5 bg-white/90 border border-gray-200 rounded-lg text-[10px] font-mono font-bold text-gray-600 shadow-sm hover:bg-white hover:border-gray-300 transition-all cursor-pointer backdrop-blur-sm"
+                        >
+                          Reset
+                        </button>
+                      )}
 
                       {/* Tooltip */}
                       <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-sky-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px]">
@@ -1201,92 +1309,116 @@ export default function Neo4jGraphs() {
                     </div>
 
                     {/* SVG Neighborhood visualization */}
-                    <div className="relative flex-1 border border-dashed border-emerald-200 bg-emerald-50/10 rounded-2xl overflow-hidden min-h-[250px]">
-                      <svg viewBox="0 0 600 300" className="w-full h-full select-none">
-                        {/* Lines */}
-                        {/* Artwork -> Artist */}
-                        {selectedArtworkNeighborhood.artist && (
-                          <g>
-                            <line x1="300" y1="150" x2="130" y2="150" stroke="#a855f7" strokeWidth="2.5" />
-                            <g transform="translate(215, 150)">
-                              <rect x="-24" y="-7" width="48" height="14" rx="4" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
-                              <text textAnchor="middle" y="3.5" fontSize="6.5" fontWeight="bold" fill="#8b2fc9" className="font-mono">
-                                CREATED
-                              </text>
+                    <div className="relative flex-1 border border-dashed border-emerald-200 bg-emerald-50/10 rounded-2xl overflow-hidden min-h-[250px]"
+                      style={{ cursor: isPanning.current ? 'grabbing' : 'grab' }}
+                    >
+                      <svg viewBox="0 0 600 300" className="w-full h-full select-none"
+                        onMouseDown={handleSvgMouseDown}
+                        onMouseMove={handleSvgMouseMove}
+                        onMouseUp={handleSvgMouseUp}
+                        onMouseLeave={handleSvgMouseUp}
+                        onWheel={handleSvgWheel}
+                      >
+                        <defs>
+                          <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="4" floodOpacity="0.1" />
+                          </filter>
+                        </defs>
+                        <g transform={`translate(${viewTransform.x},${viewTransform.y}) scale(${viewTransform.k})`}>
+                          {/* Lines */}
+                          {/* Artwork -> Artist */}
+                          {selectedArtworkNeighborhood.artist && (
+                            <g>
+                              <line x1="300" y1="150" x2="130" y2="150" stroke="#a855f7" strokeWidth="2.5" />
+                              <g transform="translate(215, 150)">
+                                <rect x="-24" y="-7" width="48" height="14" rx="4" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
+                                <text textAnchor="middle" y="3.5" fontSize="6.5" fontWeight="bold" fill="#8b2fc9" className="font-mono">
+                                  CREATED
+                                </text>
+                              </g>
                             </g>
-                          </g>
-                        )}
-                        {/* Artwork -> Genre */}
-                        {selectedArtworkNeighborhood.genre && (
-                          <g>
-                            <line x1="300" y1="150" x2="470" y2="150" stroke="#0ea5e9" strokeWidth="2.5" />
-                            <g transform="translate(385, 150)">
-                              <rect x="-26" y="-7" width="52" height="14" rx="4" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
-                              <text textAnchor="middle" y="3.5" fontSize="6.5" fontWeight="bold" fill="#0284c7" className="font-mono">
-                                HAS_GENRE
-                              </text>
+                          )}
+                          {/* Artwork -> Genre */}
+                          {selectedArtworkNeighborhood.genre && (
+                            <g>
+                              <line x1="300" y1="150" x2="470" y2="150" stroke="#0ea5e9" strokeWidth="2.5" />
+                              <g transform="translate(385, 150)">
+                                <rect x="-26" y="-7" width="52" height="14" rx="4" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
+                                <text textAnchor="middle" y="3.5" fontSize="6.5" fontWeight="bold" fill="#0284c7" className="font-mono">
+                                  HAS_GENRE
+                                </text>
+                              </g>
                             </g>
-                          </g>
-                        )}
+                          )}
 
-                        {/* Node Artist */}
-                        {selectedArtworkNeighborhood.artist && (
-                          <g transform="translate(130, 150)" className="cursor-pointer" onClick={() => {
-                            setSelectedArtistId(selectedArtworkNeighborhood.artist!.id);
-                            setActiveTab('artists');
-                          }}>
-                            <circle r="34" fill="#faf5ff" stroke="#a855f7" strokeWidth="2" filter="url(#shadow)" />
-                            <foreignObject x="-24" y="-24" width="48" height="48" className="rounded-full overflow-hidden border">
-                              <img 
-                                src={selectedArtworkNeighborhood.artist.imageUrl || `https://i.pravatar.cc/150?img=${(selectedArtworkNeighborhood.artist.id % 70) + 1}`} 
-                                alt="Artist" 
-                                className="w-full h-full object-cover" 
-                              />
+                          {/* Node Artist */}
+                          {selectedArtworkNeighborhood.artist && (
+                            <g transform="translate(130, 150)" className="cursor-pointer" onClick={() => {
+                              setSelectedArtistId(selectedArtworkNeighborhood.artist!.id);
+                              setActiveTab('artists');
+                            }}>
+                              <circle r="34" fill="#faf5ff" stroke="#a855f7" strokeWidth="2" filter="url(#shadow)" />
+                              <foreignObject x="-24" y="-24" width="48" height="48" className="rounded-full overflow-hidden border">
+                                <img 
+                                  src={selectedArtworkNeighborhood.artist.imageUrl || `https://i.pravatar.cc/150?img=${(selectedArtworkNeighborhood.artist.id % 70) + 1}`} 
+                                  alt="Artist" 
+                                  className="w-full h-full object-cover" 
+                                />
+                              </foreignObject>
+                              <text y="48" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#7e22ce" className="font-sans">
+                                {selectedArtworkNeighborhood.artist.name} {selectedArtworkNeighborhood.artist.lastName.slice(0, 1)}.
+                              </text>
+                              <text y="58" textAnchor="middle" fontSize="6" fontWeight="semibold" fill="#a21caf" className="font-mono">
+                                (:Artist)
+                              </text>
+                            </g>
+                          )}
+
+                          {/* Node Genre */}
+                          {selectedArtworkNeighborhood.genre && (
+                            <g transform="translate(470, 150)" className="cursor-pointer" onClick={() => {
+                              setSelectedGenreId(selectedArtworkNeighborhood.genre!.id);
+                              setActiveTab('genres');
+                            }}>
+                              <circle r="30" fill="#f0f9ff" stroke="#0ea5e9" strokeWidth="2" filter="url(#shadow)" />
+                              <g transform="translate(-10, -10)">
+                                <Tag size={20} className="text-sky-500" />
+                              </g>
+                              <text y="44" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0369a1" className="font-sans">
+                                {selectedArtworkNeighborhood.genre.name}
+                              </text>
+                              <text y="54" textAnchor="middle" fontSize="6" fontWeight="semibold" fill="#0369a1" className="font-mono">
+                                (:Genre)
+                              </text>
+                            </g>
+                          )}
+
+                          {/* Node Artwork (Center) */}
+                          <g transform="translate(300, 150)">
+                            <circle r="38" fill="#f0fdf4" stroke="#10b981" strokeWidth="3" filter="url(#shadow)" />
+                            <foreignObject x="-28" y="-28" width="56" height="56" className="rounded-full overflow-hidden border">
+                              <img src={selectedArtwork.imageUrl} alt="Artwork" className="w-full h-full object-cover" />
                             </foreignObject>
-                            <text y="48" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#7e22ce" className="font-sans">
-                              {selectedArtworkNeighborhood.artist.name} {selectedArtworkNeighborhood.artist.lastName.slice(0, 1)}.
+                            <circle r="38" fill="none" stroke="#34d399" strokeWidth="2" className="animate-ping opacity-25" />
+                            <text y="52" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#065f46" className="font-sans">
+                              Obra #{selectedArtwork.artworkId}
                             </text>
-                            <text y="58" textAnchor="middle" fontSize="6" fontWeight="semibold" fill="#a21caf" className="font-mono">
-                              (:Artist)
-                            </text>
-                          </g>
-                        )}
-
-                        {/* Node Genre */}
-                        {selectedArtworkNeighborhood.genre && (
-                          <g transform="translate(470, 150)" className="cursor-pointer" onClick={() => {
-                            setSelectedGenreId(selectedArtworkNeighborhood.genre!.id);
-                            setActiveTab('genres');
-                          }}>
-                            <circle r="30" fill="#f0f9ff" stroke="#0ea5e9" strokeWidth="2" filter="url(#shadow)" />
-                            <g transform="translate(-10, -10)">
-                              <Tag size={20} className="text-sky-500" />
-                            </g>
-                            <text y="44" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0369a1" className="font-sans">
-                              {selectedArtworkNeighborhood.genre.name}
-                            </text>
-                            <text y="54" textAnchor="middle" fontSize="6" fontWeight="semibold" fill="#0369a1" className="font-mono">
-                              (:Genre)
+                            <text y="62" textAnchor="middle" fontSize="6" fontWeight="semibold" fill="#065f46" className="font-mono">
+                              (:Artwork)
                             </text>
                           </g>
-                        )}
-
-                        {/* Node Artwork (Center) */}
-                        <g transform="translate(300, 150)">
-                          <circle r="38" fill="#f0fdf4" stroke="#10b981" strokeWidth="3" filter="url(#shadow)" />
-                          <foreignObject x="-28" y="-28" width="56" height="56" className="rounded-full overflow-hidden border">
-                            <img src={selectedArtwork.imageUrl} alt="Artwork" className="w-full h-full object-cover" />
-                          </foreignObject>
-                          <circle r="38" fill="none" stroke="#34d399" strokeWidth="2" className="animate-ping opacity-25" />
-                          <text y="52" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#065f46" className="font-sans">
-                            Obra #{selectedArtwork.artworkId}
-                          </text>
-                          <text y="62" textAnchor="middle" fontSize="6" fontWeight="semibold" fill="#065f46" className="font-mono">
-                            (:Artwork)
-                          </text>
                         </g>
                       </svg>
                       
+                      {/* Reset zoom button */}
+                      {viewTransform.k !== 1 && (
+                        <button onClick={resetView}
+                          className="absolute top-3 right-3 z-10 px-2.5 py-1.5 bg-white/90 border border-gray-200 rounded-lg text-[10px] font-mono font-bold text-gray-600 shadow-sm hover:bg-white hover:border-gray-300 transition-all cursor-pointer backdrop-blur-sm"
+                        >
+                          Reset
+                        </button>
+                      )}
+
                       <div className="absolute top-2 right-2 text-[8px] font-mono text-gray-400 bg-white/80 px-1.5 py-0.5 border rounded">
                         Tip: Haz click en los nodos vecinos para navegar hacia sus grafos individuales.
                       </div>
@@ -1388,92 +1520,116 @@ export default function Neo4jGraphs() {
                     </div>
 
                         {/* Interactive SVG Sub-Graph Canvas */}
-                        <div className="relative flex-1 border border-dashed border-rose-200 bg-rose-50/10 rounded-2xl overflow-hidden min-h-[320px]">
-                          <svg viewBox="0 0 600 400" className="w-full h-full select-none">
-                            {/* Center lines to satellites */}
-                            {buyerGraphData.satellites.map((sat: any, idx) => (
-                              <g key={idx}>
-                                <line 
-                                  x1={buyerGraphData.center.x} 
-                                  y1={buyerGraphData.center.y} 
-                                  x2={sat.x} 
-                                  y2={sat.y} 
-                                  stroke={highlightedNode && highlightedNode.id === sat.artworkId ? (sat.isBought ? '#f43f5e' : '#f59e0b') : (sat.isBought ? '#fb7185' : '#fcd34d')} 
-                                  strokeWidth={highlightedNode && highlightedNode.id === sat.artworkId ? '3' : '1.5'} 
-                                  strokeDasharray={sat.isBought ? 'none' : '5 3'}
-                                  className="transition-all duration-300"
-                                />
-                                <g transform={`translate(${(buyerGraphData.center.x + sat.x) / 2}, ${(buyerGraphData.center.y + sat.y) / 2})`}>
-                                  <rect x="-22" y="-7" width="44" height="14" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
-                                  <text textAnchor="middle" y="3.5" fontSize="5.5" fontWeight="bold" fill={sat.isBought ? '#e11d48' : '#d97706'} className="font-mono">
-                                    {sat.isBought ? 'BOUGHT' : 'SAW'}
-                                  </text>
-                                </g>
-                              </g>
-                            ))}
-
-                            {/* Satellite Nodes (Artworks bought/saw) */}
-                            {buyerGraphData.satellites.map((sat: any) => {
-                              const isHighlighted = highlightedNode && highlightedNode.id === sat.artworkId;
-                              const borderColor = sat.isBought ? (isHighlighted ? '#e11d48' : '#f43f5e') : (isHighlighted ? '#d97706' : '#f59e0b');
-                              return (
-                                <g 
-                                  key={sat.artworkId}
-                                  transform={`translate(${sat.x}, ${sat.y})`}
-                                  className="cursor-pointer group"
-                                  onMouseEnter={() => setHighlightedNode({
-                                    type: 'artwork',
-                                    id: sat.artworkId,
-                                    label: sat.name,
-                                    details: `Precio: $${sat.price} USD | Estado: ${sat.status} | Relación: ${sat.isBought ? 'BOUGHT' : 'SAW'}`,
-                                    imageUrl: sat.imageUrl,
-                                    price: sat.price
-                                  })}
-                                  onMouseLeave={() => setHighlightedNode(null)}
-                                >
-                                  <circle 
-                                    r="18" 
-                                    fill={isHighlighted ? (sat.isBought ? '#fdf2f8' : '#fffbeb') : '#ffffff'} 
-                                    stroke={borderColor} 
-                                    strokeWidth={isHighlighted ? '2.5' : '1.5'}
-                                    strokeDasharray={sat.isBought ? 'none' : '4 2'}
-                                    filter="url(#shadow)"
+                        <div className="relative flex-1 border border-dashed border-rose-200 bg-rose-50/10 rounded-2xl overflow-hidden min-h-[320px]"
+                          style={{ cursor: isPanning.current ? 'grabbing' : 'grab' }}
+                        >
+                          <svg viewBox="0 0 600 400" className="w-full h-full select-none"
+                            onMouseDown={handleSvgMouseDown}
+                            onMouseMove={handleSvgMouseMove}
+                            onMouseUp={handleSvgMouseUp}
+                            onMouseLeave={handleSvgMouseUp}
+                            onWheel={handleSvgWheel}
+                          >
+                            <defs>
+                              <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                                <feDropShadow dx="0" dy="4" stdDeviation="4" floodOpacity="0.1" />
+                              </filter>
+                            </defs>
+                            <g transform={`translate(${viewTransform.x},${viewTransform.y}) scale(${viewTransform.k})`}>
+                              {/* Center lines to satellites */}
+                              {buyerGraphData.satellites.map((sat: any, idx) => (
+                                <g key={idx}>
+                                  <line 
+                                    x1={buyerGraphData.center.x} 
+                                    y1={buyerGraphData.center.y} 
+                                    x2={sat.x} 
+                                    y2={sat.y} 
+                                    stroke={highlightedNode && highlightedNode.id === sat.artworkId ? (sat.isBought ? '#f43f5e' : '#f59e0b') : (sat.isBought ? '#fb7185' : '#fcd34d')} 
+                                    strokeWidth={highlightedNode && highlightedNode.id === sat.artworkId ? '3' : '1.5'} 
+                                    strokeDasharray={sat.isBought ? 'none' : '5 3'}
                                     className="transition-all duration-300"
                                   />
-                                  <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#64748b" className="font-mono">
-                                    W{sat.artworkId}
-                                  </text>
-                                  <text 
-                                    y={sat.angle > 0 && sat.angle < Math.PI ? '26' : '-22'} 
-                                    textAnchor="middle" 
-                                    fontSize="7" 
-                                    fontWeight="semibold" 
-                                    fill="#475569"
-                                    className="truncate max-w-[80px]"
-                                  >
-                                    {sat.name.length > 15 ? `${sat.name.slice(0, 12)}...` : sat.name}
-                                  </text>
-                                  <g transform="translate(11, -11)">
-                                    <circle r="7" fill={sat.isBought ? '#e11d48' : '#d97706'} stroke="#fff" strokeWidth="1" />
-                                    <text textAnchor="middle" y="2.5" fontSize="5" fontWeight="bold" fill="#fff">
-                                      {sat.isBought ? 'B' : 'S'}
+                                  <g transform={`translate(${(buyerGraphData.center.x + sat.x) / 2}, ${(buyerGraphData.center.y + sat.y) / 2})`}>
+                                    <rect x="-22" y="-7" width="44" height="14" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
+                                    <text textAnchor="middle" y="3.5" fontSize="5.5" fontWeight="bold" fill={sat.isBought ? '#e11d48' : '#d97706'} className="font-mono">
+                                      {sat.isBought ? 'BOUGHT' : 'SAW'}
                                     </text>
                                   </g>
                                 </g>
-                              );
-                            })}
+                              ))}
 
-                        {/* Central Node (Buyer) */}
-                        <g transform={`translate(${buyerGraphData.center.x}, ${buyerGraphData.center.y})`} className="cursor-default">
-                          <circle r="30" fill="#fff1f2" stroke="#e11d48" strokeWidth="3" filter="url(#shadow)" />
-                          <g transform="translate(-11, -11)">
-                            <ShoppingCart size={22} className="text-rose-600 animate-pulse" />
-                          </g>
-                          <text y="42" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#be123c" className="font-display">
-                            {selectedBuyer.name}
-                          </text>
-                        </g>
-                      </svg>
+                              {/* Satellite Nodes (Artworks bought/saw) */}
+                              {buyerGraphData.satellites.map((sat: any) => {
+                                const isHighlighted = highlightedNode && highlightedNode.id === sat.artworkId;
+                                const borderColor = sat.isBought ? (isHighlighted ? '#e11d48' : '#f43f5e') : (isHighlighted ? '#d97706' : '#f59e0b');
+                                return (
+                                  <g 
+                                    key={sat.artworkId}
+                                    transform={`translate(${sat.x}, ${sat.y})`}
+                                    className="cursor-pointer group"
+                                    onMouseEnter={() => setHighlightedNode({
+                                      type: 'artwork',
+                                      id: sat.artworkId,
+                                      label: sat.name,
+                                      details: `Precio: $${sat.price} USD | Estado: ${sat.status} | Relación: ${sat.isBought ? 'BOUGHT' : 'SAW'}`,
+                                      imageUrl: sat.imageUrl,
+                                      price: sat.price
+                                    })}
+                                    onMouseLeave={() => setHighlightedNode(null)}
+                                  >
+                                    <circle 
+                                      r="18" 
+                                      fill={isHighlighted ? (sat.isBought ? '#fdf2f8' : '#fffbeb') : '#ffffff'} 
+                                      stroke={borderColor} 
+                                      strokeWidth={isHighlighted ? '2.5' : '1.5'}
+                                      strokeDasharray={sat.isBought ? 'none' : '4 2'}
+                                      filter="url(#shadow)"
+                                      className="transition-all duration-300"
+                                    />
+                                    <text textAnchor="middle" y="3" fontSize="8" fontWeight="bold" fill="#64748b" className="font-mono">
+                                      W{sat.artworkId}
+                                    </text>
+                                    <text 
+                                      y={sat.angle > 0 && sat.angle < Math.PI ? '26' : '-22'} 
+                                      textAnchor="middle" 
+                                      fontSize="7" 
+                                      fontWeight="semibold" 
+                                      fill="#475569"
+                                      className="truncate max-w-[80px]"
+                                    >
+                                      {sat.name.length > 15 ? `${sat.name.slice(0, 12)}...` : sat.name}
+                                    </text>
+                                    <g transform="translate(11, -11)">
+                                      <circle r="7" fill={sat.isBought ? '#e11d48' : '#d97706'} stroke="#fff" strokeWidth="1" />
+                                      <text textAnchor="middle" y="2.5" fontSize="5" fontWeight="bold" fill="#fff">
+                                        {sat.isBought ? 'B' : 'S'}
+                                      </text>
+                                    </g>
+                                  </g>
+                                );
+                              })}
+
+                              {/* Central Node (Buyer) */}
+                              <g transform={`translate(${buyerGraphData.center.x}, ${buyerGraphData.center.y})`} className="cursor-default">
+                                <circle r="30" fill="#fff1f2" stroke="#e11d48" strokeWidth="3" filter="url(#shadow)" />
+                                <g transform="translate(-11, -11)">
+                                  <ShoppingCart size={22} className="text-rose-600 animate-pulse" />
+                                </g>
+                                <text y="42" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#be123c" className="font-display">
+                                  {selectedBuyer.name}
+                                </text>
+                              </g>
+                            </g>
+                          </svg>
+
+                          {/* Reset zoom button */}
+                          {viewTransform.k !== 1 && (
+                            <button onClick={resetView}
+                              className="absolute top-3 right-3 z-10 px-2.5 py-1.5 bg-white/90 border border-gray-200 rounded-lg text-[10px] font-mono font-bold text-gray-600 shadow-sm hover:bg-white hover:border-gray-300 transition-all cursor-pointer backdrop-blur-sm"
+                            >
+                              Reset
+                            </button>
+                          )}
 
                       {/* Tooltip */}
                       <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-rose-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px]">
