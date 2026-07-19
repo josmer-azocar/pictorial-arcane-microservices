@@ -19,6 +19,17 @@ function Artwork() {
     const [modoIA, setModoIA] = useState(false);
     const [aiMessage, setAiMessage] = useState('');
     const [showBubble, setShowBubble] = useState(false);
+    const [capiState, setCapiState] = useState('saludo');
+
+    const CAPI_GIFS = {
+        saludo: '/imagen/emocionesCapi/saludo.gif',
+        buscando: '/imagen/emocionesCapi/cafe.gif',
+        respirando: '/imagen/emocionesCapi/respiarr.gif',
+        triste: '/imagen/emocionesCapi/triste.gif',
+        bloqueado: '/imagen/emocionesCapi/x.gif',
+    };
+
+    const TABU_MESSAGE = 'No podemos procesar ese tipo de búsquedas.';
 
     useEffect(() => {
         if (modoIA) {
@@ -78,8 +89,9 @@ function Artwork() {
         idArtist = sortConfig.idArtist,
         sortBy = sortConfig.sortBy,
         direction = sortConfig.direction,
-        title = searchTerm) => {
-        isLoad(true);
+        title = searchTerm,
+        showLoading = true) => {
+        if (showLoading) isLoad(true);
         try {
             setError("");
             // El backend pagina antes de que nosotros podamos filtrar por status, así que
@@ -125,7 +137,7 @@ function Artwork() {
             setError("No se pudo mostrar. Error del servidor");
 
         } finally {
-            isLoad(false);
+            if (showLoading) isLoad(false);
         }
     }
 
@@ -133,19 +145,32 @@ function Artwork() {
     // candidatos ya rankeados por similitud; paginamos ese pool acá igual que en
     // getArt, filtrando solo AVAILABLE.
     const getArtIA = async (page = 0) => {
+        setShowBubble(false);
         if (!searchTerm.trim()) {
             setAiMessage('Escribe algo para buscar con IA.');
             setWork({ content: [], totalPages: 0, number: 0 });
+            setCapiState('saludo');
             return;
         }
         isLoad(true);
+        setCapiState('buscando');
+        setAiMessage('');
         try {
             setError("");
             const response = await searchSmartArtworks(searchTerm, 0, 100);
-            setAiMessage(response?.mensaje || '');
+            const mensaje = response?.mensaje || '';
+            setAiMessage(mensaje);
 
-            const catalog = await getAllArtworks();
-            const mongoIdByArtworkId = new Map(catalog.map(a => [String(a.artworkId), a.id]));
+            // El catálogo solo se usa para resolver el id de Mongo de cada obra
+            // encontrada; si esta llamada falla no debe tumbar toda la búsqueda IA
+            // ni el estado del capibara (ver catch general más abajo).
+            let mongoIdByArtworkId = new Map();
+            try {
+                const catalog = await getAllArtworks();
+                mongoIdByArtworkId = new Map(catalog.map(a => [String(a.artworkId), a.id]));
+            } catch (catalogError) {
+                console.error("Error al cargar el catálogo de obras:", catalogError);
+            }
 
             const availableArt = (response?.obras?.content || [])
                 .filter(art => art.status === 'AVAILABLE')
@@ -160,6 +185,14 @@ function Artwork() {
                     genre: art.genre?.name || 'General'
                 }));
 
+            if (mensaje.trim() === TABU_MESSAGE) {
+                setCapiState('bloqueado');
+            } else if (availableArt.length === 0) {
+                setCapiState('triste');
+            } else {
+                setCapiState('respirando');
+            }
+
             const totalPages = Math.ceil(availableArt.length / PAGE_SIZE) || 0;
             const safePage = Math.min(page, Math.max(totalPages - 1, 0));
             const pageContent = availableArt.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
@@ -172,6 +205,7 @@ function Artwork() {
         } catch (error) {
             console.error("Smart search failed:", error);
             setAiMessage('');
+            setCapiState('saludo');
             setError("No se pudo completar la búsqueda con IA.");
         } finally {
             isLoad(false);
@@ -195,7 +229,9 @@ function Artwork() {
         );
     }
 
-    
+    const hasActiveFilters = Boolean(
+        minPrice || maxPrice || sortConfig.idGenre || sortConfig.idArtist || searchTerm.trim()
+    );
 
     return (
         <section id="art-display">
@@ -210,9 +246,16 @@ function Artwork() {
                                 <div className="bubble-text">¿Cómo funciona? Ingresas lo que deseas buscar.</div>
                             </div>
                         )}
+                        {!showBubble && aiMessage && (
+                            <div className="speech-bubble">
+                                <button className="bubble-close" onClick={() => setAiMessage('')}>×</button>
+                                <div className="bubble-text">{aiMessage}</div>
+                            </div>
+                        )}
                         <img
-                            src="/imagen/emocionesCapi/saludo.gif"
-                            alt="Saludo"
+                            key={capiState}
+                            src={CAPI_GIFS[capiState]}
+                            alt="Capibara asistente IA"
                             className="saludo-gif"
                         />
                     </>
@@ -235,10 +278,10 @@ function Artwork() {
                   const nextMode = !modoIA;
                   setModoIA(nextMode);
                   setAiMessage('');
-                  if (nextMode) {
-                    if (searchTerm.trim()) getArtIA(0);
-                  } else {
-                    getArt(0);
+                  setCapiState('saludo');
+                  setSearchTerm('');
+                  if (!nextMode) {
+                    getArt(0, undefined, undefined, undefined, undefined, '', false);
                   }
                 }}
               >
@@ -250,7 +293,6 @@ function Artwork() {
               </button>
               <button className="search-btn" onClick={() => doSearch(0)}>Buscar</button>
             </div>
-            {modoIA && aiMessage && <p className="ai-message">{aiMessage}</p>}
             </div>
             {!modoIA && (
               <div className="filter-container">
@@ -302,14 +344,22 @@ function Artwork() {
                   ))}
                 </select>
                 </div>
-                <button className="filter-clear" onClick={() => {
-                  setMinPrice('');
-                  setMaxPrice('');
-                  getArt(0, null, null, 'price', 'ASC', '');
-                }}>Limpiar</button>
+                <button
+                  className="filter-clear"
+                  disabled={!hasActiveFilters}
+                  onClick={() => {
+                    setMinPrice('');
+                    setMaxPrice('');
+                    setSearchTerm('');
+                    getArt(0, null, null, 'price', 'ASC', '');
+                  }}
+                >Limpiar</button>
               </div>
             )}
             <section id="art-grid">
+                {modoIA && (works.content || []).length === 0 && (
+                    <p className="no-results-message">No hay obras para tu búsqueda.</p>
+                )}
                 {(works.content || []).map((artPiece) => (
                     <div className="art-piece" key={artPiece.id}>
                       <Link to={`/artwork/${artPiece.id}`}>
