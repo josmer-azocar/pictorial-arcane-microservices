@@ -93,7 +93,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#05020a] text-white font-sans selection:bg-arcane-lavender/50 selection:text-white">
+    <div className="bg-[#f8f6fc] text-[#2d0050] font-sans selection:bg-arcane-lavender/50 selection:text-white">
       <Navbar activeSection={SLIDE_IDS[currentSlide]} onNavigate={goToSlide} />
 
       <main className="h-screen w-full overflow-hidden relative">
@@ -102,14 +102,14 @@ export default function App() {
           style={{ transform: `translateY(-${currentSlide * 100}vh)` }}
         >
           <div id="hero" className="h-screen w-full flex-shrink-0 overflow-y-auto"><Hero onNavigate={goToSlide} /></div>
-          <div id="team" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><Team /></div>
-          <div id="architecture" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><ArchitectureDiagram onNodeHover={handleEngineHighlight} /></div>
-          <div id="cap" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><CapTheorem onEngineSelect={handleEngineHighlight} /></div>
-          <div id="dictionary" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><PolyglotDictionary onEngineSelect={handleEngineHighlight} /></div>
-          <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><Neo4jGraphs /></div>
-          <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><ApiDocumentation /></div>
-          <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><About /></div>
-          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><LiveDemo onStepChange={handleStepChange} onNavigateFrontend={() => window.open('http://localhost:5173', '_blank')} /></div>
+          <div id="team" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><Team /></div>
+          <div id="architecture" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><ArchitectureDiagram onNodeHover={handleEngineHighlight} /></div>
+          <div id="cap" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><CapTheorem onEngineSelect={handleEngineHighlight} /></div>
+          <div id="dictionary" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><PolyglotDictionary onEngineSelect={handleEngineHighlight} /></div>
+          <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><Neo4jGraphs /></div>
+          <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><ApiDocumentation /></div>
+          <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><About /></div>
+          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)'}}><LiveDemo onStepChange={handleStepChange} onNavigateFrontend={() => window.open('http://localhost:5173', '_blank')} /></div>
           <div id="closing" className="h-screen w-full flex-shrink-0 overflow-y-auto"><ClosingSlide /><Footer /></div>
         </div>
 

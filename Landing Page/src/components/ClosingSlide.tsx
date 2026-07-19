@@ -17,7 +17,7 @@ function useStarCanvas(canvasRef: React.RefObject<HTMLCanvasElement>) {
 
     let animId: number;
     const stars: Star[] = [];
-    const COUNT = 120;
+    const COUNT = 60;
 
     const resize = () => {
       canvas.width = canvas.offsetWidth;
@@ -30,7 +30,7 @@ function useStarCanvas(canvasRef: React.RefObject<HTMLCanvasElement>) {
       stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 1.8 + 0.3,
+        radius: Math.random() * 1.5 + 0.3,
         alpha: Math.random(),
         speed: Math.random() * 0.015 + 0.005,
         phase: Math.random() * Math.PI * 2,
@@ -45,7 +45,7 @@ function useStarCanvas(canvasRef: React.RefObject<HTMLCanvasElement>) {
         const alpha = 0.15 + 0.85 * Math.abs(Math.sin(t * s.speed + s.phase));
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(192, 132, 252, ${alpha * 0.8})`;
+        ctx.fillStyle = `rgba(124, 58, 237, ${alpha * 0.25})`;
         ctx.fill();
       }
       animId = requestAnimationFrame(draw);
@@ -71,7 +71,7 @@ export default function ClosingSlide() {
 
   return (
     <section className="h-full w-full relative overflow-hidden flex items-center justify-center"
-      style={{ background: 'radial-gradient(ellipse at 40% 40%, #1a0530 0%, #0a0012 60%, #000 100%)' }}
+      style={{ background: 'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)' }}
     >
       {/* Star canvas */}
       <canvas
@@ -81,12 +81,12 @@ export default function ClosingSlide() {
       />
 
       {/* Large ambient glows */}
-      <div className="absolute w-[600px] h-[600px] rounded-full blur-[160px] opacity-[0.08] pointer-events-none -top-24 -left-24 bg-arcane-purple" />
-      <div className="absolute w-[500px] h-[500px] rounded-full blur-[140px] opacity-[0.06] pointer-events-none -bottom-20 -right-20 bg-arcane-lavender" />
+      <div className="absolute w-[600px] h-[600px] rounded-full blur-[160px] opacity-[0.05] pointer-events-none -top-24 -left-24 bg-arcane-purple" />
+      <div className="absolute w-[500px] h-[500px] rounded-full blur-[140px] opacity-[0.04] pointer-events-none -bottom-20 -right-20 bg-arcane-lavender" />
 
       {/* Dot grid */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{ backgroundImage: 'radial-gradient(#8b2fc9 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: 'radial-gradient(#7c3aed 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}
       />
 
       <div className="flex items-center justify-center h-full w-full relative z-10 px-6">
@@ -104,18 +104,18 @@ export default function ClosingSlide() {
             <span
               className="font-logo text-5xl md:text-6xl block"
               style={{
-                background: 'linear-gradient(135deg, #7c3aed 0%, #c084fc 30%, #ffd700 55%, #c084fc 80%, #7c3aed 100%)',
+                background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 30%, #ffd700 55%, #a855f7 80%, #7c3aed 100%)',
                 backgroundSize: '300% auto',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
                 animation: 'gradient-shift 4s linear infinite',
-                filter: 'drop-shadow(0 0 20px rgba(192, 132, 252, 0.4))',
+                filter: 'drop-shadow(0 0 16px rgba(124, 58, 237, 0.25))',
               }}
             >
               PICTORIAL ARCANE
             </span>
-            <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest mt-3">
+            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-3">
               Microservicios · Políglota · Escalable
             </p>
 
@@ -124,12 +124,9 @@ export default function ClosingSlide() {
               {['PostgreSQL', 'MongoDB', 'Cassandra', 'Neo4j', 'Spring Boot'].map((tech, i) => (
                 <span
                   key={tech}
-                  className="px-3 py-1 rounded-full text-[9px] font-mono uppercase tracking-wider border animate-slide-up"
+                  className="px-3 py-1 rounded-full text-[9px] font-mono uppercase tracking-wider border animate-slide-up bg-purple-50 text-arcane-purple border-arcane-purple/20"
                   style={{
                     animationDelay: `${0.5 + i * 0.1}s`,
-                    borderColor: 'rgba(192, 132, 252, 0.2)',
-                    color: 'rgba(192, 132, 252, 0.7)',
-                    background: 'rgba(124, 58, 237, 0.06)',
                   }}
                 >
                   {tech}
@@ -143,8 +140,8 @@ export default function ClosingSlide() {
             <div
               className="absolute inset-0"
               style={{
-                background: 'linear-gradient(to bottom, transparent, rgba(192, 132, 252, 0.5), transparent)',
-                boxShadow: '0 0 8px rgba(192, 132, 252, 0.3)',
+                background: 'linear-gradient(to bottom, transparent, rgba(124, 58, 237, 0.25), transparent)',
+                boxShadow: '0 0 8px rgba(124, 58, 237, 0.15)',
                 animation: 'pulseGlow 3s ease-in-out infinite',
               }}
             />
@@ -152,19 +149,18 @@ export default function ClosingSlide() {
 
           {/* UNEG */}
           <div className="text-center">
-            <span className="font-display font-bold text-2xl md:text-3xl text-white/80 tracking-tight block">
+            <span className="font-display font-bold text-2xl md:text-3xl text-[#1f1a3a] tracking-tight block">
               UNEG
             </span>
-            <p className="text-[10px] font-mono text-white/35 uppercase tracking-widest mt-2 max-w-[200px] mx-auto">
+            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-2 max-w-[200px] mx-auto">
               Universidad Nacional Experimental de Guayana
             </p>
             <div className="mt-5 relative inline-block">
-              <div className="absolute inset-0 blur-xl opacity-30 bg-white rounded-full" />
               <img
                 src="/assets/uneg-logo.png"
                 alt="UNEG"
                 className="relative w-[160px] mx-auto object-contain"
-                style={{ filter: 'brightness(1.1) drop-shadow(0 4px 12px rgba(255,255,255,0.1))' }}
+                style={{ filter: 'drop-shadow(0 4px 12px rgba(124,58,237,0.12))' }}
               />
             </div>
           </div>

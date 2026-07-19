@@ -81,25 +81,25 @@ export default function Team() {
       className="pt-24 pb-6 px-4 sm:px-6 lg:px-8 relative overflow-hidden min-h-screen flex items-center"
     >
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-arcane-purple-dark/20 via-[#0a0515]/60 to-arcane-lavender/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-purple-50 pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-arcane-purple/[0.04] rounded-full blur-[130px]" />
       <div className="absolute top-12 left-12 w-64 h-64 bg-arcane-lavender/[0.04] rounded-full blur-[100px]" />
 
       {/* Dot grid subtle background */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{ backgroundImage: 'radial-gradient(#8b2fc9 1px, transparent 1px)', backgroundSize: '32px 32px' }}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02]"
+        style={{ backgroundImage: 'radial-gradient(#7c3aed 1px, transparent 1px)', backgroundSize: '32px 32px' }}
       />
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
         {/* Section Header */}
         <div className="text-center mb-10 pt-6">
-          <span className="inline-block text-[10px] font-mono uppercase tracking-[0.25em] text-arcane-purple bg-arcane-purple/8 px-4 py-1.5 rounded-full border border-arcane-purple/20 mb-4">
+          <span className="inline-block text-[10px] font-mono uppercase tracking-[0.25em] text-arcane-purple bg-arcane-purple/10 px-4 py-1.5 rounded-full border border-arcane-purple/20 mb-4">
             ✦ Equipo
           </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
+          <h2 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 tracking-tight">
             AUTORES DEL PROYECTO ACADÉMICO
           </h2>
-          <p className="font-sans text-purple-200/80 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mt-3">
+          <p className="font-sans text-gray-500 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mt-3">
             Presentadores técnicos para la defensa oral de Sistemas de Bases de Datos II de la UNEG.
             Cinco ingenieros abocados a cada dimensión del paradigma de almacenamiento políglota.
           </p>
@@ -110,7 +110,7 @@ export default function Team() {
           {/* Left Arrow */}
           <button
             onClick={goPrev}
-            className="absolute left-2 sm:left-4 z-30 w-12 h-12 rounded-full bg-[#150a2e]/90 border border-purple-500/20 shadow-lg flex items-center justify-center text-arcane-lavender hover:bg-arcane-purple hover:text-white transition-all duration-300 cursor-pointer hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
+              className="absolute left-2 sm:left-4 z-30 w-12 h-12 rounded-full bg-white/90 border border-purple-200 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all duration-300 cursor-pointer hover:shadow-[0_0_20px_rgba(124,58,237,0.3)]"
             aria-label="Anterior"
           >
             <ChevronLeft size={24} />
@@ -118,8 +118,8 @@ export default function Team() {
 
           {/* Cards Wrapper */}
           <div className="relative flex items-center justify-center w-full h-80 sm:h-96 overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
-            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#05020a] to-transparent z-10 pointer-events-none" />
-            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#05020a] to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
             {members.map((member, i) => {
               const offset = i - currentIndex;
@@ -130,7 +130,7 @@ export default function Team() {
               const translateX = offset * 90;
               const translateZ = isCenter ? 80 : absOffset === 1 ? 20 : -40;
               const rotateY = offset * -10;
-              const opacity = Math.max(0.35, 1 - absOffset * 0.28);
+              const opacity = Math.max(0.45, 1 - absOffset * 0.22);
 
               return (
                 <div
@@ -138,8 +138,8 @@ export default function Team() {
                   onClick={() => goToIndex(i)}
                   className={`absolute flex-shrink-0 w-56 sm:w-64 rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center gap-4 transition-all duration-500 cursor-pointer ${
                     isCenter
-                      ? 'bg-[#150a2e]/85 backdrop-blur-md border border-purple-500/30'
-                      : 'bg-[#0b041a]/60 backdrop-blur-sm border border-purple-500/10 shadow-lg'
+                      ? 'bg-white backdrop-blur-md border border-purple-200/60 shadow-xl'
+                      : 'bg-white/70 backdrop-blur-sm border border-purple-100/50 shadow-md'
                   }`}
                   style={{
                     transform: `translateX(${translateX}px) translateZ(${translateZ}px) scale(${scale}) rotateY(${rotateY}deg)`,
@@ -149,11 +149,11 @@ export default function Team() {
                     backdropFilter: isCenter ? 'none' : 'blur(2px)',
                     border: isCenter
                       ? `2px solid transparent`
-                      : '2px solid rgba(124, 58, 237, 0.15)',
+                      : '1px solid rgba(124, 58, 237, 0.12)',
                     backgroundClip: 'padding-box',
                     boxShadow: isCenter
-                      ? `0 24px 48px rgba(124,58,237,0.22), 0 0 0 2px ${member.color}40, 0 0 40px ${member.color}25`
-                      : undefined,
+                      ? `0 12px 32px rgba(124,58,237,0.10), 0 0 0 2px ${member.color}40, 0 0 30px ${member.color}15`
+                      : '0 4px 12px rgba(0,0,0,0.04)',
                   }}
                 >
                   {/* Holographic border for center card */}
@@ -161,7 +161,7 @@ export default function Team() {
                     <div
                       className="absolute inset-0 rounded-2xl pointer-events-none"
                       style={{
-                        background: `conic-gradient(from var(--angle, 0deg), ${member.color}, #c084fc, #7c3aed, ${member.color})`,
+                        background: `conic-gradient(from var(--angle, 0deg), ${member.color}, #a855f7, #7c3aed, ${member.color})`,
                         padding: '2px',
                         borderRadius: '1rem',
                         WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -197,7 +197,7 @@ export default function Team() {
 
                   {/* Name */}
                   <h3 className={`font-display font-extrabold tracking-tight transition-all duration-500 ${
-                    isCenter ? 'text-xl sm:text-2xl text-white' : 'text-sm sm:text-base text-gray-300'
+                    isCenter ? 'text-xl sm:text-2xl text-gray-900' : 'text-sm sm:text-base text-gray-600'
                   }`}>
                     {member.name}
                   </h3>
@@ -214,9 +214,9 @@ export default function Team() {
                         color: member.color,
                         border: `1px solid ${member.color}40`,
                       } : {
-                        background: 'rgba(255,255,255,0.05)',
-                        color: 'rgba(255,255,255,0.5)',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: 'rgba(124,58,237,0.06)',
+                        color: 'rgba(124,58,237,0.6)',
+                        border: '1px solid rgba(124,58,237,0.15)',
                       }}
                     >
                       {member.engine}
@@ -225,7 +225,7 @@ export default function Team() {
 
                   {/* Role */}
                   <span className={`font-mono tracking-wider uppercase transition-all duration-500 ${
-                    isCenter ? 'text-[10px] text-arcane-lavender' : 'text-[8px] text-purple-200/60'
+                    isCenter ? 'text-[10px] text-arcane-purple' : 'text-[8px] text-purple-400/70'
                   }`}>
                     {member.role}
                   </span>
@@ -237,7 +237,7 @@ export default function Team() {
           {/* Right Arrow */}
           <button
             onClick={goNext}
-            className="absolute right-2 sm:right-4 z-30 w-12 h-12 rounded-full bg-[#150a2e]/90 border border-purple-500/20 shadow-lg flex items-center justify-center text-arcane-lavender hover:bg-arcane-purple hover:text-white transition-all duration-300 cursor-pointer hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
+              className="absolute right-2 sm:right-4 z-30 w-12 h-12 rounded-full bg-white/90 border border-purple-200 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all duration-300 cursor-pointer hover:shadow-[0_0_20px_rgba(124,58,237,0.3)]"
             aria-label="Siguiente"
           >
             <ChevronRight size={24} />

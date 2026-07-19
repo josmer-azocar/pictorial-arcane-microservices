@@ -118,7 +118,8 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
   return (
     <section
       id="architecture"
-      className="pt-24 pb-16 px-6 lg:px-12 border-b border-purple-500/10 relative flex flex-col justify-start font-sans select-none overflow-hidden text-white"
+      className="pt-24 pb-16 px-6 lg:px-12 border-b border-purple-500/10 relative flex flex-col justify-start font-sans select-none overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #f8f6fc 0%, #f0ebfa 100%)' }}
     >
       {/* Ambient background glows */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-arcane-purple/[0.04] rounded-full blur-[130px] pointer-events-none" />
@@ -133,10 +134,10 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
           <span className="inline-block text-[10px] font-mono uppercase tracking-[0.25em] text-arcane-purple bg-arcane-purple/10 px-4 py-1.5 rounded-full border border-arcane-purple/20 mb-3">
             ✦ Arquitectura Técnica
           </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
+          <h2 className="font-display font-bold text-3xl sm:text-4xl text-[#2d0050] tracking-tight">
             ARQUITECTURA DE MICROSERVICIOS POLÍGLOTA
           </h2>
-          <p className="font-sans text-purple-200/80 max-w-2xl mx-auto text-sm leading-relaxed mt-2">
+          <p className="font-sans text-gray-500 max-w-2xl mx-auto text-sm leading-relaxed mt-2">
             Explora la evolución desde el núcleo relacional hasta la arquitectura distribuida políglota.
           </p>
         </div>
@@ -273,7 +274,9 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
                             </div>
                           </div>
                         ))}
-                      </div>                    {idx === 2 && (
+                      </div>
+                      )}
+                      {idx === 2 && (
                       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch w-full flex-1 min-h-0 overflow-y-auto">
 
                         {/* SVG diagrama */}
@@ -463,10 +466,6 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
         .animate-flow-fast { animation: flowLinear 0.6s infinite linear; }
         .animate-flow-normal { animation: flowLinear 1.2s infinite linear; }
         .animate-flow-reverse { animation: flowLinearReverse 1.4s infinite linear; }
-      `}</style>
-    </section>
-  );
-}e { animation: flowLinearReverse 1.4s infinite linear; }
       `}</style>
     </section>
   );

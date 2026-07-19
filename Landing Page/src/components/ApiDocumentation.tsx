@@ -163,9 +163,17 @@ export default function ApiDocumentation() {
               </div>
             </div>
             
-            <span className="text-[10px] sm:text-xs font-mono text-gray-400">
-              Host de Desarrollo: http://localhost:3000
-            </span>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io/swagger-ui/index.html#/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-[11px] font-bold tracking-wide uppercase transition-all duration-300 bg-gradient-to-r from-arcane-purple-dark via-arcane-purple to-arcane-purple-dark text-white shadow-[0_4px_16px_rgba(124,58,237,0.35)] hover:shadow-[0_6px_24px_rgba(124,58,237,0.5)] hover:scale-105 active:scale-95 border border-arcane-lavender/30"
+              >
+                <BookOpen size={14} />
+                Swagger UI
+              </a>
+            </div>
           </div>
 
           {/* Endpoints listing wrapper */}

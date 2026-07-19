@@ -233,23 +233,6 @@ export default function Hero({ onNavigate }: HeroProps) {
           </button>
         </div>
 
-        {/* Stats strip */}
-        <div
-          className="mt-10 flex flex-wrap gap-6 animate-slide-up"
-          style={{ animationDelay: '1.1s' }}
-        >
-          {[
-            { value: '5', label: 'Bases de Datos' },
-            { value: '12+', label: 'Microservicios' },
-            { value: '∞', label: 'Obras de Arte' },
-          ].map(stat => (
-            <div key={stat.label} className="flex flex-col">
-              <span className="text-2xl font-display font-bold text-arcane-lavender">{stat.value}</span>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-white/50">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-
         {/* Scroll indicator */}
         <div
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-40 hover:opacity-70 transition cursor-pointer"

@@ -38,10 +38,10 @@ export default function About() {
           <span className="inline-block text-xs font-mono uppercase tracking-[0.2em] text-arcane-purple bg-arcane-purple/10 px-4 py-1.5 rounded-full border border-arcane-purple/20">
             Quiénes Somos
           </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white mt-5 mb-4 tracking-tight">
+          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-[#2d0050] mt-5 mb-4 tracking-tight">
             EXPLICACIÓN DE LA PLATAFORMA
           </h2>
-          <p className="text-purple-200/80 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+          <p className="text-gray-500 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
             Pictorial Arcane es un museo digital que integra un motor de búsqueda
             y compra de obras de arte, sustentado en una arquitectura de bases de datos políglota.
           </p>
@@ -169,7 +169,7 @@ export default function About() {
             return (
               <span
                 key={feature.label}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-purple-200 text-xs font-medium tracking-wide transition-all duration-300 hover:bg-white/10 hover:border-arcane-purple/40 hover:shadow-[0_4px_16px_rgba(124,58,237,0.25)] hover:text-white cursor-default animate-slide-up"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200 text-gray-600 text-xs font-medium tracking-wide transition-all duration-300 hover:bg-white hover:border-arcane-purple/30 hover:shadow-[0_4px_12px_rgba(124,58,237,0.10)] hover:text-arcane-purple cursor-default animate-slide-up"
                 style={{ animationDelay: `${idx * 0.08}s` }}
               >
                 <Icon size={14} className={feature.color} />

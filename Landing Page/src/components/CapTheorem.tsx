@@ -60,25 +60,25 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
   return (
     <section 
       id="cap" 
-      className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-white/10 relative overflow-hidden"
+      className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 relative overflow-hidden"
     >
       {/* Ambient glows */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-arcane-purple/20 rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-arcane-purple/10 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-arcane-lavender/10 rounded-full blur-[110px] pointer-events-none" />
       {/* Dot grid */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#c084fc 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#7c3aed 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
 
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Section Header */}
         <div className="text-center mb-8">
-          <span className="inline-block text-[10px] font-mono uppercase tracking-[0.25em] text-arcane-gold bg-white/5 px-4 py-1.5 rounded-full border border-white/10 mb-3">
+          <span className="inline-block text-[10px] font-mono uppercase tracking-[0.25em] text-arcane-purple bg-arcane-purple/10 px-4 py-1.5 rounded-full border border-arcane-purple/20 mb-3">
             ✦ Marco Teórico Distribuido
           </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white mt-3 mb-4 tracking-tight">
+          <h2 className="font-display font-bold text-3xl sm:text-4xl text-[#2d0050] mt-3 mb-4 tracking-tight">
             TEOREMA CAP Y CONSISTENCIA EVENTUAL
           </h2>
-          <p className="font-sans text-white/60 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+          <p className="font-sans text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
             Ningún sistema distribuido cumple simultáneamente Consistencia, Disponibilidad y Tolerancia a Particiones.
             Conoce cómo cada motor gestiona este equilibrio matemático.
           </p>
@@ -88,10 +88,10 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-6">
           
           {/* Triangular CAP Graph SVG (Left 6 cols) */}
-          <div className="lg:col-span-6 p-6 rounded-2xl flex flex-col items-center justify-center relative overflow-hidden min-h-[320px] arcane-glass" style={{ background: 'rgba(15, 6, 28, 0.55)', backdropFilter: 'blur(16px)', border: '1px solid rgba(192, 132, 252, 0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+          <div className="lg:col-span-6 p-6 rounded-2xl flex flex-col items-center justify-center relative overflow-hidden min-h-[320px] arcane-glass" style={{ background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124, 58, 237, 0.2)', boxShadow: '0 10px 30px rgba(124, 76, 219, 0.05)' }}>
             {/* Inner glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-arcane-purple/20 blur-2xl rounded-full pointer-events-none" />
-            <div className="absolute top-2 left-4 text-[10px] font-mono text-purple-300/60 uppercase tracking-widest">Triángulo CAP SBDII</div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-arcane-purple/10 blur-2xl rounded-full pointer-events-none" />
+            <div className="absolute top-2 left-4 text-[10px] font-mono text-arcane-purple/60 uppercase tracking-widest">Triángulo CAP SBDII</div>
             
             {/* SVG CAP Triangle */}
             <svg viewBox="0 0 400 300" className="w-full max-w-[280px] aspect-[4/3] relative z-10 select-none">
@@ -129,23 +129,23 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
               
               {/* Vértice C - Consistencia */}
               <g className="cursor-default">
-                <circle cx="200" cy="60" r="14" fill="#0e061b" stroke="#c084fc" strokeWidth="2.5" />
-                <text x="200" y="64" fill="#ffffff" fontSize="12" fontWeight="bold" fontFamily="monospace" textAnchor="middle">C</text>
-                <text x="200" y="38" fill="#e2e8f0" fontSize="10" fontWeight="bold" textAnchor="middle">Consistencia (Strict)</text>
+                <circle cx="200" cy="60" r="14" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5" />
+                <text x="200" y="64" fill="#1a1a1a" fontSize="12" fontWeight="bold" fontFamily="monospace" textAnchor="middle">C</text>
+                <text x="200" y="38" fill="#374151" fontSize="10" fontWeight="bold" textAnchor="middle">Consistencia (Strict)</text>
               </g>
 
               {/* Vértice P - Partición */}
               <g className="cursor-default">
-                <circle cx="70" cy="270" r="14" fill="#0e061b" stroke="#c084fc" strokeWidth="2.5" />
-                <text x="70" y="274" fill="#ffffff" fontSize="12" fontWeight="bold" fontFamily="monospace" textAnchor="middle">P</text>
-                <text x="70" y="296" fill="#e2e8f0" fontSize="10" fontWeight="bold" textAnchor="middle">Partición (Network)</text>
+                <circle cx="70" cy="270" r="14" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5" />
+                <text x="70" y="274" fill="#1a1a1a" fontSize="12" fontWeight="bold" fontFamily="monospace" textAnchor="middle">P</text>
+                <text x="70" y="296" fill="#374151" fontSize="10" fontWeight="bold" textAnchor="middle">Partición (Network)</text>
               </g>
 
               {/* Vértice A - Disponibilidad */}
               <g className="cursor-default">
-                <circle cx="330" cy="270" r="14" fill="#0e061b" stroke="#c084fc" strokeWidth="2.5" />
-                <text x="330" y="274" fill="#ffffff" fontSize="12" fontWeight="bold" fontFamily="monospace" textAnchor="middle">A</text>
-                <text x="330" y="296" fill="#e2e8f0" fontSize="10" fontWeight="bold" textAnchor="middle">Disponibilidad</text>
+                <circle cx="330" cy="270" r="14" fill="#ffffff" stroke="#a855f7" strokeWidth="2.5" />
+                <text x="330" y="274" fill="#1a1a1a" fontSize="12" fontWeight="bold" fontFamily="monospace" textAnchor="middle">A</text>
+                <text x="330" y="296" fill="#374151" fontSize="10" fontWeight="bold" textAnchor="middle">Disponibilidad</text>
               </g>
 
               {/* ENGINE PLACEMENT NODES - CLICKABLE */}
@@ -204,7 +204,7 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
             </svg>
 
             {/* Quick Helper text */}
-            <div className="text-[11px] font-sans text-white/50 text-center uppercase tracking-wider mt-2">
+            <div className="text-[11px] font-sans text-gray-500 text-center uppercase tracking-wider mt-2">
               Haz clic en cualquier motor en el triángulo para analizar su distribución CAP
             </div>
           </div>
@@ -221,8 +221,8 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
                   onClick={() => handleSelect(dbName as DBEngine | 'PostgreSQL')}
                   className={`px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all border cursor-pointer ${
                     selectedDB === dbName
-                      ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white border-purple-400/50 shadow-[0_0_16px_rgba(192,132,252,0.4)]'
-                      : 'bg-white/5 text-purple-200 border-white/10 hover:text-white hover:bg-white/10 hover:border-purple-500/30 hover:shadow-sm'
+                      ? 'bg-gradient-to-r from-arcane-purple-dark to-arcane-purple text-white border-arcane-lavender/30 shadow-[0_0_16px_rgba(124,58,237,0.35)]'
+                      : 'bg-white text-gray-500 border-gray-200 hover:text-arcane-purple hover:border-arcane-purple/30 hover:shadow-sm'
                   }`}
                 >
                   {dbName}
@@ -231,29 +231,29 @@ export default function CapTheorem({ onEngineSelect }: CapTheoremProps) {
             </div>
 
             {/* Active Glassmorphism Detail Card */}
-            <div className="p-6 rounded-2xl animate-fade-in relative overflow-hidden arcane-glass" style={{ background: 'rgba(15, 6, 28, 0.55)', backdropFilter: 'blur(16px)', border: '1px solid rgba(192, 132, 252, 0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+            <div className="p-6 rounded-2xl animate-fade-in relative overflow-hidden arcane-glass" style={{ background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124, 58, 237, 0.2)', boxShadow: '0 10px 30px rgba(124, 76, 219, 0.05)' }}>
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] uppercase font-mono tracking-widest px-2.5 py-1 rounded bg-purple-500/20 border border-purple-500/30 text-purple-200">
+                <span className="text-[10px] uppercase font-mono tracking-widest px-2.5 py-1 rounded bg-arcane-purple/10 border border-arcane-purple/20 text-arcane-purple">
                   {currentDetails.badge}
                 </span>
-                <span className="text-xs font-bold text-arcane-gold">{currentDetails.focus}</span>
+                <span className="text-xs font-bold text-arcane-purple">{currentDetails.focus}</span>
               </div>
 
-              <h3 className="font-display font-black text-xl text-white mb-1 tracking-tight">
+              <h3 className="font-display font-black text-xl text-[#2d0050] mb-1 tracking-tight">
                 {currentDetails.title}
               </h3>
-              <p className="text-xs text-purple-300/80 font-mono mb-4">{currentDetails.subtitle}</p>
+              <p className="text-xs text-gray-500 font-mono mb-4">{currentDetails.subtitle}</p>
 
               {/* Justification Text */}
               <div className="space-y-4">
-                <div className="border-l-4 border-arcane-gold pl-4 py-1 bg-white/5 rounded-r-xl pr-2">
-                  <span className="text-[10px] uppercase font-mono text-white/50 block font-bold">Mayor Fortaleza:</span>
-                  <p className="text-xs sm:text-sm font-medium text-white font-sans mt-0.5">{currentDetails.strength}</p>
+                <div className="border-l-4 border-arcane-purple pl-4 py-1 bg-purple-50/50 rounded-r-xl pr-2">
+                  <span className="text-[10px] uppercase font-mono text-gray-500 block font-bold">Mayor Fortaleza:</span>
+                  <p className="text-xs sm:text-sm font-medium text-gray-900 font-sans mt-0.5">{currentDetails.strength}</p>
                 </div>
 
-                <div className="border-l-4 border-red-500 pl-4 py-1 bg-red-900/10 rounded-r-xl pr-2">
-                  <span className="text-[10px] uppercase font-mono text-white/50 block font-bold">Debilidad CAP:</span>
-                  <p className="text-xs sm:text-sm text-red-300 font-sans mt-0.5">{currentDetails.weakness}</p>
+                <div className="border-l-4 border-red-500 pl-4 py-1 bg-red-50/50 rounded-r-xl pr-2">
+                  <span className="text-[10px] uppercase font-mono text-gray-500 block font-bold">Debilidad CAP:</span>
+                  <p className="text-xs sm:text-sm text-red-700 font-sans mt-0.5">{currentDetails.weakness}</p>
                 </div>
               </div>
             </div>

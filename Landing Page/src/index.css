@@ -9,12 +9,12 @@
 
   --color-arcane-dark: #0a0a0a;
   --color-arcane-deep: #140523;
-  --color-arcane-purple-dark: #3d0066;
+  --color-arcane-purple-dark: #4c1d95;
   --color-arcane-purple: #7c3aed;
-  --color-arcane-lavender: #c084fc;
-  --color-arcane-pale: #f5f0ff;
+  --color-arcane-lavender: #a855f7;
+  --color-arcane-pale: #faf8ff;
   --color-arcane-gold: #ffd700;
-  --color-arcane-glow: #a855f7;
+  --color-arcane-glow: #c084fc;
 }
 
 @layer utilities {
