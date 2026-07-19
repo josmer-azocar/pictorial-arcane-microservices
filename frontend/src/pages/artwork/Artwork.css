@@ -74,11 +74,19 @@
     box-shadow: 0 2px 10px rgba(124, 76, 219, 0.3);
 }
 
+/* Contenedor del capibara: hermano de .buscador-wrapper dentro de
+   .buscador-row (flex), así queda garantizado al lado de la barra sin
+   importar la altura real del título "GALERÍA" en cada navegador. */
+.capi-widget {
+    position: relative;
+    z-index: 3;
+    flex-shrink: 0;
+    width: 120px;
+}
+
 .saludo-gif {
-    position: absolute;
-    top: 120px;
-    right: 150px;
-    width: 140px;
+    display: block;
+    width: 120px;
     height: auto;
     z-index: 5;
     pointer-events: none;
@@ -88,8 +96,9 @@
 
 .speech-bubble {
     position: absolute;
-    top: 30px;
-    right: 110px;
+    bottom: 100%;
+    margin-bottom: 12px;
+    right: -50px;
     width: 220px;
     max-width: 220px;
     z-index: 4;
@@ -202,15 +211,30 @@
 }
 
 /* ── SEARCH BAR ── */
+/* Fila que alinea la barra de búsqueda y el widget del capibara como
+   hermanos en flujo normal, para que el capibara quede SIEMPRE al lado
+   de la barra sin importar cómo cada navegador mida el texto "GALERÍA"
+   (ver bug de posicionamiento absoluto que dependía de esa altura). */
+.buscador-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  width: 85%;
+  max-width: 900px;
+  margin: 24px auto 0;
+}
+
 .buscador-wrapper {
   position: relative;
   z-index: 1;
   display: flex;
   align-items: center;
-  width: 85%;
+  flex: 1 1 auto;
+  min-width: 0;
   max-width: 800px;
   height: 48px;
-  margin: 24px auto 0;
+  margin: 0;
   background: #ffffff;
   border: 1px solid #dfe1e5;
   border-radius: 999px;
@@ -536,7 +560,7 @@
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-    .buscador-wrapper {
+    .buscador-row {
         width: 90%;
     }
 }
@@ -554,8 +578,9 @@
     .art-piece .pin-overlay {
         border-radius: 12px;
     }
-    .buscador-wrapper {
+    .buscador-row {
         width: 95%;
+        flex-wrap: wrap;
     }
     .buscador-wrapper button {
         padding: 0 14px;

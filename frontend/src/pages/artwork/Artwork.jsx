@@ -236,31 +236,8 @@ function Artwork() {
     return (
         <section id="art-display">
             <div id="titulo-galeria" className={modoIA ? 'modo-ia' : ''}>
-                {modoIA && (
-                    <>
-                        {showBubble && (
-                            <div className="speech-bubble">
-                                <button className="bubble-close" onClick={() => setShowBubble(false)}>×</button>
-                                <div className="bubble-title">Bienvenido al modo IA</div>
-                                <div className="bubble-text">Aquí puedes realizar búsquedas inteligentes.</div>
-                                <div className="bubble-text">¿Cómo funciona? Ingresas lo que deseas buscar.</div>
-                            </div>
-                        )}
-                        {!showBubble && aiMessage && (
-                            <div className="speech-bubble">
-                                <button className="bubble-close" onClick={() => setAiMessage('')}>×</button>
-                                <div className="bubble-text">{aiMessage}</div>
-                            </div>
-                        )}
-                        <img
-                            key={capiState}
-                            src={CAPI_GIFS[capiState]}
-                            alt="Capibara asistente IA"
-                            className="saludo-gif"
-                        />
-                    </>
-                )}
                 <p>GALERÍA</p>
+                <div className="buscador-row">
                 <div className="buscador-wrapper">
               <svg className="buscador-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#9aa0a6"/>
@@ -292,7 +269,32 @@ function Artwork() {
                 {modoIA ? 'Modo Normal' : 'IA'}
               </button>
               <button className="search-btn" onClick={() => doSearch(0)}>Buscar</button>
-            </div>
+                </div>
+                {modoIA && (
+                    <div className="capi-widget">
+                        {showBubble && (
+                            <div className="speech-bubble">
+                                <button className="bubble-close" onClick={() => setShowBubble(false)}>×</button>
+                                <div className="bubble-title">Bienvenido al modo IA</div>
+                                <div className="bubble-text">Aquí puedes realizar búsquedas inteligentes.</div>
+                                <div className="bubble-text">¿Cómo funciona? Ingresas lo que deseas buscar.</div>
+                            </div>
+                        )}
+                        {!showBubble && aiMessage && (
+                            <div className="speech-bubble">
+                                <button className="bubble-close" onClick={() => setAiMessage('')}>×</button>
+                                <div className="bubble-text">{aiMessage}</div>
+                            </div>
+                        )}
+                        <img
+                            key={capiState}
+                            src={CAPI_GIFS[capiState]}
+                            alt="Capibara asistente IA"
+                            className="saludo-gif"
+                        />
+                    </div>
+                )}
+                </div>
             </div>
             {!modoIA && (
               <div className="filter-container">
