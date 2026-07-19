@@ -30,6 +30,7 @@ public class SecurityLogByEventKey implements Serializable {
     @PrimaryKeyColumn(name = "event_time", type = PrimaryKeyType.CLUSTERED, ordinal = 2, ordering = Ordering.DESCENDING)
     private Instant eventTime;
 
+    @org.springframework.data.cassandra.core.mapping.CassandraType(type = org.springframework.data.cassandra.core.mapping.CassandraType.Name.TIMEUUID)
     @PrimaryKeyColumn(name = "event_id", type = PrimaryKeyType.CLUSTERED, ordinal = 3, ordering = Ordering.DESCENDING)
     private UUID eventId;
 

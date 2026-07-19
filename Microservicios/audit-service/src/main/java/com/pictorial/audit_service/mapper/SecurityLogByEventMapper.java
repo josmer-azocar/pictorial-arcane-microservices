@@ -26,7 +26,7 @@ public interface SecurityLogByEventMapper {
     @Mapping(source = "eventType", target = "key.eventType")
     @Mapping(target = "key.eventDate", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "key.eventTime", expression = "java(java.time.Instant.now())")
-    @Mapping(target = "key.eventId", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "key.eventId", expression = "java(com.datastax.oss.driver.api.core.uuid.Uuids.timeBased())")
     @Mapping(source = "ipAddress", target = "ipAddress")
     SecurityLogByEventTable toTable(SecurityLogByEventRequestDto dto);
 
