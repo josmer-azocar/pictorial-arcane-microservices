@@ -209,19 +209,19 @@ LIMIT 10;`,
   return (
     <section 
       id="dictionary" 
-      className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10"
+      className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-b border-white/10"
     >
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
         <div className="text-center mb-8">
-          <span className="text-xs font-mono uppercase tracking-widest text-arcane-purple bg-arcane-purple/10 px-3 py-1 rounded-full border border-arcane-purple/20">
+          <span className="text-xs font-mono uppercase tracking-widest text-arcane-gold bg-white/5 px-3 py-1 rounded-full border border-white/10">
             Diccionario Políglota
           </span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 mt-3 mb-4 tracking-tight">
+          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white mt-3 mb-4 tracking-tight">
             ESTRUCTURA DE DATOS MULTIMOTOR
           </h2>
-          <p className="font-sans text-gray-500 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+          <p className="font-sans text-white/60 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
             Analiza cómo se modela una Obra de Arte a través de diferentes paradigmas físicos: 
             Tablas SQL, Documentos BSON, Wide-Column CQL o Nodos Cypher.
           </p>
@@ -231,24 +231,24 @@ LIMIT 10;`,
 
           {/* Left: Ficha de Persistencia */}
           <div className="lg:w-80 flex-shrink-0">
-            <div className="p-6 rounded-2xl bg-white border border-arcane-purple/10 shadow-sm h-full">
-              <div className="inline-flex items-center gap-2 text-xs font-mono text-arcane-purple mb-3 bg-arcane-purple/10 px-2 py-0.5 rounded border border-arcane-purple/20">
+            <div className="p-6 rounded-2xl arcane-glass border border-purple-500/20 shadow-sm h-full" style={{ background: 'rgba(15, 6, 28, 0.55)', backdropFilter: 'blur(16px)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+              <div className="inline-flex items-center gap-2 text-xs font-mono text-purple-300 mb-3 bg-purple-500/20 px-2 py-0.5 rounded border border-purple-500/30">
                 <BookOpen size={12} />
                 Ficha de Persistencia
               </div>
               
-              <h3 className="font-display font-black text-xl text-gray-900 mb-1 tracking-tight flex items-center gap-2">
+              <h3 className="font-display font-black text-xl text-white mb-1 tracking-tight flex items-center gap-2">
                 <span><EngineIcon engine={activeTab} /></span>
                 <span>{currentItem.title}</span>
               </h3>
-              <p className="text-[11px] font-mono text-arcane-purple mb-4">{currentItem.subtitle}</p>
+              <p className="text-[11px] font-mono text-purple-300/80 mb-4">{currentItem.subtitle}</p>
               
-              <p className="text-xs text-gray-600 font-sans leading-relaxed mb-4 line-clamp-3">
+              <p className="text-xs text-white/70 font-sans leading-relaxed mb-4 line-clamp-3">
                 {currentItem.description}
               </p>
 
-              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs text-gray-500">
-                <span className="font-mono font-bold text-gray-900 block mb-1">💡 Claves Evaluativas SBDII:</span>
+              <div className="bg-[#0a0414]/60 p-3 rounded-xl border border-purple-500/20 text-xs text-purple-200">
+                <span className="font-mono font-bold text-white block mb-1">💡 Claves Evaluativas SBDII:</span>
                 <p className="font-sans text-[11px] line-clamp-3">
                   {activeTab === DBEngine.PostgreSQL && 'PostgreSQL garantiza el cumplimiento absoluto del ACID transaccional. Es la única fuente confiable para verificar si un cliente tiene saldo y si la obra está realmente libre.'}
                   {activeTab === DBEngine.MongoDB && 'El catálogo polimórfico en MongoDB permite agregar campos sobre la marcha para obras de disciplinas disonantes (arte digital, esculturas cinéticas o videoarte).'}
@@ -352,13 +352,13 @@ LIMIT 10;`,
                 onClick={() => handleTabChange(engine)}
                 className="group relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border-2 cursor-pointer select-none"
                 style={{
-                  backgroundColor: activeTab === engine ? '#7c3aed' : '#ffffff',
-                  borderColor: activeTab === engine ? '#a78bfa' : '#e5e7eb',
-                  boxShadow: activeTab === engine ? '0 0 20px rgba(139,47,201,0.4)' : 'none',
+                  backgroundColor: activeTab === engine ? 'rgba(124, 58, 237, 0.4)' : 'rgba(255, 255, 255, 0.05)',
+                  borderColor: activeTab === engine ? '#a78bfa' : 'rgba(255,255,255,0.1)',
+                  boxShadow: activeTab === engine ? '0 0 20px rgba(139,47,201,0.6)' : 'none',
                 }}
               >
                 <span className="scale-100"><EngineIcon engine={engine} /></span>
-                <span className="absolute right-full mr-3 px-2.5 py-1 rounded-lg bg-gray-900 text-white text-[10px] font-mono font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg border border-gray-700">
+                <span className="absolute right-full mr-3 px-2.5 py-1 rounded-lg bg-[#0f061c] text-white text-[10px] font-mono font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-[0_0_15px_rgba(124,58,237,0.3)] border border-purple-500/30">
                   {engine}
                 </span>
               </button>
@@ -373,8 +373,8 @@ LIMIT 10;`,
                 onClick={() => handleTabChange(engine)}
                 className={`px-4 py-2 rounded-lg text-xs font-mono font-bold border cursor-pointer transition-all ${
                   activeTab === engine
-                    ? 'bg-arcane-purple text-white border-arcane-lavender'
-                    : 'bg-white text-gray-500 border-gray-200'
+                    ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white border-purple-400/50 shadow-[0_0_16px_rgba(192,132,252,0.4)]'
+                    : 'bg-white/5 text-purple-200 border-white/10 hover:text-white hover:bg-white/10 hover:border-purple-500/30'
                 }`}
               >
                 {engine}

@@ -93,7 +93,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-white text-gray-900 font-sans selection:bg-arcane-purple/40 selection:text-white">
+    <div className="bg-[#05020a] text-white font-sans selection:bg-arcane-lavender/50 selection:text-white">
       <Navbar activeSection={SLIDE_IDS[currentSlide]} onNavigate={goToSlide} />
 
       <main className="h-screen w-full overflow-hidden relative">
@@ -101,27 +101,27 @@ export default function App() {
           className="flex flex-col transition-transform duration-700 ease-in-out will-change-transform"
           style={{ transform: `translateY(-${currentSlide * 100}vh)` }}
         >
-          <div id="hero" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16"><Hero onNavigate={goToSlide} /></div>
-          <div id="team" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><Team /></div>
-          <div id="architecture" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><ArchitectureDiagram onNodeHover={handleEngineHighlight} /></div>
-          <div id="cap" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><CapTheorem onEngineSelect={handleEngineHighlight} /></div>
-          <div id="dictionary" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><PolyglotDictionary onEngineSelect={handleEngineHighlight} /></div>
-          <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><Neo4jGraphs /></div>
-          <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><ApiDocumentation /></div>
-          <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-purple-dark/20"><About /></div>
-          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16 bg-arcane-lavender/20"><LiveDemo onStepChange={handleStepChange} onNavigateFrontend={() => window.open('http://localhost:5173', '_blank')} /></div>
-          <div id="closing" className="h-screen w-full flex-shrink-0 overflow-y-auto bg-arcane-purple-dark/20"><ClosingSlide /><Footer /></div>
+          <div id="hero" className="h-screen w-full flex-shrink-0 overflow-y-auto"><Hero onNavigate={goToSlide} /></div>
+          <div id="team" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><Team /></div>
+          <div id="architecture" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><ArchitectureDiagram onNodeHover={handleEngineHighlight} /></div>
+          <div id="cap" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><CapTheorem onEngineSelect={handleEngineHighlight} /></div>
+          <div id="dictionary" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><PolyglotDictionary onEngineSelect={handleEngineHighlight} /></div>
+          <div id="neo4j-graphs" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><Neo4jGraphs /></div>
+          <div id="api-documentation" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><ApiDocumentation /></div>
+          <div id="about" className="h-screen w-full flex-shrink-0 overflow-y-auto" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><About /></div>
+          <div id="live-demo" className="h-screen w-full flex-shrink-0 overflow-y-auto pb-16" style={{background:'linear-gradient(135deg,#0a0516 0%,#14072b 50%,#05020a 100%)'}}><LiveDemo onStepChange={handleStepChange} onNavigateFrontend={() => window.open('http://localhost:5173', '_blank')} /></div>
+          <div id="closing" className="h-screen w-full flex-shrink-0 overflow-y-auto"><ClosingSlide /><Footer /></div>
         </div>
 
         {/* Navigation arrows */}
         <div className="fixed bottom-8 right-8 flex flex-col gap-2 z-50">
           {currentSlide > 0 && (
-            <button onClick={prevSlide} className="w-10 h-10 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer">
+            <button onClick={prevSlide} className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm border border-arcane-purple/20 shadow-lg shadow-arcane-purple/10 flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white hover:shadow-[0_0_20px_rgba(124,58,237,0.4)] transition-all duration-300 cursor-pointer">
               <ChevronUp size={20} />
             </button>
           )}
           {currentSlide < SLIDE_IDS.length - 1 && (
-            <button onClick={nextSlide} className="w-10 h-10 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer">
+            <button onClick={nextSlide} className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm border border-arcane-purple/20 shadow-lg shadow-arcane-purple/10 flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white hover:shadow-[0_0_20px_rgba(124,58,237,0.4)] transition-all duration-300 cursor-pointer">
               <ChevronDown size={20} />
             </button>
           )}
@@ -130,10 +130,20 @@ export default function App() {
         {/* Dot indicator */}
         <div className="fixed bottom-8 left-8 flex flex-col gap-2 z-50">
           {SLIDE_IDS.map((_, idx) => (
-            <button key={idx} onClick={() => goToSlide(idx)}
-              className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-                idx === currentSlide ? 'bg-arcane-purple scale-125' : 'bg-gray-300 hover:bg-gray-400'
-              }`}
+            <button
+              key={idx}
+              onClick={() => goToSlide(idx)}
+              className="cursor-pointer transition-all duration-300"
+              style={{
+                width: idx === currentSlide ? '20px' : '8px',
+                height: '8px',
+                borderRadius: '9999px',
+                background: idx === currentSlide
+                  ? 'linear-gradient(90deg, #7c3aed, #c084fc)'
+                  : 'rgba(200,200,220,0.7)',
+                boxShadow: idx === currentSlide ? '0 0 10px rgba(124,58,237,0.5)' : 'none',
+                transition: 'all 0.3s ease',
+              }}
             />
           ))}
         </div>

@@ -4,7 +4,7 @@ import path from 'path';
 import {defineConfig} from 'vite';
 import fs from 'fs';
 
-const frontendPublicDir = path.resolve(__dirname, 'frontend/public');
+const frontendPublicDir = path.resolve(__dirname, '../frontend/public');
 
 export default defineConfig(() => {
   return {

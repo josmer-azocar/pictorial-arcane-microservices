@@ -6,124 +6,310 @@
   --font-display: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-logo: "Zen Tokyo Zoo", cursive;
-  
+
   --color-arcane-dark: #0a0a0a;
   --color-arcane-deep: #140523;
   --color-arcane-purple-dark: #3d0066;
-  --color-arcane-purple: #8b2fc9;
+  --color-arcane-purple: #7c3aed;
   --color-arcane-lavender: #c084fc;
   --color-arcane-pale: #f5f0ff;
+  --color-arcane-gold: #ffd700;
+  --color-arcane-glow: #a855f7;
 }
 
 @layer utilities {
-  /* Light theme scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #f5f5f5;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #d4d4d4;
-    border-radius: 9999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #a3a3a3;
-  }
+  /* ──────────────────────────────────────────────
+     SCROLLBAR
+  ────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #f5f5f5; }
+  ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
 
-  /* Glassmorphism style presets */
+  /* ──────────────────────────────────────────────
+     GLASSMORPHISM PRESETS
+  ────────────────────────────────────────────── */
   .arcane-glass {
     background: rgba(15, 6, 28, 0.45);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(192, 132, 252, 0.1);
   }
-
   .arcane-glass-light {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(139, 47, 201, 0.1);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(124, 58, 237, 0.12);
   }
-
-  .arcane-glass-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
+  .arcane-glass-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
   .arcane-glass-hover:hover {
     background: rgba(45, 10, 75, 0.25);
     border-color: rgba(192, 132, 252, 0.3);
-    box-shadow: 0 0 25px rgba(139, 47, 201, 0.15);
+    box-shadow: 0 0 25px rgba(124, 58, 237, 0.15);
   }
 
-  /* Text glow preset */
-  .text-glow {
-    text-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+  /* ──────────────────────────────────────────────
+     TEXT EFFECTS
+  ────────────────────────────────────────────── */
+  .text-glow { text-shadow: 0 0 20px rgba(192, 132, 252, 0.4); }
+
+  .text-gradient-arcane {
+    background: linear-gradient(135deg, #c084fc 0%, #7c3aed 50%, #c084fc 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 4s linear infinite;
   }
 
-  /* Nav underline animation (pictorial-arcane style) */
-  .nav-underline {
-    position: relative;
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ff9900 50%, #ffd700 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 3s linear infinite;
   }
+
+  /* ──────────────────────────────────────────────
+     NAV UNDERLINE
+  ────────────────────────────────────────────── */
+  .nav-underline { position: relative; }
   .nav-underline::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 50%;
+    bottom: 0; left: 50%;
     transform: translateX(-50%);
-    width: 0;
-    height: 2px;
+    width: 0; height: 2px;
     background: #c084fc;
     transition: width 0.3s ease;
     border-radius: 1px;
   }
-  .nav-underline:hover::after {
-    width: 70%;
-  }
+  .nav-underline:hover::after { width: 70%; }
   .nav-underline-active::after {
     width: 70% !important;
     box-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
   }
+
+  /* ──────────────────────────────────────────────
+     3D CARD PERSPECTIVE
+  ────────────────────────────────────────────── */
+  .perspective-card {
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
+  }
+  .perspective-card:hover {
+    transform: perspective(800px) rotateX(-3deg) rotateY(3deg) translateY(-6px);
+    box-shadow: 0 24px 48px rgba(124, 58, 237, 0.18), 0 8px 16px rgba(0,0,0,0.08);
+  }
+
+  /* ──────────────────────────────────────────────
+     HOLOGRAPHIC BORDER
+  ────────────────────────────────────────────── */
+  .holographic-border {
+    position: relative;
+  }
+  .holographic-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      #7c3aed, #c084fc, #ffd700, #a855f7, #7c3aed
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 2px;
+    animation: spin-holo 4s linear infinite;
+  }
+
+  /* ──────────────────────────────────────────────
+     SHIMMER BUTTON
+  ────────────────────────────────────────────── */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -75%;
+    width: 50%; height: 200%;
+    background: linear-gradient(
+      to right,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.22) 50%,
+      rgba(255,255,255,0) 100%
+    );
+    transform: skewX(-20deg);
+    transition: left 0.5s ease;
+    pointer-events: none;
+  }
+  .btn-shimmer:hover::after { left: 125%; }
+
+  /* ──────────────────────────────────────────────
+     CONIC GRADIENT SPIN (para marco de imagen)
+  ────────────────────────────────────────────── */
+  .conic-border-spin {
+    position: relative;
+    border-radius: 1.5rem;
+  }
+  .conic-border-spin::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--conic-angle, 0deg),
+      #7c3aed 0%,
+      #c084fc 25%,
+      #ffd700 50%,
+      #c084fc 75%,
+      #7c3aed 100%
+    );
+    z-index: -1;
+    animation: conic-spin 6s linear infinite;
+  }
+  .conic-border-spin::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: calc(1.5rem - 2px);
+    background: white;
+    z-index: -1;
+  }
+
+  /* ──────────────────────────────────────────────
+     FLOATING BADGE
+  ────────────────────────────────────────────── */
+  .badge-float {
+    animation: float-badge 3s ease-in-out infinite;
+  }
 }
 
-/* Animations */
+/* ════════════════════════════════════════════════
+   KEYFRAMES PREMIUM
+════════════════════════════════════════════════ */
+
 @keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.15;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.25;
-    transform: scale(1.08);
-  }
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.08); }
+}
+.glow-backdrop { animation: pulseGlow 12s infinite ease-in-out; }
+
+@keyframes gradient-shift {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
-  .glow-backdrop {
-    animation: pulseGlow 12s infinite ease-in-out;
-  }
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(1deg); }
+  66% { transform: translateY(-6px) rotate(-1deg); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
 
-/* Base global transitions */
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes shimmer-bg {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+}
+.animate-orbit { animation: orbit 20s linear infinite; }
+
+@keyframes orbit-reverse {
+  from { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+  to   { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+}
+.animate-orbit-reverse { animation: orbit-reverse 14s linear infinite; }
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(124, 58, 237, 0.4), 0 0 24px rgba(124, 58, 237, 0.2); }
+  50% { box-shadow: 0 0 24px rgba(192, 132, 252, 0.7), 0 0 48px rgba(124, 58, 237, 0.35); }
+}
+.animate-glow-pulse { animation: glowPulse 2.5s ease-in-out infinite; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes conic-spin {
+  from { --conic-angle: 0deg; }
+  to { --conic-angle: 360deg; }
+}
+@property --conic-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin-holo {
+  from { --angle: 0deg; }
+  to { --angle: 360deg; }
+}
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slideUpFade 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-modal-in { animation: modalIn 0.2s ease-out forwards; }
+
+@keyframes word-appear {
+  from { opacity: 0; transform: translateY(16px) rotateX(30deg); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0) rotateX(0); filter: blur(0); }
+}
+
+@keyframes scrollDot {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(8px); opacity: 0; }
+}
+.animate-scroll-dot { animation: scrollDot 1.8s infinite ease-in-out; }
+
+/* ════════════════════════════════════════════════
+   GLOBAL BASE
+════════════════════════════════════════════════ */
 html {
   scroll-behavior: smooth;
   background-color: #ffffff;
 }
 
-/* Fade-in animation utility */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
-}
-
-/* Modal enter animation */
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-.animate-modal-in {
-  animation: modalIn 0.2s ease-out forwards;
-}
-
+/* Stagger helpers */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }

@@ -8,6 +8,7 @@ interface MemberInfo {
   engine: DBEngine;
   photo: string;
   icon?: string;
+  color: string;
 }
 
 const engineIcons: Record<string, string> = {
@@ -17,12 +18,21 @@ const engineIcons: Record<string, string> = {
   [DBEngine.Neo4j]: '/assets/Neo4j-logo_color.ico',
 };
 
+// Colors matching each DB engine brand
+const engineColors: Record<string, string> = {
+  [DBEngine.PostgreSQL]: '#336791',
+  [DBEngine.MongoDB]: '#00ED64',
+  [DBEngine.Cassandra]: '#1287B1',
+  [DBEngine.Neo4j]: '#00A0E0',
+  [DBEngine.SpringBoot]: '#6DB33F',
+};
+
 const members: MemberInfo[] = [
-  { name: 'Azocar Josue', role: 'Arquitecto de Integración y APIs', engine: DBEngine.SpringBoot, photo: '/assets/josue.jpg', icon: '/assets/spring-logo.png' },
-  { name: 'Azocar Josmer', role: 'DBA Relacional', engine: DBEngine.PostgreSQL, photo: '/assets/josmer.jpg' },
-  { name: 'Avendaño Licett', role: 'DBA Documental', engine: DBEngine.MongoDB, photo: '/assets/patricia.jpeg' },
-  { name: 'Salazar Inés', role: 'Ingeniero de Datos', engine: DBEngine.Cassandra, photo: '/assets/ines.jpeg' },
-  { name: 'Gamboa Lismarx', role: 'Especialista en Grafos', engine: DBEngine.Neo4j, photo: '/assets/lismarx.jpeg' },
+  { name: 'Azocar Josue',    role: 'Arquitecto de Integración y APIs', engine: DBEngine.SpringBoot,  photo: '/assets/josue.jpg',    icon: '/assets/spring-logo.png', color: '#6DB33F' },
+  { name: 'Azocar Josmer',   role: 'DBA Relacional',                  engine: DBEngine.PostgreSQL,  photo: '/assets/josmer.jpg',   color: '#336791' },
+  { name: 'Avendaño Licett', role: 'DBA Documental',                  engine: DBEngine.MongoDB,     photo: '/assets/patricia.jpeg',color: '#00ED64' },
+  { name: 'Salazar Inés',    role: 'Ingeniero de Datos',              engine: DBEngine.Cassandra,   photo: '/assets/ines.jpeg',    color: '#1287B1' },
+  { name: 'Gamboa Lismarx',  role: 'Especialista en Grafos',          engine: DBEngine.Neo4j,       photo: '/assets/lismarx.jpeg', color: '#00A0E0' },
 ];
 
 export default function Team() {
@@ -68,37 +78,49 @@ export default function Team() {
   return (
     <section
       id="team"
-      className="pt-24 pb-6 px-4 sm:px-6 lg:px-8 border-b border-arcane-purple/10 relative overflow-hidden min-h-screen flex items-center"
+      className="pt-24 pb-6 px-4 sm:px-6 lg:px-8 relative overflow-hidden min-h-screen flex items-center"
     >
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-arcane-purple/[0.03] rounded-full blur-[120px]" />
+      {/* Animated background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-arcane-purple-dark/20 via-[#0a0515]/60 to-arcane-lavender/10 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-arcane-purple/[0.04] rounded-full blur-[130px]" />
+      <div className="absolute top-12 left-12 w-64 h-64 bg-arcane-lavender/[0.04] rounded-full blur-[100px]" />
+
+      {/* Dot grid subtle background */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: 'radial-gradient(#8b2fc9 1px, transparent 1px)', backgroundSize: '32px 32px' }}
+      />
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
         {/* Section Header */}
         <div className="text-center mb-10 pt-6">
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 tracking-tight">
+          <span className="inline-block text-[10px] font-mono uppercase tracking-[0.25em] text-arcane-purple bg-arcane-purple/8 px-4 py-1.5 rounded-full border border-arcane-purple/20 mb-4">
+            ✦ Equipo
+          </span>
+          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
             AUTORES DEL PROYECTO ACADÉMICO
           </h2>
-          <p className="font-sans text-gray-500 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mt-3">
+          <p className="font-sans text-purple-200/80 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mt-3">
             Presentadores técnicos para la defensa oral de Sistemas de Bases de Datos II de la UNEG.
             Cinco ingenieros abocados a cada dimensión del paradigma de almacenamiento políglota.
           </p>
         </div>
 
-        {/* Coverflow Carousel */}
+        {/* 3D Coverflow Carousel */}
         <div className="relative flex items-center justify-center mb-8 select-none" style={{ perspective: '1200px' }}>
           {/* Left Arrow */}
           <button
             onClick={goPrev}
-            className="absolute left-2 sm:left-4 z-30 w-12 h-12 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer"
+            className="absolute left-2 sm:left-4 z-30 w-12 h-12 rounded-full bg-[#150a2e]/90 border border-purple-500/20 shadow-lg flex items-center justify-center text-arcane-lavender hover:bg-arcane-purple hover:text-white transition-all duration-300 cursor-pointer hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
             aria-label="Anterior"
           >
             <ChevronLeft size={24} />
           </button>
 
-          {/* Cards Wrapper with fade edges */}
+          {/* Cards Wrapper */}
           <div className="relative flex items-center justify-center w-full h-80 sm:h-96 overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
-            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#05020a] to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#05020a] to-transparent z-10 pointer-events-none" />
+
             {members.map((member, i) => {
               const offset = i - currentIndex;
               const absOffset = Math.abs(offset);
@@ -108,16 +130,16 @@ export default function Team() {
               const translateX = offset * 90;
               const translateZ = isCenter ? 80 : absOffset === 1 ? 20 : -40;
               const rotateY = offset * -10;
-              const opacity = Math.max(0.35, 1 - absOffset * 0.25);
+              const opacity = Math.max(0.35, 1 - absOffset * 0.28);
 
               return (
                 <div
                   key={i}
                   onClick={() => goToIndex(i)}
-                  className={`absolute flex-shrink-0 w-56 sm:w-64 rounded-2xl border-2 p-6 sm:p-8 flex flex-col items-center text-center gap-4 transition-all duration-500 cursor-pointer ${
+                  className={`absolute flex-shrink-0 w-56 sm:w-64 rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center gap-4 transition-all duration-500 cursor-pointer ${
                     isCenter
-                      ? 'bg-white border-arcane-purple/20 shadow-2xl shadow-arcane-purple/10'
-                      : 'bg-purple-50/80 border-arcane-purple/5 shadow-lg'
+                      ? 'bg-[#150a2e]/85 backdrop-blur-md border border-purple-500/30'
+                      : 'bg-[#0b041a]/60 backdrop-blur-sm border border-purple-500/10 shadow-lg'
                   }`}
                   style={{
                     transform: `translateX(${translateX}px) translateZ(${translateZ}px) scale(${scale}) rotateY(${rotateY}deg)`,
@@ -125,39 +147,85 @@ export default function Team() {
                     zIndex: 20 - absOffset,
                     transformStyle: 'preserve-3d',
                     backdropFilter: isCenter ? 'none' : 'blur(2px)',
+                    border: isCenter
+                      ? `2px solid transparent`
+                      : '2px solid rgba(124, 58, 237, 0.15)',
+                    backgroundClip: 'padding-box',
+                    boxShadow: isCenter
+                      ? `0 24px 48px rgba(124,58,237,0.22), 0 0 0 2px ${member.color}40, 0 0 40px ${member.color}25`
+                      : undefined,
                   }}
                 >
-                  {/* Developer Photo */}
-                  <div className={`rounded-2xl border flex items-center justify-center select-none overflow-hidden transition-all duration-500 ${
-                    isCenter
-                      ? 'w-16 h-16 border-arcane-purple/10 shadow-sm'
-                      : 'w-12 h-12 border-arcane-purple/5'
+                  {/* Holographic border for center card */}
+                  {isCenter && (
+                    <div
+                      className="absolute inset-0 rounded-2xl pointer-events-none"
+                      style={{
+                        background: `conic-gradient(from var(--angle, 0deg), ${member.color}, #c084fc, #7c3aed, ${member.color})`,
+                        padding: '2px',
+                        borderRadius: '1rem',
+                        WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                        WebkitMaskComposite: 'xor',
+                        maskComposite: 'exclude',
+                        animation: 'spin-holo 4s linear infinite',
+                      }}
+                    />
+                  )}
+
+                  {/* Photo with glow ring */}
+                  <div className={`relative rounded-full flex items-center justify-center select-none overflow-visible transition-all duration-500 ${
+                    isCenter ? 'w-20 h-20' : 'w-12 h-12'
                   }`}>
-                    <img src={member.photo} alt={member.name} className="object-cover w-full h-full select-none pointer-events-none transition-all duration-500" />
+                    {isCenter && (
+                      <div
+                        className="absolute inset-0 rounded-full"
+                        style={{
+                          background: `radial-gradient(circle, ${member.color}40 0%, transparent 70%)`,
+                          animation: 'glowPulse 2.5s ease-in-out infinite',
+                          transform: 'scale(1.3)',
+                        }}
+                      />
+                    )}
+                    <div className={`relative rounded-full overflow-hidden border-2 transition-all duration-500 ${
+                      isCenter ? 'w-20 h-20' : 'w-12 h-12'
+                    }`}
+                      style={{ borderColor: isCenter ? member.color : 'rgba(124,58,237,0.15)' }}
+                    >
+                      <img src={member.photo} alt={member.name} className="object-cover w-full h-full pointer-events-none" />
+                    </div>
                   </div>
 
                   {/* Name */}
                   <h3 className={`font-display font-extrabold tracking-tight transition-all duration-500 ${
-                    isCenter ? 'text-xl sm:text-2xl text-gray-900' : 'text-sm sm:text-base text-gray-700'
+                    isCenter ? 'text-xl sm:text-2xl text-white' : 'text-sm sm:text-base text-gray-300'
                   }`}>
                     {member.name}
                   </h3>
 
-                  {/* Engine Icon + Badge */}
+                  {/* Engine badge with brand color */}
                   <div className="flex items-center gap-2">
-                    <img src={member.icon || engineIcons[member.engine]} alt="" className="w-4 h-4 object-contain select-none pointer-events-none" />
-                    <span className={`rounded-full font-mono font-bold tracking-wide uppercase transition-all duration-500 ${
-                      isCenter
-                        ? 'px-4 py-1.5 text-[10px] bg-purple-50 text-arcane-purple border border-arcane-purple/20'
-                        : 'px-2 py-1 text-[8px] bg-gray-100 text-gray-500 border border-gray-200'
-                    }`}>
+                    <img src={member.icon || engineIcons[member.engine]} alt="" className="w-4 h-4 object-contain pointer-events-none" />
+                    <span
+                      className={`rounded-full font-mono font-bold tracking-wide uppercase transition-all duration-500 ${
+                        isCenter ? 'px-4 py-1.5 text-[10px]' : 'px-2 py-1 text-[8px]'
+                      }`}
+                      style={isCenter ? {
+                        background: `${member.color}15`,
+                        color: member.color,
+                        border: `1px solid ${member.color}40`,
+                      } : {
+                        background: 'rgba(255,255,255,0.05)',
+                        color: 'rgba(255,255,255,0.5)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    >
                       {member.engine}
                     </span>
                   </div>
 
                   {/* Role */}
                   <span className={`font-mono tracking-wider uppercase transition-all duration-500 ${
-                    isCenter ? 'text-[11px] text-arcane-purple' : 'text-[9px] text-gray-500'
+                    isCenter ? 'text-[10px] text-arcane-lavender' : 'text-[8px] text-purple-200/60'
                   }`}>
                     {member.role}
                   </span>
@@ -169,7 +237,7 @@ export default function Team() {
           {/* Right Arrow */}
           <button
             onClick={goNext}
-            className="absolute right-2 sm:right-4 z-30 w-12 h-12 rounded-full bg-white/90 border border-arcane-purple/20 shadow-lg flex items-center justify-center text-arcane-purple hover:bg-arcane-purple hover:text-white transition-all cursor-pointer"
+            className="absolute right-2 sm:right-4 z-30 w-12 h-12 rounded-full bg-[#150a2e]/90 border border-purple-500/20 shadow-lg flex items-center justify-center text-arcane-lavender hover:bg-arcane-purple hover:text-white transition-all duration-300 cursor-pointer hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
             aria-label="Siguiente"
           >
             <ChevronRight size={24} />
@@ -178,13 +246,19 @@ export default function Team() {
 
         {/* Dot indicators */}
         <div className="flex justify-center gap-2">
-          {members.map((_, idx) => (
+          {members.map((member, idx) => (
             <button
               key={idx}
               onClick={() => goToIndex(idx)}
-              className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-                idx === currentIndex ? 'bg-arcane-purple scale-125' : 'bg-gray-300 hover:bg-gray-400'
-              }`}
+              className="transition-all cursor-pointer"
+              style={{
+                width: idx === currentIndex ? '24px' : '10px',
+                height: '10px',
+                borderRadius: '9999px',
+                background: idx === currentIndex ? members[idx].color : '#d4d4d4',
+                boxShadow: idx === currentIndex ? `0 0 8px ${members[idx].color}80` : 'none',
+                transition: 'all 0.3s ease',
+              }}
             />
           ))}
         </div>
