@@ -112,12 +112,6 @@ export default function About() {
                 </div>
               </div>
 
-              {/* "En Vivo" badge */}
-              <div className="absolute bottom-5 right-5 flex items-center gap-1.5 bg-black/85 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-[9px] text-white/90 font-mono tracking-widest uppercase">En Vivo</span>
-              </div>
-
               {/* Floating decorative dots */}
               <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full border-2 border-arcane-purple/30 bg-arcane-purple/10 animate-float" style={{ animationDelay: '0s' }} />
               <div className="absolute -bottom-4 -right-4 w-10 h-10 rounded-full border-2 border-arcane-lavender/30 bg-arcane-lavender/10 animate-float" style={{ animationDelay: '1.5s' }} />
