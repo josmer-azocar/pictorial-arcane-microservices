@@ -33,8 +33,8 @@ const AddPainting = ({ artworkData, onCreationSuccess }) => {
                 name: artworkData.name || '',
                 status: artworkData.status || 'AVAILABLE',
                 price: artworkData.price || artworkData.precio || '',
-                idArtist: artworkData.idArtist || '',
-                idGenre: artworkData.idGenre || '',
+                idArtist: artworkData.artistId || '',
+                idGenre: artworkData.genreId || '',
                 technique: artworkData.technique || '',
                 holder: artworkData.holder || '',
                 style: artworkData.style || '',
@@ -57,7 +57,7 @@ const AddPainting = ({ artworkData, onCreationSuccess }) => {
                 if (!artworkData) {
                     const paintingGenre = genresData.find(g => g.name === 'Pintura');
                     if (paintingGenre) {
-                        setFormData(prev => ({ ...prev, idGenre: paintingGenre.idGenre }));
+                        setFormData(prev => ({ ...prev, idGenre: paintingGenre.id }));
                     }
                 }
             } catch (error) {
@@ -112,8 +112,8 @@ const AddPainting = ({ artworkData, onCreationSuccess }) => {
                     name: formData.name,
                     status: formData.status,
                     price: parseFloat(formData.price),
-                    idArtist: parseInt(formData.idArtist),
-                    idGenre: parseInt(formData.idGenre)
+                    idArtist: formData.idArtist,
+                    idGenre: formData.idGenre
                 },
                 paintingRequest: {
                     technique: formData.technique,
@@ -226,7 +226,7 @@ const AddPainting = ({ artworkData, onCreationSuccess }) => {
                     <select name="idArtist" value={formData.idArtist} onChange={handleChange} required>
                         <option value="">Selecciona un artista</option>
                         {artists.map(artist => (
-                            <option key={artist.idArtist} value={artist.idArtist}>{artist.name} {artist.lastName}</option>
+                            <option key={artist.id} value={artist.id}>{artist.name} {artist.lastName}</option>
                         ))}
                     </select>
                 </div>

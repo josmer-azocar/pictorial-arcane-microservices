@@ -112,8 +112,8 @@ const DeleteArtwork = () => {
                         name: artworkData.name,
                         price: artworkData.price,
                         status: 'saled',
-                        idArtist: artworkData.idArtist,
-                        idGenre: artworkData.idGenre,
+                        idArtist: artworkData.artistId,
+                        idGenre: artworkData.genreId,
                         imageUrl: artworkData.imageUrl
                     }, token);
 
@@ -150,13 +150,13 @@ const DeleteArtwork = () => {
         <select name="artistId" value={filters.artistId} onChange={handleFilterChange}>
           <option value="">Filtrar por Artista</option>
           {artists.map(artist => (
-            <option key={artist.idArtist} value={artist.idArtist}>{artist.name} {artist.lastName}</option>
+            <option key={artist.id} value={artist.id}>{artist.name} {artist.lastName}</option>
           ))}
         </select>
         <select name="genre" value={filters.genre} onChange={handleFilterChange}>
           <option value="">Filtrar por Género</option>
           {genres.map(genre => (
-            <option key={genre.idGenre} value={genre.idGenre}>{genre.name}</option>
+            <option key={genre.id} value={genre.id}>{genre.name}</option>
           ))}
         </select>
         <button type="submit" className="btn btn-primary" disabled={loading}>Buscar</button>
@@ -173,14 +173,14 @@ const DeleteArtwork = () => {
             </thead>
             <tbody>
               {artworks.map(art => {
-                const genre = genres.find(g => g.idGenre === art.idGenre);
-                const artist = artists.find(a => a.idArtist === art.idArtist);
+                const genre = genres.find(g => g.id === art.genreId);
+                const artist = artists.find(a => a.id === art.artistId);
                 return (
                   <tr key={art.idArtWork}>
                     <td className="mono">#{art.idArtWork}</td>
                     <td className="artwork">{art.name}</td>
-                    <td>{artist ? artist.name : art.idArtist}</td>
-                    <td>{genre ? genre.name : art.idGenre}</td>
+                    <td>{artist ? artist.name : art.artistId}</td>
+                    <td>{genre ? genre.name : art.genreId}</td>
                     <td className="price">${art.price?.toLocaleString()}</td>
                     <td>
                       <div className="action-buttons">

@@ -60,7 +60,7 @@ function CreateArtist() {
       const response = await axios.post(`${BASE_URL}/artist/add`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const newArtistId = response.data.idArtist; // Asumiendo que devuelve { idArtist: ... }
+      const newArtistId = response.data.id;
 
       // PASO B: Subir la imagen
       await uploadArtistImage(newArtistId, imageFile, token);
@@ -135,13 +135,13 @@ function CreateArtist() {
           <label>Géneros del artista:</label>
           <div className="genre-checkboxes">
               {genres.map(genre => (
-                  <label key={genre.idGenre} className="genre-checkbox-label">
+                  <label key={genre.id} className="genre-checkbox-label">
                       <input
                           type="checkbox"
-                          value={genre.idGenre}
-                          checked={selectedGenres.includes(genre.idGenre)}
+                          value={genre.id}
+                          checked={selectedGenres.includes(genre.id)}
                           onChange={(e) => {
-                              const id = Number(e.target.value);
+                              const id = e.target.value;
                               setSelectedGenres(prev =>
                                   prev.includes(id)
                                       ? prev.filter(g => g !== id)

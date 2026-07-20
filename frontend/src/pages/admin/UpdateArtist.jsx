@@ -33,18 +33,37 @@ function UpdateArtist() {
   const [allGenres, setAllGenres] = useState([]);
   const [artistGenres, setArtistGenres] = useState([]);
   const [updatingGenre, setUpdatingGenre] = useState(false);
+  const [filters, setFilters] = useState({ id: '', name: '', lastName: '' });
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ id: '', name: '', lastName: '' });
+  };
+
+  const filteredArtists = artists
+    .filter(a => {
+      const matchId = !filters.id || a.id?.toLowerCase().includes(filters.id.toLowerCase());
+      const matchName = !filters.name || a.name?.toLowerCase().includes(filters.name.toLowerCase());
+      const matchLastName = !filters.lastName || a.lastName?.toLowerCase().includes(filters.lastName.toLowerCase());
+      return matchId && matchName && matchLastName;
+    })
+    .sort((a, b) => b.id.localeCompare(a.id));
 
   const handleChangeImage = async (artistId, file) => {
     if (!file) return;
     setUploadingImage(true);
     try {
-      await axios.delete(`${API_BASE_URL}/admin/${artistId}/artistImage`, {
+      await axios.delete(`${API_BASE_URL}/artist/${artistId}/artistImage`, {
         headers: { Authorization: `Bearer ${token}` }
       }).catch(err => console.warn("No se pudo borrar la imagen anterior (quizás no existía)", err));
 
       const formDataImg = new FormData();
       formDataImg.append('file', file);
-      await axios.post(`${API_BASE_URL}/admin/${artistId}/artistImage`, formDataImg, {
+      await axios.post(`${API_BASE_URL}/artist/${artistId}/artistImage`, formDataImg, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -52,7 +71,7 @@ function UpdateArtist() {
       });
 
       const newImageUrl = URL.createObjectURL(file);
-      setArtists(prev => prev.map(a => a.idArtist === artistId ? { ...a, imageUrl: newImageUrl } : a));
+      setArtists(prev => prev.map(a => a.id === artistId ? { ...a, imageUrl: newImageUrl } : a));
       setSelectedArtist(prev => ({ ...prev, imageUrl: newImageUrl }));
       toast.success('Imagen actualizada correctamente.');
     } catch (err) {
@@ -65,9 +84,9 @@ function UpdateArtist() {
   const handleDeleteImage = async (artistId) => {
     if (!window.confirm('¿Seguro que quieres eliminar la imagen de este artista?')) return;
     try {
-      await axios.delete(`${API_BASE_URL}/admin/${artistId}/artistImage`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`${API_BASE_URL}/artist/${artistId}/artistImage`, { headers: { Authorization: `Bearer ${token}` } });
       toast.success('Imagen eliminada.');
-      setArtists(prev => prev.map(a => a.idArtist === artistId ? { ...a, imageUrl: '' } : a));
+      setArtists(prev => prev.map(a => a.id === artistId ? { ...a, imageUrl: '' } : a));
       setSelectedArtist(prev => ({ ...prev, imageUrl: '' }));
     } catch (err) {
       toast.error('Error al eliminar la imagen.');
@@ -90,9 +109,9 @@ function UpdateArtist() {
     if (selectedArtist) {
       const fetchArtistGenres = async () => {
         try {
-          const genres = await getGenresByArtist(selectedArtist.idArtist);
-          setArtistGenres(Array.isArray(genres) ? genres.map(g => g.idGenre) : []);
-          setArtistGenres(genres.map(g => g.idGenre));
+          const genres = await getGenresByArtist(selectedArtist.id);
+          setArtistGenres(Array.isArray(genres) ? genres.map(g => g.id) : []);
+          setArtistGenres(genres.map(g => g.id));
         } catch (err) {
           console.error(err);
           toast.error('No se pudieron cargar los géneros del artista.');
@@ -111,12 +130,12 @@ function UpdateArtist() {
     try {
       if (currentlyAssigned) {
         // unassign
-        await unassignGenre(selectedArtist.idArtist, genreId);
+        await unassignGenre(selectedArtist.id, genreId);
         setArtistGenres(prev => prev.filter(id => id !== genreId));
         toast.info('Género removido.');
       } else {
         // assign
-        await assignGenre(selectedArtist.idArtist, genreId);
+        await assignGenre(selectedArtist.id, genreId);
         setArtistGenres(prev => [...prev, genreId]);
         toast.success('Género asignado.');
       }
@@ -208,7 +227,7 @@ useEffect(() => {
       return;
     }
     try {
-      await axios.put(`${API_BASE_URL}/artist/update/${selectedArtist.idArtist}`, formData, {
+      await axios.put(`${API_BASE_URL}/artist/update/${selectedArtist.id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -216,7 +235,7 @@ useEffect(() => {
       });
       toast.success('Artista actualizado correctamente.');
       // Actualizar el artista en la lista
-      setArtists(prev => prev.map(a => a.idArtist === selectedArtist.idArtist ? { ...a, ...formData } : a));
+      setArtists(prev => prev.map(a => a.id === selectedArtist.id ? { ...a, ...formData } : a));
       handleCancel(); // Limpiar
     } catch (err) {
       const msg = err.response?.data?.message || 'Error al actualizar el artista.';
@@ -230,6 +249,14 @@ useEffect(() => {
       <div className="card-header">
         <h3 className="card-title">Actualizar Artista</h3>
       </div>
+
+      {/* Barra de Filtros */}
+      <form className="filter-bar" onSubmit={(e) => e.preventDefault()}>
+        <input type="text" name="id" placeholder="Buscar por ID" value={filters.id} onChange={handleFilterChange} />
+        <input type="text" name="name" placeholder="Buscar por nombre" value={filters.name} onChange={handleFilterChange} />
+        <input type="text" name="lastName" placeholder="Buscar por apellido" value={filters.lastName} onChange={handleFilterChange} />
+        <button type="button" className="btn btn-primary" onClick={handleClearFilters}>Limpiar</button>
+      </form>
 
       {/* Tabla de artistas */}
       {loading ? (
@@ -248,9 +275,9 @@ useEffect(() => {
               </tr>
             </thead>
             <tbody>
-              {artists.map(a => (
-                <tr key={a.idArtist}>
-                  <td className="mono">#{a.idArtist}</td>
+              {filteredArtists.map(a => (
+                <tr key={a.id}>
+                  <td className="mono">#{a.id}</td>
                   <td>{a.name}</td>
                   <td>{a.lastName}</td>
                   <td>{a.nationality}</td>
@@ -262,9 +289,11 @@ useEffect(() => {
                   </td>
                 </tr>
               ))}
-              {artists.length === 0 && (
+              {filteredArtists.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="empty-state">No hay artistas registrados.</td>
+                  <td colSpan="6" className="empty-state">
+                    {artists.length === 0 ? 'No hay artistas registrados.' : 'No se encontraron artistas con esos filtros.'}
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -327,7 +356,7 @@ useEffect(() => {
                       }}>
                         {selectedArtist.imageUrl ? (
                           <button 
-                            onClick={(e) => { e.stopPropagation(); handleDeleteImage(selectedArtist.idArtist); }} 
+                            onClick={(e) => { e.stopPropagation(); handleDeleteImage(selectedArtist.id); }} 
                             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                           >
                             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -359,7 +388,7 @@ useEffect(() => {
               <h2 className="section-title" style={{ fontSize: '1.25rem', fontWeight: '600', color: '#f3f4f6', marginBottom: '2px' }}>
                 Editando a: {selectedArtist.name} {selectedArtist.lastName}
               </h2>
-              <span className="form-label" style={{ fontSize: '0.85rem', color: '#9ca3af' }}>ID: #{selectedArtist.idArtist}</span>
+              <span className="form-label" style={{ fontSize: '0.85rem', color: '#9ca3af' }}>ID: #{selectedArtist.id}</span>
       
             </div>
           </div>
@@ -369,7 +398,7 @@ useEffect(() => {
             ref={fileInputRef}
             style={{ display: 'none' }}
             accept="image/*"
-            onChange={(e) => handleChangeImage(selectedArtist.idArtist, e.target.files[0])}
+            onChange={(e) => handleChangeImage(selectedArtist.id, e.target.files[0])}
           />
           <div>
             <div className="form-group">
@@ -443,11 +472,11 @@ useEffect(() => {
               <label className="form-label">Géneros del artista</label>
               <div className="genre-checkboxes" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
                 {allGenres.map(genre => (
-                  <label key={genre.idGenre} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: '#2a2a2a', padding: '0.3rem 0.8rem', borderRadius: '20px', cursor: 'pointer' }}>
+                  <label key={genre.id} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: '#2a2a2a', padding: '0.3rem 0.8rem', borderRadius: '20px', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
-                      checked={artistGenres.includes(genre.idGenre)}
-                      onChange={() => handleGenreToggle(genre.idGenre, artistGenres.includes(genre.idGenre))}
+                      checked={artistGenres.includes(genre.id)}
+                      onChange={() => handleGenreToggle(genre.id, artistGenres.includes(genre.id))}
                       disabled={updatingGenre}
                     />
                     {genre.name}

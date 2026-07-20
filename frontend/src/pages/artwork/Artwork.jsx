@@ -268,36 +268,35 @@ function Artwork() {
                 </svg>
                 {modoIA ? 'Modo Normal' : 'IA'}
               </button>
-              <button className="search-btn" onClick={() => doSearch(0)}>Buscar</button>
+                      <button className="search-btn" onClick={() => doSearch(0)}>Buscar</button>
                 </div>
-                {modoIA && (
-                    <div className="capi-widget">
-                        {showBubble && (
-                            <div className="speech-bubble">
-                                <button className="bubble-close" onClick={() => setShowBubble(false)}>×</button>
-                                <div className="bubble-title">Bienvenido al modo IA</div>
-                                <div className="bubble-text">Aquí puedes realizar búsquedas inteligentes.</div>
-                                <div className="bubble-text">¿Cómo funciona? Ingresas lo que deseas buscar.</div>
-                            </div>
-                        )}
-                        {!showBubble && aiMessage && (
-                            <div className="speech-bubble">
-                                <button className="bubble-close" onClick={() => setAiMessage('')}>×</button>
-                                <div className="bubble-text">{aiMessage}</div>
-                            </div>
-                        )}
-                        <img
-                            key={capiState}
-                            src={CAPI_GIFS[capiState]}
-                            alt="Capibara asistente IA"
-                            className="saludo-gif"
-                        />
-                    </div>
-                )}
                 </div>
+            {modoIA && (
+                <div className="capi-widget">
+                    {showBubble && (
+                        <div className="speech-bubble">
+                            <button className="bubble-close" onClick={() => setShowBubble(false)}>×</button>
+                            <div className="bubble-title">Bienvenido al modo IA</div>
+                            <div className="bubble-text">Aquí puedes realizar búsquedas inteligentes.</div>
+                            <div className="bubble-text">¿Cómo funciona? Ingresas lo que deseas buscar.</div>
+                        </div>
+                    )}
+                    {!showBubble && aiMessage && (
+                        <div className="speech-bubble">
+                            <button className="bubble-close" onClick={() => setAiMessage('')}>×</button>
+                            <div className="bubble-text">{aiMessage}</div>
+                        </div>
+                    )}
+                    <img
+                        key={capiState}
+                        src={CAPI_GIFS[capiState]}
+                        alt="Capibara asistente IA"
+                        className="saludo-gif"
+                    />
+                </div>
+            )}
             </div>
-            {!modoIA && (
-              <div className="filter-container">
+            <div className={`filter-container${modoIA ? ' filter-container--hidden' : ''}`}>
                 <div className="filter-group">
                 <input
                   type="number"
@@ -356,8 +355,7 @@ function Artwork() {
                     getArt(0, null, null, 'price', 'ASC', '');
                   }}
                 >Limpiar</button>
-              </div>
-            )}
+            </div>
             <section id="art-grid">
                 {modoIA && (works.content || []).length === 0 && (
                     <p className="no-results-message">No hay obras para tu búsqueda.</p>

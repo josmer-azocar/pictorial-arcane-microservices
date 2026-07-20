@@ -55,7 +55,7 @@ const UpdateGenre = () => {
     }
     setIsEditing(true);
     try {
-      await updateGenre(selectedGenre.idGenre, {
+      await updateGenre(selectedGenre.id, {
         name: formData.name,
         description: formData.description
       }, token);
@@ -64,7 +64,7 @@ const UpdateGenre = () => {
 
       setGenres(prevGenres =>
         prevGenres.map(g =>
-          g.idGenre === selectedGenre.idGenre
+          g.id === selectedGenre.id
             ? { ...g, name: formData.name, description: formData.description }
             : g
         )
@@ -98,8 +98,8 @@ const UpdateGenre = () => {
             </thead>
             <tbody>
               {genres.map(genre => (
-                <tr key={genre.idGenre}>
-                  <td className="mono">#{genre.idGenre}</td>
+                <tr key={genre.id}>
+                  <td className="mono">#{genre.id}</td>
                   <td>{genre.name}</td>
                   <td>{genre.description}</td>
                   <td>

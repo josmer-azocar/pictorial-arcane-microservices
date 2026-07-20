@@ -378,7 +378,7 @@ export const uploadArtworkImage = async (artworkId, file, token) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    return await axios.post(`${API_BASE_URL}/admin/${artworkId}/artworkImage`, formData, {
+    return await axios.post(`${API_BASE_URL}/artwork/${artworkId}/artworkImage`, formData, {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -389,7 +389,7 @@ export const uploadArtworkImage = async (artworkId, file, token) => {
 export const uploadArtistImage = async (artistId, file, token) => {
     const formData = new FormData();
     formData.append('file', file);
-    return await axios.post(`${API_BASE_URL}/admin/${artistId}/artistImage`, formData, {
+    return await axios.post(`${API_BASE_URL}/artist/${artistId}/artistImage`, formData, {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -473,7 +473,7 @@ export async function deleteArtwork(id, token) {
 
 // DELETE /admin/{id}/artworkImage
 export async function deleteArtworkImage(id, token) {
-    const response = await axios.delete(`${API_BASE_URL}/admin/${id}/artworkImage`, {
+    const response = await axios.delete(`${API_BASE_URL}/artwork/${id}/artworkImage`, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
     return response;

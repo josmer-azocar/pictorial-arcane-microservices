@@ -198,7 +198,7 @@ function Admin() {
       return <p className="empty-state">Cargando datos de la obra...</p>;
     }
 
-    const genre = genres.find(g => g.idGenre === artworkToEdit.idGenre);
+    const genre = genres.find(g => g.id === artworkToEdit.genreId);
     if (!genre) {
       return <p className="empty-state">Error: Género no encontrado para la obra seleccionada.</p>;
     }

@@ -14,6 +14,25 @@ function DeleteArtist() {
   const [loading, setLoading] = useState(true);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [artistGenres, setArtistGenres] = useState([]);
+  const [filters, setFilters] = useState({ id: '', name: '', lastName: '' });
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ id: '', name: '', lastName: '' });
+  };
+
+  const filteredArtists = artists
+    .filter(a => {
+      const matchId = !filters.id || a.id?.toLowerCase().includes(filters.id.toLowerCase());
+      const matchName = !filters.name || a.name?.toLowerCase().includes(filters.name.toLowerCase());
+      const matchLastName = !filters.lastName || a.lastName?.toLowerCase().includes(filters.lastName.toLowerCase());
+      return matchId && matchName && matchLastName;
+    })
+    .sort((a, b) => b.id.localeCompare(a.id));
 
   // GET /artists — trae todos los artistas
  useEffect(() => {
@@ -35,7 +54,7 @@ function DeleteArtist() {
   if (selectedArtist) {
     const fetchGenres = async () => {
       try {
-        const genres = await getGenresByArtist(selectedArtist.idArtist);
+        const genres = await getGenresByArtist(selectedArtist.id);
         setArtistGenres(genres); 
       } catch (error) {
         toast.error('Error al cargar los géneros del artista.');
@@ -110,7 +129,7 @@ function DeleteArtist() {
   if (!window.confirm(`¿Eliminar a ${name}? Esta acción no se puede deshacer.`)) return;
   try {
     // PASO 1: borrar imagen del artista primero
-    await axios.delete(`${API_BASE_URL}/admin/${id}/artistImage`, {
+    await axios.delete(`${API_BASE_URL}/artist/${id}/artistImage`, {
       headers: { Authorization: `Bearer ${token}` }
     }).catch(() => {}); // si no tiene imagen no importa
 
@@ -119,7 +138,7 @@ function DeleteArtist() {
   headers: { Authorization: `Bearer ${token}` }
 });
     toast.success(`Artista "${name}" eliminado correctamente.`);
-    setArtists(prev => prev.filter(a => a.idArtist !== id));
+    setArtists(prev => prev.filter(a => a.id !== id));
   } catch (err) {
     toast.error('No se pudo eliminar el artista.');
   }
@@ -131,6 +150,14 @@ function DeleteArtist() {
       <div className="card-header">
         <h3 className="card-title">Borrar Artista</h3>
       </div>
+
+      {/* Barra de Filtros */}
+      <form className="filter-bar" onSubmit={(e) => e.preventDefault()}>
+        <input type="text" name="id" placeholder="Buscar por ID" value={filters.id} onChange={handleFilterChange} />
+        <input type="text" name="name" placeholder="Buscar por nombre" value={filters.name} onChange={handleFilterChange} />
+        <input type="text" name="lastName" placeholder="Buscar por apellido" value={filters.lastName} onChange={handleFilterChange} />
+        <button type="button" className="btn btn-primary" onClick={handleClearFilters}>Limpiar</button>
+      </form>
 
       {loading ? (
         <div className="empty-state">Cargando artistas...</div>
@@ -148,9 +175,9 @@ function DeleteArtist() {
               </tr>
             </thead>
             <tbody>
-              {artists.map(a => (
-                <tr key={a.idArtist}>
-                  <td className="mono">#{a.idArtist}</td>
+              {filteredArtists.map(a => (
+                <tr key={a.id}>
+                  <td className="mono">#{a.id}</td>
                   <td className="artwork">{a.name}</td>
                   <td className="artwork">{a.lastName}</td>
                   <td>{a.nationality}</td>
@@ -159,7 +186,7 @@ function DeleteArtist() {
                       className="btn btn-primary"
                       title="Ver detalles"
                       onClick={() => setSelectedArtist(
-                        selectedArtist?.idArtist === a.idArtist ? null : a
+                        selectedArtist?.id === a.id ? null : a
                       )}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -176,16 +203,16 @@ function DeleteArtist() {
                   </td>
                   <td>
                     <button className="btn btn-primary"
-                      onClick={() => handleDelete(a.idArtist, `${a.name} ${a.lastName}`)}>
+                      onClick={() => handleDelete(a.id, `${a.name} ${a.lastName}`)}>
                       Eliminar
                     </button>
                   </td>
                 </tr>
               ))}
-              {artists.length === 0 && (
+              {filteredArtists.length === 0 && (
                 <tr>
                   <td colSpan="6" className="empty-state">
-                    No hay artistas registrados.
+                    {artists.length === 0 ? 'No hay artistas registrados.' : 'No se encontraron artistas con esos filtros.'}
                   </td>
                 </tr>
               )}
@@ -276,7 +303,7 @@ function DeleteArtist() {
                   <span style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.2rem' }}>
                     {artistGenres.length > 0 ? (
                       artistGenres.map(g => (
-                        <span key={g.idGenre} style={{
+                        <span key={g.id} style={{
                           background: '#2a2a2a',
                           padding: '0.2rem 0.6rem',
                           borderRadius: '12px',
