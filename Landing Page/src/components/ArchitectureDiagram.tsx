@@ -416,8 +416,8 @@ export default function ArchitectureDiagram({ onNodeHover }: ArchitectureDiagram
                             </p>
                           </div>
 
-                          <div className="flex-1 p-4 rounded-2xl flex flex-col gap-3 relative overflow-hidden" style={{ background: 'rgba(15, 6, 28, 0.55)', backdropFilter: 'blur(16px)', border: '1px solid rgba(192, 132, 252, 0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-                            <div className="absolute -top-2.5 left-5 px-2.5 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider text-white" style={{ backgroundColor: selectedNode.accentColor, boxShadow: `0 0 15px ${selectedNode.accentColor}50` }}>
+                          <div className="flex-1 pt-7 p-4 rounded-2xl flex flex-col gap-3 relative" style={{ background: 'rgba(15, 6, 28, 0.55)', backdropFilter: 'blur(16px)', border: '1px solid rgba(192, 132, 252, 0.15)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+                            <div className="absolute top-2 left-5 px-2.5 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider text-white" style={{ backgroundColor: selectedNode.accentColor, boxShadow: `0 0 15px ${selectedNode.accentColor}50` }}>
                               Data Node Specs
                             </div>
                             <div className="pt-2">
