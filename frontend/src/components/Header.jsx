@@ -38,7 +38,6 @@ function Header(){
                 <li className="list-item"><Link to="/">Home</Link></li>
                 <li className="list-item"><Link to="/about">Acerca de</Link></li>
                 <li className="list-item"><Link to="/artwork">Galería</Link></li>
-                <li className="list-item"><Link to="/shipment">Envíos</Link></li>
                 {!isLoggedIn ? (
                     <li className="list-item">
                         <Link to="/login" className="login-btn">Login</Link>
