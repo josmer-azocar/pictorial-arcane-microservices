@@ -3,6 +3,7 @@ import ConfirmDialog from '../pages/admin/ConfirmDialog';
 
 /**
  * Hook para reemplazar window.confirm() y window.alert() con modales estilizados.
+ *
  * Uso:
  *   const { confirmDialog, showConfirm, showAlert } = useConfirm();
  *
