@@ -13,7 +13,7 @@ import "./Admin.css";
 import CreateArtist from "./CreateArtist.jsx";
 import DeleteArtist from './DeleteArtist.jsx';
 import UpdateArtwork from './UpdateArtwork.jsx';
-import { getGenres, getAllArtworks, getArtists, getTopArtworks, getTopArtists } from '../../services/fetchArtwork.js';
+import { getGenres, getAllArtworks, getArtists, getTopArtworks, getTopArtists, getSpecificArtworkById } from '../../services/fetchArtwork.js';
 import { useAuth } from '../../services/AuthContext';
 import { getPendingSales } from '../../services/fetchSales';
 import AddSculpture from './AddSculpture.jsx';
@@ -32,6 +32,8 @@ function Admin() {
   const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState(null);
   const [artworkToEdit, setArtworkToEdit] = useState(null);
+  const [editArtworkDetail, setEditArtworkDetail] = useState(null);
+  const [editArtworkError, setEditArtworkError] = useState(null);
   const [isArtworksMenuOpen, setArtworksMenuOpen] = useState(false);
   const [isArtistsMenuOpen, setArtistsMenuOpen] = useState(false);
   const [isGenresMenuOpen, setGenresMenuOpen] = useState(false);
@@ -136,6 +138,22 @@ function Admin() {
     handleSectionChange(null);
   };
 
+  // El tipo real de una obra (pintura/escultura/etc.) no se puede inferir del género
+  // (el género es un movimiento artístico como "Expresionismo", no una categoría física),
+  // así que se determina a partir del detalle específico devuelto por el backend.
+  useEffect(() => {
+    if (!artworkToEdit) {
+      setEditArtworkDetail(null);
+      setEditArtworkError(null);
+      return;
+    }
+    setEditArtworkDetail(null);
+    setEditArtworkError(null);
+    getSpecificArtworkById(artworkToEdit.id)
+      .then(setEditArtworkDetail)
+      .catch(() => setEditArtworkError('No se pudo cargar el detalle de la obra seleccionada.'));
+  }, [artworkToEdit]);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -199,21 +217,35 @@ function Admin() {
     if (!artworkToEdit || !genres.length) {
       return <p className="empty-state">Cargando datos de la obra...</p>;
     }
-
-    const genre = genres.find(g => g.id === artworkToEdit.genreId);
-    if (!genre) {
-      return <p className="empty-state">Error: Género no encontrado para la obra seleccionada.</p>;
+    if (editArtworkError) {
+      return <p className="empty-state">{editArtworkError}</p>;
+    }
+    if (!editArtworkDetail) {
+      return <p className="empty-state">Cargando datos de la obra...</p>;
     }
 
-    const genreTypeMap = {
-      'Escultura': 'SCULPTURE',
-      'Pintura': 'PAINTING',
-      'Fotografía': 'PHOTOGRAPHY',
-      'Cerámica': 'CERAMIC',
-      'Orfebrería': 'GOLDSMITH'
-    };
-    const artworkType = genreTypeMap[genre.name];
-    const artworkDataForForm = { ...artworkToEdit, id: artworkToEdit.idArtWork };
+    let artworkType = null;
+    let subtypeDetails = null;
+    if (editArtworkDetail.paintingResponse) {
+      artworkType = 'PAINTING';
+      subtypeDetails = editArtworkDetail.paintingResponse;
+    } else if (editArtworkDetail.sculptureResponse) {
+      artworkType = 'SCULPTURE';
+      subtypeDetails = editArtworkDetail.sculptureResponse;
+    } else if (editArtworkDetail.photographyResponse) {
+      artworkType = 'PHOTOGRAPHY';
+      subtypeDetails = editArtworkDetail.photographyResponse;
+    } else if (editArtworkDetail.ceramicResponse) {
+      artworkType = 'CERAMIC';
+      subtypeDetails = editArtworkDetail.ceramicResponse;
+    } else if (editArtworkDetail.goldsmithResponse) {
+      artworkType = 'GOLDSMITH';
+      subtypeDetails = editArtworkDetail.goldsmithResponse;
+    }
+
+    // Combina los datos base (name, price, status, artistId, genreId...) con los
+    // campos propios del subtipo (technique, material, weight...) para precargar el form.
+    const artworkDataForForm = { ...artworkToEdit, ...(subtypeDetails || {}), id: artworkToEdit.id };
 
     switch (artworkType) {
       case 'SCULPTURE':
@@ -227,7 +259,7 @@ function Admin() {
       case 'GOLDSMITH':
         return <AddGoldsmith artworkData={artworkDataForForm} onCreationSuccess={handleActionSuccess} />;
       default:
-        return <p>Tipo de obra "{genre.name}" no reconocido. No se puede editar.</p>;
+        return <p>No se encontró el detalle específico de esta obra. No se puede editar.</p>;
     }
   };
 
