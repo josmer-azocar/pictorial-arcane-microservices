@@ -46,8 +46,17 @@ function Admin() {
   const [unread, setUnread] = useState(0);
   const [bellRing, setBellRing] = useState(false);
   const bellRef = useRef(null);
-  const prevCountRef = useRef(0);
   const audioCtxRef = useRef(null);
+
+  // IDs persistidos en localStorage para sobrevivir remounts y recarga
+  const getSeenIds = () => {
+    try { return new Set(JSON.parse(localStorage.getItem('admin_seen_notif_ids') || '[]')); }
+    catch { return new Set(); }
+  };
+  const saveSeenIds = (set) => {
+    try { localStorage.setItem('admin_seen_notif_ids', JSON.stringify([...set])); }
+    catch {}
+  };
 
   const playBellSound = () => {
     try {
@@ -59,26 +68,23 @@ function Admin() {
 
       const now = ctx.currentTime;
 
-      const osc1 = ctx.createOscillator();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(800, now);
+      // Sonido tipo notificación: dos notas suaves ascendentes
+      const notes = [880, 1046]; // La5, Do6
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.15);
 
-      const osc2 = ctx.createOscillator();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(1200, now);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0, now + i * 0.15);
+        gain.gain.linearRampToValueAtTime(0.25, now + i * 0.15 + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.4);
 
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.8, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-
-      osc1.connect(gain);
-      osc2.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc1.start(now);
-      osc2.start(now);
-      osc1.stop(now + 0.5);
-      osc2.stop(now + 0.5);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.15);
+        osc.stop(now + i * 0.15 + 0.4);
+      });
     } catch (e) {
       console.warn('Error al reproducir sonido de campana:', e);
     }
@@ -144,16 +150,27 @@ function Admin() {
         const data = await getPendingSales(token);
         const sales = Array.isArray(data) ? data : data?.content || [];
 
-        if (sales.length > prevCountRef.current && prevCountRef.current !== 0) {
+        // Obtener IDs ya vistos (persistidos en localStorage)
+        const seenIds = getSeenIds();
+
+        // Filtrar solo los genuinamente nuevos
+        const genuinelyNew = sales.filter(s => s.id != null && !seenIds.has(String(s.id)));
+
+        if (genuinelyNew.length > 0) {
+          // Hay notificaciones nuevas → sonar UNA SOLA VEZ y animar
           setBellRing(true);
-          setTimeout(() => setBellRing(false), 1500);
-        }
-
-        if (sales.length > 0) {
           playBellSound();
+          setTimeout(() => setBellRing(false), 1500);
+
+          // Marcar todos los actuales como vistos
+          sales.forEach(s => seenIds.add(String(s.id)));
+          saveSeenIds(seenIds);
+        } else if (seenIds.size === 0 && sales.length > 0) {
+          // Primera carga: registrar sin sonar
+          sales.forEach(s => seenIds.add(String(s.id)));
+          saveSeenIds(seenIds);
         }
 
-        prevCountRef.current = sales.length;
         setNotifications(sales);
         setUnread(sales.length);
       } catch (err) {
@@ -162,7 +179,7 @@ function Admin() {
     };
 
     fetchNotifs();
-    const id = setInterval(fetchNotifs, 10000);
+    const id = setInterval(fetchNotifs, 60000); // Revisar cada 60 segundos
     return () => {
       clearInterval(id);
       audioCtxRef.current?.close().catch(() => {});
