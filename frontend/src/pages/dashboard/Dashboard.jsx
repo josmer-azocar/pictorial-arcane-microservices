@@ -9,6 +9,7 @@ import { obtainOrRenewMembership, fetchMembershipStatus, createSecurityCode } fr
 import { fetchPurchases } from '../../services/fetchPurchases';
 import { showArtwork } from '../../services/fetchArtwork.js';
 import { ToastContainer } from 'react-toastify';
+import ConfirmDialog from '../admin/ConfirmDialog';
 const kawaiiBanner = '/K.png';
 const cuteAvatar = '/K.png';
 
@@ -111,6 +112,7 @@ function Dashboard() {
     const [member, setMember] = useState(null);
     const [loading, setLoading] = useState(false);
     const [purchaseCount, setPurchaseCount] = useState(0);
+    const [showConfirmRenew, setShowConfirmRenew] = useState(false);
     const [recommendedArtworks, setRecommendedArtworks] = useState([]);
 
     // Fetch membership status and purchase count on mount
@@ -170,13 +172,16 @@ function Dashboard() {
         }
     };
 
-    const handleObtainOrRenew = async () => {
-        if (!confirm('¿Deseas obtener o renovar tu membresía?')) return;
+    const handleObtainOrRenew = () => {
+        setShowConfirmRenew(true);
+    };
 
+    const handleConfirmRenew = async () => {
+        setShowConfirmRenew(false);
         setLoading(true);
         try {
             const newMembership = await obtainOrRenewMembership();
-            setMember(newMembership); // directly set the result
+            setMember(newMembership);
             createSecurityCode(); 
             alert('Membresía obtenida/renovada exitosamente. Se ha generado un código de seguridad para tu cuenta. Revise su correo');
         } catch (error) {
@@ -191,6 +196,8 @@ function Dashboard() {
         navigator.clipboard.writeText(window.location.href);
         alert('Enlace del perfil copiado al portapapeles.');
     };
+
+    const hasMembership = member?.status === 'ACTIVE';
 
     const renderContent = () => {
         switch (activeSection) {
@@ -379,6 +386,20 @@ function Dashboard() {
             <div id='message-user'>
                 {renderContent()}  
             </div>
+            <ConfirmDialog
+                isOpen={showConfirmRenew}
+                title={hasMembership ? '¿Renovar membresía?' : '¿Obtener membresía?'}
+                message={
+                    hasMembership
+                        ? '¿Deseas renovar tu membresía de Pictorial Arcane?'
+                        : '¿Deseas obtener tu membresía exclusiva de Pictorial Arcane?'
+                }
+                confirmText={hasMembership ? 'Sí, renovar' : 'Sí, obtener'}
+                cancelText="Cancelar"
+                icon="warning"
+                onConfirm={handleConfirmRenew}
+                onCancel={() => setShowConfirmRenew(false)}
+            />
             <ToastContainer />
         </section>
         </div>
