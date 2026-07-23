@@ -7,6 +7,7 @@ import TicketInvoice from './TicketInvoice.jsx';
 import './Admin.css';
 import { getPendingSales } from '../../services/fetchSales';
 import { getAllArtworks } from '../../services/fetchArtwork.js';
+import { useConfirm } from '../../services/useConfirm';
 
 const API_BASE_URL  = import.meta.env.VITE_API_URL;
 
@@ -88,8 +89,17 @@ function PendingReservations() {
     return () => clearInterval(id);
   }, []);
 
+  const { confirmDialog, showConfirm } = useConfirm();
+
   const handleCancel = async (saleId) => {
-    if (!window.confirm('¿Cancelar esta reserva?')) return;
+    const ok = await showConfirm({
+      title: '¿Cancelar reserva?',
+      message: 'Esta acción cancelará la reserva y no se puede deshacer.',
+      confirmText: 'Sí, cancelar',
+      cancelText: 'Volver',
+      icon: 'danger',
+    });
+    if (!ok) return;
     try {
       await axios.put(
         `${ API_BASE_URL}/core/admin/rejectPendingSale/${saleId}`,
@@ -126,6 +136,7 @@ function PendingReservations() {
 
   return (
     <div className="card">
+      {confirmDialog}
       <ToastContainer />
 
       <div className="card-header">

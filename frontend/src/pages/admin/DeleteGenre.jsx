@@ -3,10 +3,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getGenres, deleteGenre } from '../../services/fetchArtwork';
 import './Admin.css';
+import { useConfirm } from '../../services/useConfirm';
 
 const DeleteGenre = () => {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { confirmDialog, showConfirm } = useConfirm();
 
   const loadGenres = async () => {
     setLoading(true);
@@ -25,13 +27,17 @@ const DeleteGenre = () => {
   }, []);
 
   const handleDelete = async (id, description) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar el género "${description}"?`)) {
+    const ok = await showConfirm({
+      title: '¿Eliminar género?',
+      message: `¿Estás seguro de que deseas eliminar el género "${description}"?`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Cancelar',
+      icon: 'danger',
+    });
+    if (ok) {
         try {
-            // TODO: Pasar el token real
             await deleteGenre(id, null);
             toast.success(`El género "${description}" ha sido eliminado.`);
-            
-            // Recargamos la lista para ver los cambios
             loadGenres();
         } catch (error) {
             console.error(error);
@@ -42,6 +48,7 @@ const DeleteGenre = () => {
 
   return (
     <div className="admin-section">
+      {confirmDialog}
       <ToastContainer position="top-center" theme="dark" />
       <h1 className="section-title">Borrar Género</h1>
       <div className="admin-line"></div>

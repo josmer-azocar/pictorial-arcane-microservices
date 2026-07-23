@@ -2,6 +2,7 @@ import './Reports.css'
 import { searchMemberships, cancelMembership } from '../../services/membershipServices.js'
 import { useState } from 'react';
 import Loading from '../../components/Loading';
+import { useConfirm } from '../../services/useConfirm';
 
 function ReportsSearch() {
     const [searchParams, setSearchParams] = useState({
@@ -12,6 +13,7 @@ function ReportsSearch() {
     const [results, setResults] = useState(null); 
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
+    const { confirmDialog, showConfirm, showAlert } = useConfirm();
 
     const statusColor = (status) => {
         const map = {
@@ -57,12 +59,24 @@ function ReportsSearch() {
     }
 
     const handleCancel = async (membershipId) => {
-        if (!confirm('¿Cancelar esta membresía?')) return;
+        const ok = await showConfirm({
+            title: '¿Cancelar membresía?',
+            message: 'Esta acción cancelará la membresía del usuario seleccionado.',
+            confirmText: 'Sí, cancelar',
+            cancelText: 'Volver',
+            icon: 'danger',
+        });
+        if (!ok) return;
         try {
             await cancelMembership(membershipId);
             handleSearch();
         } catch (error) {
-            alert('Error al cancelar');
+            await showAlert({
+                title: 'Error',
+                message: 'No se pudo cancelar la membresía. Inténtalo de nuevo.',
+                icon: 'danger',
+                confirmText: 'Entendido',
+            });
             console.error("Error cancelando membresía:", error);
         }
     };
@@ -75,6 +89,7 @@ function ReportsSearch() {
 
     return (
         <div className="reports-search">
+            {confirmDialog}
             <form onSubmit={handleSearch} className="filter-bar">
                 <input
                     type="date"

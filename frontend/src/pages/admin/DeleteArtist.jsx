@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Admin.css';
 import { getGenresByArtist } from '../../services/genreServices';
+import { useConfirm } from '../../services/useConfirm';
 
 //const BASE_URL = 'https://api-gateway.calmgrass-156d398a.eastus.azurecontainerapps.io';
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -15,6 +16,7 @@ function DeleteArtist() {
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [artistGenres, setArtistGenres] = useState([]);
   const [filters, setFilters] = useState({ id: '', name: '', lastName: '' });
+  const { confirmDialog, showConfirm } = useConfirm();
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -126,26 +128,34 @@ function DeleteArtist() {
 
   // DELETE /artists/{id}
   const handleDelete = async (id, name) => {
-  if (!window.confirm(`¿Eliminar a ${name}? Esta acción no se puede deshacer.`)) return;
-  try {
-    // PASO 1: borrar imagen del artista primero
-    await axios.delete(`${API_BASE_URL}/artist/${id}/artistImage`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).catch(() => {}); // si no tiene imagen no importa
+    const ok = await showConfirm({
+      title: '¿Eliminar artista?',
+      message: `¿Estás seguro de que deseas eliminar a "${name}"? Esta acción no se puede deshacer.`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Cancelar',
+      icon: 'danger',
+    });
+    if (!ok) return;
+    try {
+      // PASO 1: borrar imagen del artista primero
+      await axios.delete(`${API_BASE_URL}/artist/${id}/artistImage`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).catch(() => {}); // si no tiene imagen no importa
 
-    // PASO 2: borrar el artista
-    await axios.delete(`${API_BASE_URL}/artist/delete/${id}`, {
-  headers: { Authorization: `Bearer ${token}` }
-});
-    toast.success(`Artista "${name}" eliminado correctamente.`);
-    setArtists(prev => prev.filter(a => a.id !== id));
-  } catch (err) {
-    toast.error('No se pudo eliminar el artista.');
-  }
-};
+      // PASO 2: borrar el artista
+      await axios.delete(`${API_BASE_URL}/artist/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`Artista "${name}" eliminado correctamente.`);
+      setArtists(prev => prev.filter(a => a.id !== id));
+    } catch (err) {
+      toast.error('No se pudo eliminar el artista.');
+    }
+  };
 
   return (
     <div className="card">
+      {confirmDialog}
       <ToastContainer />
       <div className="card-header">
         <h3 className="card-title">Borrar Artista</h3>

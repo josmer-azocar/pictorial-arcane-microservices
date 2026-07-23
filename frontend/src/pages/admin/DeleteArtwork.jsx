@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { showArtwork, searchArtworks, showArtist, deleteArtwork, getAllArtworks, getGenres, getArtworkById, updateGenericArtwork } from '../../services/fetchArtwork';
 import { useAuth } from '../../services/AuthContext';
 import './Admin.css';
+import { useConfirm } from '../../services/useConfirm';
 
 const DeleteArtwork = () => {
   const { token } = useAuth();
@@ -12,6 +13,7 @@ const DeleteArtwork = () => {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ id: '', artistId: '', genre: '' });
+  const { confirmDialog, showConfirm } = useConfirm();
 
   // Carga inicial de datos
   const loadData = async () => {
@@ -86,7 +88,14 @@ const DeleteArtwork = () => {
   };
 
   const handleDelete = async (id, name) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar la obra "${name}"? Esta acción no se puede deshacer.`)) {
+    const ok = await showConfirm({
+      title: '¿Eliminar obra?',
+      message: `¿Estás seguro de que deseas eliminar "${name}"? Esta acción no se puede deshacer.`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Cancelar',
+      icon: 'danger',
+    });
+    if (ok) {
         try {
             await deleteArtwork(id, token);
             toast.success(`La obra "${name}" ha sido eliminada exitosamente.`);
@@ -136,6 +145,7 @@ const DeleteArtwork = () => {
 
   return (
     <div className="card">
+      {confirmDialog}
       <ToastContainer position="top-center" theme="dark" />
       <div className="card-header">
         <h3 className="card-title">Borrar Obra</h3>
