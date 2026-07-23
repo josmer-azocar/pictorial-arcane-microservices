@@ -54,39 +54,38 @@ const CreateGenre = () => {
     };
 
     return (
-        <div className="card">
-            <ToastContainer position="top-center" theme="dark" />
-            <div className="card-header">
-                <h3 className="card-title">Crear Nuevo Género</h3>
-            </div>
+        <div className="admin-form-container">
+            <ToastContainer position="top-center" autoClose={5000} theme="dark" />
+            <h1 className="admin-title">Crear Nuevo Género</h1>
+            <div className="admin-line"></div>
             <p className="admin-subtitle">Agrega nuevas categorías para clasificar las obras de arte.</p>
 
             <form className="admin-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label className="form-label">Nombre del Género</label>
-                    <input 
-                        type="text" 
-                        name="name" 
-                        value={formData.name} 
-                        onChange={handleChange} 
-                        placeholder="Ej: Renacimiento, Cubismo..." 
-                        required 
+                    <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Ej: Renacimiento, Cubismo..."
+                        required
                     />
                 </div>
 
                 <div className="form-group">
                     <label className="form-label">Descripción</label>
-                    <textarea 
-                        name="description" 
-                        value={formData.description} 
-                        onChange={handleChange} 
-                        placeholder="Breve descripción del género..." 
+                    <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Breve descripción del género..."
                         rows="4"
-                        required 
+                        required
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                <button type="submit" className="admin-create-btn" disabled={isLoading}>
                     {isLoading ? 'Creando...' : 'Crear Género'}
                 </button>
             </form>
