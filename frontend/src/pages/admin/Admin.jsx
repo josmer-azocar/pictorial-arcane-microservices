@@ -47,6 +47,7 @@ function Admin() {
   const [bellRing, setBellRing] = useState(false);
   const bellRef = useRef(null);
   const prevCountRef = useRef(0);
+  const seenIdsRef = useRef(new Set());
   const audioCtxRef = useRef(null);
 
   const playBellSound = () => {
@@ -68,8 +69,8 @@ function Admin() {
       osc2.frequency.setValueAtTime(1200, now);
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.8, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
 
       osc1.connect(gain);
       osc2.connect(gain);
@@ -77,8 +78,8 @@ function Admin() {
 
       osc1.start(now);
       osc2.start(now);
-      osc1.stop(now + 0.5);
-      osc2.stop(now + 0.5);
+      osc1.stop(now + 0.6);
+      osc2.stop(now + 0.6);
     } catch (e) {
       console.warn('Error al reproducir sonido de campana:', e);
     }
@@ -144,15 +145,16 @@ function Admin() {
         const data = await getPendingSales(token);
         const sales = Array.isArray(data) ? data : data?.content || [];
 
-        if (sales.length > prevCountRef.current && prevCountRef.current !== 0) {
+        // Solo suena si hay IDs genuinamente nuevos (no vistos antes)
+        const genuinelyNew = sales.filter(s => !seenIdsRef.current.has(s.id));
+        if (genuinelyNew.length > 0 && seenIdsRef.current.size > 0) {
           setBellRing(true);
+          playBellSound();
           setTimeout(() => setBellRing(false), 1500);
         }
 
-        if (sales.length > 0) {
-          playBellSound();
-        }
-
+        // Actualizar el set de IDs vistos
+        sales.forEach(s => seenIdsRef.current.add(s.id));
         prevCountRef.current = sales.length;
         setNotifications(sales);
         setUnread(sales.length);
@@ -162,7 +164,7 @@ function Admin() {
     };
 
     fetchNotifs();
-    const id = setInterval(fetchNotifs, 10000);
+    const id = setInterval(fetchNotifs, 60000); // Revisar cada 60 segundos
     return () => {
       clearInterval(id);
       audioCtxRef.current?.close().catch(() => {});
