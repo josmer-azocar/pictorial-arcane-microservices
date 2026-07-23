@@ -1,141 +1,260 @@
-/* Fondo general con vibe arcane (usa gradiente + textura sutil o imagen) */
-.about-container {
-  background: #fff;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: #000;
-  min-height: 100vh;
-  padding: 0 0 60px 0;
-  font-family: 'Roboto Flex', sans-serif;
+.about-page {
+  font-family: 'Roboto Flex', 'Inter', Arial, sans-serif;
+  background: #faf9fc;
+  overflow-x: hidden;
 }
 
-/* Header con overlay místico (similar al hero de home) */
-.about-header {
+/* ── Hero ────────────────────────────────── */
+.about-hero {
   position: relative;
+  height: 70vh;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 100px 20px 80px;
-  overflow: hidden;
+  background: url('../../assets/about-img.jpg') center center / cover no-repeat;
+  background-attachment: fixed;
 }
 
-.about-header::before {
-  content: "";
+.about-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(239, 230, 247, 0.8), rgba(255, 255, 255, 0.9));
-  z-index: 1;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(124, 58, 237, 0.35) 0%,
+    rgba(20, 0, 50, 0.85) 100%
+  );
 }
 
-.about-header h1 {
+.about-hero-content {
   position: relative;
   z-index: 2;
+  max-width: 900px;
+  padding: 0 24px;
+  animation: heroFadeIn 1s ease-out;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.about-hero-title {
   font-size: 3.5rem;
   font-weight: 900;
-  color: #000;
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: 4px;
-  text-shadow: none;
-  margin-bottom: 16px;
+  margin: 0 0 16px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
 }
 
-.about-header p {
-  position: relative;
-  z-index: 2;
+.about-hero-sub {
   font-size: 1.4rem;
-  color: #333;
-  max-width: 800px;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 700px;
   margin: 0 auto;
-  text-shadow: none;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Sección de contenido (dos columnas) */
-.about-content {
+/* ── Fade-in genérico ─────────────────────── */
+.fade-section {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-section.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Nuestra Historia ─────────────────────── */
+.about-story {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
   gap: 60px;
   max-width: 1200px;
-  margin: 60px auto;
+  margin: 80px auto;
   padding: 0 40px;
 }
 
-.about-image-wrapper {
-  flex: 1;
-  position: relative;
+.about-story-image-wrap {
+  flex: 0 0 45%;
+  max-width: 45%;
 }
 
-.about-image {
+.about-story-image {
   width: 100%;
-  height: auto;
-  border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.15);
-  border: 1px solid #d4b3ff;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow:
+    0 12px 40px rgba(124, 58, 237, 0.15),
+    0 0 60px rgba(124, 58, 237, 0.06);
+  border: 1.5px solid #ede6fa;
   transition: transform 0.4s ease;
 }
 
-.about-image:hover {
-  transform: scale(1.03);
+.about-story-image:hover {
+  transform: scale(1.02);
 }
 
-.about-text-wrapper {
+.about-story-text {
   flex: 1;
 }
 
-.about-text-wrapper h2 {
-  font-size: 2.5rem;
-  color: #000;
-  margin-bottom: 24px;
-  text-shadow: none;
-}
-
-.about-text-wrapper p {
+.about-story-text p {
   font-size: 1.15rem;
-  line-height: 1.7;
-  color: #333;
+  line-height: 1.8;
+  color: #444;
   margin-bottom: 20px;
 }
 
-.about-text-wrapper h3 {
-  font-size: 1.8rem;
-  color: #000;
-  margin: 40px 0 20px;
-  letter-spacing: 1px;
+.about-story-text strong {
+  color: #7c3aed;
+  font-weight: 700;
 }
 
-/* Pilares con acento violeta (cambia el cuadradito naranja por algo más arcane) */
-.about-pillars {
-  list-style-type: none;
-  padding: 0;
-}
-
-.about-pillars li {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 16px;
-  color: #333;
-  padding-left: 32px;
+/* ── Títulos de sección ───────────────────── */
+.about-section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #4b158c;
+  margin: 0 0 28px;
+  letter-spacing: -0.5px;
   position: relative;
 }
 
-.about-pillars li::before {
-  content: "✦"; /* símbolo místico en vez de cuadrado */
-  color: #a855f7; /* violeta brillante */
-  position: absolute;
-  left: 0;
-  top: 4px;
-  font-size: 1.2rem;
+.about-section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  border-radius: 2px;
+  margin-top: 10px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .about-content {
-    flex-direction: column;
-    gap: 40px;
-    padding: 0 20px;
+/* ── Nuestros Pilares ─────────────────────── */
+.about-pillars-section {
+  max-width: 1200px;
+  margin: 0 auto 100px;
+  padding: 0 40px;
+}
+
+.about-pillars-heading {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.about-pillars-heading::after {
+  margin: 12px auto 0;
+}
+
+.about-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.about-pillar-card {
+  background: #fff;
+  border: 1.5px solid #ede6fa;
+  border-radius: 24px;
+  padding: 40px 28px;
+  text-align: center;
+  box-shadow:
+    0 8px 32px rgba(124, 58, 237, 0.08),
+    0 0 40px rgba(124, 58, 237, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-pillar-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 16px 48px rgba(124, 58, 237, 0.14),
+    0 0 60px rgba(124, 58, 237, 0.08);
+}
+
+.about-pillar-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 0 8px rgba(124, 58, 237, 0.06);
+}
+
+.about-pillar-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d1b4e;
+  margin: 0 0 12px;
+}
+
+.about-pillar-text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
+  margin: 0;
+}
+
+/* ── Responsive ────────────────────────────── */
+@media (max-width: 1024px) {
+  .about-pillars-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  .about-header h1 {
-    font-size: 2.8rem;
+}
+
+@media (max-width: 768px) {
+  .about-hero {
+    height: 60vh;
+    min-height: 360px;
+    background-attachment: scroll;
+  }
+
+  .about-hero-title {
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+  }
+
+  .about-hero-sub {
+    font-size: 1.1rem;
+  }
+
+  .about-story {
+    flex-direction: column;
+    gap: 30px;
+    margin: 50px auto;
+    padding: 0 24px;
+  }
+
+  .about-story-image-wrap {
+    flex: none;
+    max-width: 100%;
+  }
+
+  .about-story-image {
+    height: 300px;
+  }
+
+  .about-section-title {
+    font-size: 1.8rem;
+  }
+
+  .about-pillars-section {
+    padding: 0 24px;
+    margin-bottom: 60px;
+  }
+
+  .about-pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
