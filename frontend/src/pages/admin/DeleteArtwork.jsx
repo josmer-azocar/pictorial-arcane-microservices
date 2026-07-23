@@ -11,7 +11,7 @@ const DeleteArtwork = () => {
   const [artists, setArtists] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ id: '', artistId: '', genre: '' });
+  const [filters, setFilters] = useState({ name: '', artistId: '', genre: '' });
 
   // Carga inicial de datos
   const loadData = async () => {
@@ -45,12 +45,13 @@ const DeleteArtwork = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      if (filters.id) {
-        // Búsqueda por ID local (en las obras ya cargadas)
-        const filtered = artworks.filter(art => art.idArtWork.toString() === filters.id);
+      if (filters.name) {
+        // Búsqueda por nombre local (en las obras ya cargadas)
+        const term = filters.name.trim().toLowerCase();
+        const filtered = artworks.filter(art => art.name?.toLowerCase().includes(term));
         setArtworks(filtered);
         if (filtered.length === 0) {
-          toast.info("No se encontraron obras disponibles con ese ID.");
+          toast.info("No se encontraron obras disponibles con ese nombre.");
         }
       } else {
         // Búsqueda por artista o género usando la API
@@ -68,14 +69,15 @@ const DeleteArtwork = () => {
   };
 
   const handleClear = async () => {
-    setFilters({ id: '', artistId: '', genre: '' });
+    setFilters({ name: '', artistId: '', genre: '' });
     loadData();
   };
 
   const reloadArtworks = async () => {
-    if (filters.id) {
+    if (filters.name) {
+        const term = filters.name.trim().toLowerCase();
         const response = await getAllArtworks();
-        setArtworks(response.filter(art => art.idArtWork.toString() === filters.id && art.status === 'AVAILABLE'));
+        setArtworks(response.filter(art => art.name?.toLowerCase().includes(term) && art.status === 'AVAILABLE'));
     } else if (filters.artistId || filters.genre) {
         const response = await searchArtworks({ artistId: filters.artistId, genre: filters.genre, size: 1000 });
         setArtworks(response.content.filter(art => art.status === 'AVAILABLE') || []);
@@ -146,7 +148,7 @@ const DeleteArtwork = () => {
 
       {/* Barra de Filtros */}
       <form className="filter-bar" onSubmit={handleSearch}>
-        <input type="number" name="id" placeholder="Buscar por ID" value={filters.id} onChange={handleFilterChange} />
+        <input type="text" name="name" placeholder="Buscar por nombre de obra" value={filters.name} onChange={handleFilterChange} />
         <select name="artistId" value={filters.artistId} onChange={handleFilterChange}>
           <option value="">Filtrar por Artista</option>
           {artists.map(artist => (
@@ -176,15 +178,15 @@ const DeleteArtwork = () => {
                 const genre = genres.find(g => g.id === art.genreId);
                 const artist = artists.find(a => a.id === art.artistId);
                 return (
-                  <tr key={art.idArtWork}>
-                    <td className="mono">#{art.idArtWork}</td>
+                  <tr key={art.artworkId}>
+                    <td className="mono">#{art.artworkId}</td>
                     <td className="artwork">{art.name}</td>
                     <td>{artist ? artist.name : art.artistId}</td>
                     <td>{genre ? genre.name : art.genreId}</td>
                     <td className="price">${art.price?.toLocaleString()}</td>
                     <td>
                       <div className="action-buttons">
-                        <button className="btn btn-primary" onClick={() => handleDelete(art.idArtWork, art.name)}>Eliminar</button>
+                        <button className="btn btn-primary" onClick={() => handleDelete(art.id, art.name)}>Eliminar</button>
                       </div>
                     </td>
                   </tr>
