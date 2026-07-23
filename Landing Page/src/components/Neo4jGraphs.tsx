@@ -690,23 +690,24 @@ export default function Neo4jGraphs() {
                   </button>
                 )}
 
-                {/* Corner Tooltip Overlay */}
-                <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-purple-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none transition-all duration-300">
-                  {highlightedNode ? (
-                    <div>
-                      <h4 className="text-xs font-bold text-gray-900 uppercase flex items-center gap-1">
-                        <Sparkles size={12} className="text-arcane-purple animate-pulse" />
-                        {highlightedNode.label}
-                      </h4>
-                      <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">{highlightedNode.details}</p>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-[10px] text-gray-500">
-                      <HelpCircle size={14} className="text-arcane-purple" />
-                      <span>Coloca el mouse sobre un nodo para ver su ontología o haz click para explorar sus registros.</span>
-                    </div>
-                  )}
-                </div>
+              </div>
+
+              {/* Corner Tooltip Overlay (below graph) */}
+              <div className="w-full mt-3 bg-white/95 border border-purple-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none transition-all duration-300">
+                {highlightedNode ? (
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-900 uppercase flex items-center gap-1">
+                      <Sparkles size={12} className="text-arcane-purple animate-pulse" />
+                      {highlightedNode.label}
+                    </h4>
+                    <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">{highlightedNode.details}</p>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                    <HelpCircle size={14} className="text-arcane-purple" />
+                    <span>Coloca el mouse sobre un nodo para ver su ontología o haz click para explorar sus registros.</span>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -937,9 +938,10 @@ export default function Neo4jGraphs() {
                           Reset
                         </button>
                       )}
+                    </div>
 
-                      {/* Floating Detail Tooltip */}
-                      <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-purple-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px] transition-all duration-300">
+                      {/* Floating Detail Tooltip (below graph) */}
+                      <div className="w-full mt-3 bg-white/95 border border-purple-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px] transition-all duration-300">
                         {highlightedNode && highlightedNode.type === 'artwork' ? (
                           <div className="flex gap-3 items-center">
                             {highlightedNode.imageUrl && (
@@ -957,7 +959,6 @@ export default function Neo4jGraphs() {
                           </div>
                         )}
                       </div>
-                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-12 text-slate-400 flex flex-col items-center gap-3">
@@ -1147,9 +1148,10 @@ export default function Neo4jGraphs() {
                           Reset
                         </button>
                       )}
+                    </div>
 
-                      {/* Tooltip */}
-                      <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-sky-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px]">
+                      {/* Tooltip (below graph) */}
+                      <div className="w-full mt-3 bg-white/95 border border-sky-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px]">
                         {highlightedNode && highlightedNode.type === 'artwork' ? (
                           <div className="flex gap-3 items-center">
                             {highlightedNode.imageUrl && (
@@ -1167,7 +1169,6 @@ export default function Neo4jGraphs() {
                           </div>
                         )}
                       </div>
-                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-12 text-slate-400 flex flex-col items-center gap-3">
@@ -1631,8 +1632,10 @@ export default function Neo4jGraphs() {
                             </button>
                           )}
 
-                      {/* Tooltip */}
-                      <div className="absolute bottom-3 left-3 right-3 bg-white/95 border border-rose-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px]">
+                    </div>
+
+                      {/* Tooltip (below graph) */}
+                      <div className="w-full mt-3 bg-white/95 border border-rose-100 p-3 rounded-xl shadow-md backdrop-blur-sm pointer-events-none min-h-[50px]">
                         {highlightedNode && highlightedNode.type === 'artwork' ? (
                           <div className="flex gap-3 items-center">
                             {highlightedNode.imageUrl && (
@@ -1650,7 +1653,6 @@ export default function Neo4jGraphs() {
                           </div>
                         )}
                       </div>
-                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-12 text-slate-400 flex flex-col items-center gap-3">
