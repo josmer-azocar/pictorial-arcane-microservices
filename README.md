@@ -40,19 +40,6 @@ El proyecto rompe con el monolito tradicional dividiendo el dominio en **7 micro
 
 ---
 
-## 🌟 Puntos Destacados para Ingenieros y Reclutadores
-
-Si estás evaluando este proyecto desde una perspectiva técnica o de reclutamiento, aquí están los aspectos de ingeniería clave implementados:
-
-- 🧱 **Arquitectura Cloud Native Escalable**: Descubrimiento dinámico de servicios (**Netflix Eureka**) y Configuración Centralizada (**Spring Cloud Config**).
-- 🛡️ **Seguridad Centralizada con Módulo Reutilizable**: Librería `security-commons` propia que desacopla la validación stateless JWT y `@PreAuthorize` entre microservicios.
-- 🗄️ **Persistencia Políglota Real**: 4 modelos de almacenamiento en producción/nube: **PostgreSQL** (ACID relacional), **MongoDB Atlas** (catálogo JSON), **Cassandra Astra DB** (series de tiempo e inmutabilidad de auditoría), y **Neo4j Aura** (relaciones complejas y recomendaciones).
-- 🔄 **Orquestación e Intercambio de Estado Inter-Servicio**: Comunicación no bloqueante y síncrona mediante `RestClient` balanceado por Eureka (`lb://`), gestión de claves cruzadas (ObjectIDs a `Long artworkId`), y tareas automatizadas en background (`@Scheduled`) para la caducidad de reservas (24h).
-- 📊 **Panel Visual & Métricas React 19**: Aplicación cliente SPA desacoplada en React 19 + Vite con visualización analítica (Chart.js) para administradores y experiencia e-commerce interactiva para clientes.
-- 🐳 **Despliegue Multi-Contenedor Automatizado**: Configuración `docker-compose.yaml` optimizada para orquestar la suite completa de microservicios con perfiles de red aislados.
-
----
-
 ## 🛠️ Ecosistema Tecnológico
 
 ### Backend (Java / Spring Ecosystem)
