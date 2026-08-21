@@ -66,34 +66,39 @@ El proyecto rompe con el monolito tradicional dividiendo el dominio en **7 micro
 ## 🏛️ Arquitectura del Sistema
 
 ```mermaid
-graph TD
-    Client[📱 Cliente Web SPA / React 19] -->|HTTP / JWT| Gateway[🌐 API Gateway - Port 8060]
+flowchart TD
+    Client["📱 Cliente Web SPA (React 19)"] -->|HTTP / JWT| Gateway["🌐 API Gateway (Puerto 8060)"]
     
-    subgraph Infraestructura Spring Cloud
-        Eureka[🔎 Service Registry - Eureka Port 8761]
-        ConfigServer[⚙️ Config Server - Port 8088]
+    subgraph Infra["Infraestructura Spring Cloud"]
+        Eureka["🔎 Service Registry (Eureka 8761)"]
+        ConfigServer["⚙️ Config Server (Puerto 8088)"]
     end
     
-    Gateway -->|Enrutamiento lb://| CoreSvc[🏢 Core Service - Port 8082]
-    Gateway -->|Enrutamiento lb://| ArtworkSvc[🎨 Artwork Service - Port 8070]
-    Gateway -->|Enrutamiento lb://| AuditSvc[📜 Audit Service - Port 8071]
-    Gateway -->|Enrutamiento lb://| RecomSvc[🧠 Recommendation Service - Port 8072]
+    Gateway -->|"Enrutamiento lb://"| CoreSvc["🏢 Core Service (Puerto 8082)"]
+    Gateway -->|"Enrutamiento lb://"| ArtworkSvc["🎨 Artwork Service (Puerto 8070)"]
+    Gateway -->|"Enrutamiento lb://"| AuditSvc["📜 Audit Service (Puerto 8071)"]
+    Gateway -->|"Enrutamiento lb://"| RecomSvc["🧠 Recommendation Service (Puerto 8072)"]
 
-    CoreSvc <-->|Descubrimiento & Config| Eureka
-    ArtworkSvc <-->|Descubrimiento & Config| Eureka
-    AuditSvc <-->|Descubrimiento & Config| Eureka
-    RecomSvc <-->|Descubrimiento & Config| Eureka
+    CoreSvc --- Eureka
+    ArtworkSvc --- Eureka
+    AuditSvc --- Eureka
+    RecomSvc --- Eureka
 
-    CoreSvc <-->|RestClient lb://| ArtworkSvc
-    CoreSvc -->|Log Audit / HTTP| AuditSvc
-    ArtworkSvc -->|Status History / HTTP| AuditSvc
-    CoreSvc -->|Sync Purchase/User| RecomSvc
+    CoreSvc --- ConfigServer
+    ArtworkSvc --- ConfigServer
+    AuditSvc --- ConfigServer
+    RecomSvc --- ConfigServer
 
-    subgraph Persistencia Políglota
-        CoreSvc --->|ACID Relacional| Postgres[(🐘 PostgreSQL / Azure)]
-        ArtworkSvc --->|Documentos JSON| Mongo[(🍃 MongoDB Atlas)]
-        AuditSvc --->|Columnar / Logs| Cassandra[(👁️ Cassandra / Astra DB)]
-        RecomSvc --->|Grafos / Vector AI| Neo4j[(🕸️ Neo4j Aura DB)]
+    CoreSvc -->|"RestClient lb://"| ArtworkSvc
+    CoreSvc -->|"Log Audit (HTTP)"| AuditSvc
+    ArtworkSvc -->|"Status History (HTTP)"| AuditSvc
+    CoreSvc -->|"Sync Purchase y User"| RecomSvc
+
+    subgraph Persistence["Persistencia Políglota"]
+        CoreSvc ---> Postgres[("🐘 PostgreSQL (Azure SQL)")]
+        ArtworkSvc ---> Mongo[("🍃 MongoDB Atlas")]
+        AuditSvc ---> Cassandra[("👁️ Apache Cassandra (Astra DB)")]
+        RecomSvc ---> Neo4j[("🕸️ Neo4j Aura DB")]
     end
 ```
 
@@ -137,10 +142,10 @@ Las obras en MongoDB poseen un identificador nativo `_id` de tipo `ObjectId` (`S
 sequenceDiagram
     autonumber
     actor Cliente
-    participant Gateway as API Gateway
-    participant Core as Core Service (Postgres)
-    participant Artwork as Artwork Service (Mongo)
-    participant Audit as Audit Service (Cassandra)
+    participant Gateway as "API Gateway"
+    participant Core as "Core Service (Postgres)"
+    participant Artwork as "Artwork Service (Mongo)"
+    participant Audit as "Audit Service (Cassandra)"
 
     Cliente->>Gateway: POST /core/sales (Reserva)
     Gateway->>Core: Crear Venta (PENDING)
