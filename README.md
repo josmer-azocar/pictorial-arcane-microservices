@@ -118,7 +118,7 @@ En lugar de forzar una única base de datos para todas las necesidades, el domin
 
 | Base de Datos | Tipo | Servicio Responsable | Justificación Técnica & Casos de Uso |
 |---|---|---|---|
-| **PostgreSQL** | Relacional (ACID) | `core-service` | Garantiza transacciones strictly e integridad referencial para Usuarios, Perfiles de Clientes, Ventas, Pagos y Membresías. |
+| **PostgreSQL** | Relacional (ACID) | `core-service` | Garantiza transacciones estrictas e integridad referencial para Usuarios, Perfiles de Clientes, Ventas, Pagos y Membresías. |
 | **MongoDB Atlas** | Documental (NoSQL) | `artwork-service` | Proporciona flexibilidad sintáctica y esquemas dinámicos para catalogar Obras de Arte, Artistas y Géneros con búsquedas eficientes por atributos. |
 | **Apache Cassandra (Astra DB)** | Columnar (NoSQL) | `audit-service` | Optimizado para alta velocidad de escritura inmutable y consultas por rango de fechas (Series de Tiempo) en logs de auditoría, seguridad e historial de facturación mensual. |
 | **Neo4j Aura DB** | Grafos & Vector AI | `recommendation-service` | Modela conexiones complejas entre Compradores, Obras vistas y Artistas favoritos para generar motores de recomendación por similitud y vectores Spring AI. |
@@ -299,23 +299,4 @@ Todo el tráfico externo es centralizado a través de **API Gateway (Port 8060)*
 ### 🔍 Documentación Interactive Swagger / OpenAPI
 - **Core Service Swagger UI**: `http://localhost:8082/swagger-ui/index.html`
 - **Eureka Dashboard**: `http://localhost:8761`
-
----
-
-## 🎯 Decisiones Arquitectónicas y Mejoras Futuras
-
-> [!NOTE]
-> **Consistencia Distribuida (Patrón Saga)**  
-> En el flujo actual, la reserva de una obra realiza una escritura distribuida en dos sistemas independientes (MongoDB para la obra y PostgreSQL para la venta). Si la transacción en `core-service` falla inmediatamente después de haber cambiado el estado en `artwork-service`, la obra podría quedar en estado `RESERVED`.  
->   
-> **Roadmap de Evolución**: Se plantea la migración a un esquema de mensajería asíncrona mediante **Apache Kafka** o **RabbitMQ** implementando el patrón **Transactional Outbox + Saga (Choreography/Orchestration)** para garantizar la consistencia eventual estricta y reintentos automatizados.
-
----
-
-## 🤝 Autor & Contacto
-
-Desarrollado como una solución de ingeniería de software robusta, moderna y orientada a microservicios.
-
-- **Repositorio**: [josmer-azocar/pictorial-arcane-microservices](https://github.com/josmer-azocar/pictorial-arcane-microservices)
-- **Desarrollador**: Josmer Azocar
 
