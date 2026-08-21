@@ -1,5 +1,15 @@
-# Distribution / packaging
-.idea/
+# Sensitive files and credentials
+*.zip
+secure-connect-*.zip
+*.env
+*.env.local
+*.env.*.local
+*.log
 
-# Vite cache
-.vite/
+# IDE & Build files
+.idea/
+.vscode/
+*.iml
+target/
+node_modules/
+.vite/

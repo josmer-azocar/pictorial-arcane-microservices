@@ -4,13 +4,13 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
   instance:
     prefer-ip-address: true
 
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://josue:REDACTED@localhost:27017/pictorial-arcane?retryWrites=true&w=majority
-      database: pictorial-arcane
+      uri: ${SPRING_MONGODB_URI:mongodb://localhost:27017/pictorial-arcane}
+      database: ${SPRING_MONGODB_DATABASE:pictorial-arcane}
 
